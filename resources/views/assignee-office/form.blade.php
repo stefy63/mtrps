@@ -1,0 +1,29 @@
+<div class="row padding-1 p-1">
+    <div class="col-md-12">
+        
+        <div class="form-floating mb-2 mb20">
+            <input type="text" name="car_assignee_id" class="form-control @error('car_assignee_id') is-invalid @enderror" value="{{ old('car_assignee_id', $assigneeOffice?->car_assignee_id) }}" id="car_assignee_id" placeholder="Car Assignee Id">
+            <label for="car_assignee_id" class="form-label">{{ __('Car Assignee Id') }}</label>
+            {!! $errors->first('car_assignee_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+        <div class="form-floating mb-2 mb20">
+            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $assigneeOffice?->name) }}" id="name" placeholder="Name">
+            <label for="name" class="form-label">{{ __('Name') }}</label>
+            {!! $errors->first('name', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+        <div class="form-floating mb-2 mb20">
+            <input type="text" name="description" class="form-control @error('description') is-invalid @enderror" value="{{ old('description', $assigneeOffice?->description) }}" id="description" placeholder="Description">
+            <label for="description" class="form-label">{{ __('Description') }}</label>
+            {!! $errors->first('description', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+        <div class="form-floating mb-2 mb20">
+            <input type="text" name="note" class="form-control @error('note') is-invalid @enderror" value="{{ old('note', $assigneeOffice?->note) }}" id="note" placeholder="Note">
+            <label for="note" class="form-label">{{ __('Note') }}</label>
+            {!! $errors->first('note', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+
+    </div>
+    <div class="col-md-12 mt20 mt-2">
+        <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+    </div>
+</div>
