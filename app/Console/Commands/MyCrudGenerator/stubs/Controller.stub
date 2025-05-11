@@ -1,0 +1,126 @@
+<?php
+
+namespace {{controllerNamespace}};
+
+use {{modelNamespace}}\{{modelName}};
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use {{requestNamespace}}\{{modelName}}Request;
+use {{requestNamespace}}\Store{{modelName}}Request;
+use {{requestNamespace}}\Update{{modelName}}Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
+
+class {{modelName}}Controller extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @return View
+     */
+    public function index(Request $request): View
+    {
+        ${{modelNamePluralLowerCase}} = {{modelName}}::paginate();
+
+        confirmDelete('Conferma cancellazione','Sei sicuro di voler cancellare?');
+        return view('{{modelView}}.index', compact('{{modelNamePluralLowerCase}}'))
+            ->with('i', ($request->input('page', 1) - 1) * ${{modelNamePluralLowerCase}}->perPage());
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return View
+     */
+    public function create(): View
+    {
+        ${{modelNameLowerCase}} = new {{modelName}}();
+
+        return view('{{modelView}}.create', compact('{{modelNameLowerCase}}'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param Store{{modelName}}Request $request
+     * @return RedirectResponse
+     */
+    public function store(Store{{modelName}}Request $request): RedirectResponse
+    {
+        try {
+            if ($request->validated()) {
+                {{modelName}}::create($request->validated());
+            } else {
+                Redirect::back()->withErrors();
+            }
+
+            return Redirect::route('{{modelRoute}}.index')
+                ->with('toast_success', '{{modelName}} created successfully.');
+        } catch (\Throwable $e) {
+            return Redirect::back()->with('toast_error', '{{modelName}} Not created');
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param {{modelName}} ${{modelNameLowerCase}}
+     * @return View
+     */
+    public function show({{modelName}} ${{modelNameLowerCase}}): View
+    {
+        return view('{{modelView}}.show', compact('{{modelNameLowerCase}}'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param {{modelName}} ${{modelNameLowerCase}}
+     * @return View
+     */
+    public function edit({{modelName}} ${{modelNameLowerCase}}): View
+    {
+        return view('{{modelView}}.edit', compact('{{modelNameLowerCase}}'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param Update{{modelName}}Request $request
+     * @param {{modelName}} ${{modelNameLowerCase}}
+     * @return RedirectResponse
+     */
+    public function update(Update{{modelName}}Request $request, {{modelName}} ${{modelNameLowerCase}}): RedirectResponse
+    {
+        try {
+            if ($request->validated()) {
+                ${{modelNameLowerCase}}->update($request->validated());
+            } else {
+                Redirect::back()->withErrors();
+            }
+            return Redirect::route('{{modelRoute}}.index')
+                ->with('toast_success', '{{modelName}} updated successfully');
+        } catch (\Throwable $e) {
+            return Redirect::back()->with('toast_error', '{{modelName}} Not updated');
+        }
+    }
+
+    /**
+     * Delete the specified resource in storage.
+     *
+     * @param {{modelName}} ${{modelNameLowerCase}}
+     * @return RedirectResponse
+     */
+    public function destroy({{modelName}} ${{modelNameLowerCase}}): RedirectResponse
+    {
+        try {
+            ${{modelNameLowerCase}}->delete();
+
+            return Redirect::route('{{modelRoute}}.index')
+                ->with('toast_success', '{{modelName}} deleted successfully');
+        } catch (\Throwable $e) {
+            Redirect::back()->with('toast_error', '{{modelName}} Not deleted');
+        }
+    }
+}

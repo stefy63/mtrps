@@ -1,0 +1,7 @@
+
+td:not(td:last-child) {
+    padding: 0 0 0 .5rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

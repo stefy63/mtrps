@@ -1,0 +1,15 @@
+
+.dropstart-three-dots {
+
+    .dropdown-toggle {
+        width: 20px !important;
+        height: 30px !important;
+        padding: 0 !important;
+        border: none !important;
+
+        &:before {
+            content: none;
+        }
+    }
+
+}

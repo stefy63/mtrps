@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Console\Commands\MyCrudGenerator;
+
+use App\Console\Commands\MyCrudGenerator\Commands\MyCrudGenerator;
+use Illuminate\Support\ServiceProvider;
+
+/**
+ * Class CrudServiceProvider.
+ */
+class MyCrudServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                MyCrudGenerator::class,
+            ]);
+        }
+
+        $this->publishes([
+            __DIR__.'/config/crud.php' => config_path('crud.php'),
+        ], 'crud');
+
+        $this->publishes([
+            __DIR__.'/../src/stubs' => resource_path('stubs/crud/'),
+        ], 'stubs-crud');
+    }
+
+    /**
+     * Register services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        //
+    }
+}
