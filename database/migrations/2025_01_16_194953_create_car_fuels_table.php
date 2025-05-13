@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('car_fuels', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('car_id')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('name');
             $table->string('description')->nullable();
             $table->date('date_from')->useCurrent();
@@ -22,7 +21,6 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->timestamps();
             $table->foreign('car_id')->references('id')->on('cars');
-            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
