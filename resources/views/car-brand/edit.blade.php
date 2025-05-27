@@ -13,7 +13,7 @@
                     <div class="card-header">
                         <span class="card-title">{{ __('Update') }} Car Brand</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body bg-white">
                         <form method="POST" action="{{ route('car-brands.update', $carBrand->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf

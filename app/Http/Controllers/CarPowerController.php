@@ -6,8 +6,6 @@ use App\Models\CarPower;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarPowerRequest;
-use App\Http\Requests\StoreCarPowerRequest;
-use App\Http\Requests\UpdateCarPowerRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -15,23 +13,17 @@ class CarPowerController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return View
      */
     public function index(Request $request): View
     {
         $carPowers = CarPower::paginate();
 
-        confirmDelete('Conferma cancellazione','Sei sicuro di voler cancellare?');
         return view('car-power.index', compact('carPowers'))
             ->with('i', ($request->input('page', 1) - 1) * $carPowers->perPage());
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
     public function create(): View
     {
@@ -42,85 +34,54 @@ class CarPowerController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param StoreCarPowerRequest $request
-     * @return RedirectResponse
      */
-    public function store(StoreCarPowerRequest $request): RedirectResponse
+    public function store(CarPowerRequest $request): RedirectResponse
     {
-        try {
-            if ($request->validated()) {
-                CarPower::create($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+        CarPower::create($request->validated());
 
-            return Redirect::route('car-powers.index')
-                ->with('toast_success', 'CarPower created successfully.');
-        } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarPower Not created');
-        }
+        return Redirect::route('car-powers.index')
+            ->with('success', 'Car Power created successfully.');
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param CarPower $carPower
-     * @return View
      */
-    public function show(CarPower $carPower): View
+    public function show($id): View
     {
+        $carPower = CarPower::find($id);
+
         return view('car-power.show', compact('carPower'));
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param CarPower $carPower
-     * @return View
      */
-    public function edit(CarPower $carPower): View
+    public function edit($id): View
     {
+        $carPower = CarPower::find($id);
+
         return view('car-power.edit', compact('carPower'));
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param UpdateCarPowerRequest $request
-     * @param CarPower $carPower
-     * @return RedirectResponse
      */
-    public function update(UpdateCarPowerRequest $request, CarPower $carPower): RedirectResponse
+    public function update(CarPowerRequest $request, CarPower $carPower): RedirectResponse
     {
-        try {
-            if ($request->validated()) {
-                $carPower->update($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
-            return Redirect::route('car-powers.index')
-                ->with('toast_success', 'CarPower updated successfully');
-        } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarPower Not updated');
-        }
+        $carPower->update($request->validated());
+
+        return Redirect::route('car-powers.index')
+            ->with('success', 'Car Power updated successfully');
     }
 
     /**
-     * Delete the specified resource in storage.
-     *
-     * @param CarPower $carPower
-     * @return RedirectResponse
+     * Remove the specified resource from storage.
      */
-    public function destroy(CarPower $carPower): RedirectResponse
+    public function destroy($id): RedirectResponse
     {
-        try {
-            $carPower->delete();
+        CarPower::find($id)->delete();
 
-            return Redirect::route('car-powers.index')
-                ->with('toast_success', 'CarPower deleted successfully');
-        } catch (\Throwable $e) {
-            Redirect::back()->with('toast_error', 'CarPower Not deleted');
-        }
+        return Redirect::route('car-powers.index')
+            ->with('success', 'Car Power deleted successfully');
     }
 }

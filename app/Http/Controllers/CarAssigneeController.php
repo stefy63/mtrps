@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\CarAssignee;
+use App\Models\Car;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarAssigneeRequest;
-use App\Http\Requests\StoreCarAssigneeRequest;
-use App\Http\Requests\UpdateCarAssigneeRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -15,112 +14,138 @@ class CarAssigneeController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return View
      */
     public function index(Request $request): View
     {
-        $carAssignees = CarAssignee::with(['car', 'car.carPlates'])->paginate();
+        $carAssignees = CarAssignee::with([
+            'car', 
+            'car.carBrand', 
+            'car.carType', 
+            'car.carOwner',
+            'car.carPlates',
+            'assigneeOffices'
+        ])->paginate();
 
-        confirmDelete('Conferma cancellazione','Sei sicuro di voler cancellare?');
         return view('car-assignee.index', compact('carAssignees'))
             ->with('i', ($request->input('page', 1) - 1) * $carAssignees->perPage());
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
     public function create(): View
     {
         $carAssignee = new CarAssignee();
-
-        return view('car-assignee.create', compact('carAssignee'));
+        
+        // Recupera i veicoli disponibili
+        $cars = Car::with('carBrand', 'carType', 'carPlates')->get()->pluck('full_name_with_details', 'id');
+        
+        return view('car-assignee.create', compact('carAssignee', 'cars'));
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param StoreCarAssigneeRequest $request
-     * @return RedirectResponse
      */
-    public function store(StoreCarAssigneeRequest $request): RedirectResponse
+    public function store(CarAssigneeRequest $request): RedirectResponse
     {
-        try {
-            if ($request->validated()) {
-                CarAssignee::create($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+        CarAssignee::create($request->validated());
 
-            return Redirect::route('car-assignees.index')
-                ->with('toast_success', 'CarAssignee created successfully.');
-        } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarAssignee Not created');
-        }
+        return Redirect::route('car-assignees.index')
+            ->with('success', 'Car Assignee created successfully.');
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param CarAssignee $carAssignee
-     * @return View
      */
-    public function show(CarAssignee $carAssignee): View
+    public function show($id): View
     {
+        $carAssignee = CarAssignee::with([
+            'car', 
+            'car.carBrand', 
+            'car.carType', 
+            'car.carOwner',
+            'car.carPlates',
+            'assigneeOffices'
+        ])->find($id);
+
         return view('car-assignee.show', compact('carAssignee'));
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param CarAssignee $carAssignee
-     * @return View
      */
-    public function edit(CarAssignee $carAssignee): View
+    public function edit($id): View
     {
-        return view('car-assignee.edit', compact('carAssignee'));
+        $carAssignee = CarAssignee::find($id);
+        
+        // Recupera i veicoli disponibili
+        $cars = Car::with('carBrand', 'carType', 'carPlates')->get()->pluck('full_name_with_details', 'id');
+
+        return view('car-assignee.edit', compact('carAssignee', 'cars'));
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param UpdateCarAssigneeRequest $request
-     * @param CarAssignee $carAssignee
-     * @return RedirectResponse
      */
-    public function update(UpdateCarAssigneeRequest $request, CarAssignee $carAssignee): RedirectResponse
+    public function update(CarAssigneeRequest $request, CarAssignee $carAssignee): RedirectResponse
     {
-        try {
-            if ($request->validated()) {
-                $carAssignee->update($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
-            return Redirect::route('car-assignees.index')
-                ->with('toast_success', 'CarAssignee updated successfully');
-        } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarAssignee Not updated');
-        }
+        $carAssignee->update($request->validated());
+
+        return Redirect::route('car-assignees.index')
+            ->with('success', 'Car Assignee updated successfully');
     }
 
     /**
-     * Delete the specified resource in storage.
-     *
-     * @param CarAssignee $carAssignee
-     * @return RedirectResponse
+     * Remove the specified resource from storage.
      */
-    public function destroy(CarAssignee $carAssignee): RedirectResponse
+    public function destroy($id): RedirectResponse
     {
-        try {
-            $carAssignee->delete();
+        CarAssignee::find($id)->delete();
 
-            return Redirect::route('car-assignees.index')
-                ->with('toast_success', 'CarAssignee deleted successfully');
-        } catch (\Throwable $e) {
-            Redirect::back()->with('toast_error', 'CarAssignee Not deleted');
-        }
+        return Redirect::route('car-assignees.index')
+            ->with('success', 'Car Assignee deleted successfully');
+    }
+
+    /**
+     * Get current assignees (active assignments)
+     */
+    public function current(Request $request): View
+    {
+        $carAssignees = CarAssignee::current()->with([
+            'car', 
+            'car.carBrand', 
+            'car.carType', 
+            'car.carOwner',
+            'car.carPlates',
+            'assigneeOffices'
+        ])->paginate();
+
+        return view('car-assignee.current', compact('carAssignees'))
+            ->with('i', ($request->input('page', 1) - 1) * $carAssignees->perPage());
+    }
+
+    /**
+     * Get assignees by vehicle for AJAX
+     */
+    public function getByVehicle($carId)
+    {
+        $assignees = CarAssignee::where('car_id', $carId)
+            ->with('assigneeOffices')
+            ->get();
+        return response()->json($assignees);
+    }
+
+    /**
+     * Get assignment history for a vehicle
+     */
+    public function vehicleHistory($carId): View
+    {
+        $car = Car::with('carBrand', 'carType')->find($carId);
+        $assignees = CarAssignee::where('car_id', $carId)
+            ->with('assigneeOffices')
+            ->orderBy('date_from', 'desc')
+            ->get();
+
+        return view('car-assignee.vehicle-history', compact('car', 'assignees'));
     }
 }

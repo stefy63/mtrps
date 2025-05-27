@@ -41,6 +41,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('car-types', CarTypeController::class);
     Route::resource('car-owners', CarOwnerController::class);
     Route::resource('car-assignees', CarAssigneeController::class);
+    Route::get('car-assignees-current', [CarAssigneeController::class, 'current'])->name('car-assignees.current');
+   Route::get('car-assignees/vehicle/{car}', [CarAssigneeController::class, 'getByVehicle'])->name('car-assignees.by-vehicle');
+   Route::get('car-assignees/vehicle/{car}/history', [CarAssigneeController::class, 'vehicleHistory'])->name('car-assignees.vehicle-history');
+   Route::get('api/car-assignees/check-overlaps', [CarAssigneeController::class, 'checkOverlaps'])->name('car-assignees.check-overlaps');
     Route::resource('car-brands', CarBrandController::class);
     Route::resource('car-powers', CarPowerController::class);
     Route::resource('car-profit-accounts', CarProfitAccountController::class);
