@@ -209,4 +209,54 @@ class Car extends Model
         return $this->hasMany(Movement::class, 'id', 'car_id');
     }
 
+    /**
+     * Accessor per nome completo con dettagli per le select
+     */
+    public function getFullNameWithDetailsAttribute()
+    {
+        $brand = $this->carBrand?->name ?? 'N/A';
+        $model = $this->model ?? '';
+        $type = $this->carType?->name ?? 'N/A';
+        
+        return "{$this->name} - {$brand} {$model} ({$type})";
+    }
+
+    /**
+     * Relazione per ottenere solo le targhe attive
+     */
+    public function activePlates()
+    {
+        return $this->hasMany(CarPlate::class)->where(function($query) {
+            $query->where('date_from', '<=', now())
+                  ->where(function($q) {
+                      $q->whereNull('date_to')
+                        ->orWhere('date_to', '>=', now());
+                  });
+        });
+    }
+
+    /**
+     * Accessor per ottenere la targa attiva corrente
+     */
+    public function getCurrentPlateAttribute()
+    {
+        return $this->activePlates()->first();
+    }
+
+    /**
+     * Scope per veicoli con targa attiva
+     */
+    public function scopeWithActivePlate($query)
+    {
+        return $query->whereHas('activePlates');
+    }
+
+    /**
+     * Scope per veicoli senza targa attiva
+     */
+    public function scopeWithoutActivePlate($query)
+    {
+        return $query->whereDoesntHave('activePlates');
+    }
+
 }

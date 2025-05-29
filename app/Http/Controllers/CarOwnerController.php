@@ -6,8 +6,6 @@ use App\Models\CarOwner;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarOwnerRequest;
-use App\Http\Requests\StoreCarOwnerRequest;
-use App\Http\Requests\UpdateCarOwnerRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -15,23 +13,17 @@ class CarOwnerController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return View
      */
     public function index(Request $request): View
     {
-        $carOwners = CarOwner::paginate();
+        $carOwners = CarOwner::withCount('cars')->paginate();
 
-        confirmDelete('Conferma cancellazione','Sei sicuro di voler cancellare?');
         return view('car-owner.index', compact('carOwners'))
             ->with('i', ($request->input('page', 1) - 1) * $carOwners->perPage());
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
     public function create(): View
     {
@@ -42,85 +34,77 @@ class CarOwnerController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param StoreCarOwnerRequest $request
-     * @return RedirectResponse
      */
-    public function store(StoreCarOwnerRequest $request): RedirectResponse
+    public function store(CarOwnerRequest $request): RedirectResponse
     {
-        try {
-            if ($request->validated()) {
-                CarOwner::create($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+        CarOwner::create($request->validated());
 
-            return Redirect::route('car-owners.index')
-                ->with('toast_success', 'CarOwner created successfully.');
-        } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarOwner Not created');
-        }
+        return Redirect::route('car-owners.index')
+            ->with('success', 'Car Owner created successfully.');
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param CarOwner $carOwner
-     * @return View
      */
-    public function show(CarOwner $carOwner): View
+    public function show($id): View
     {
+        $carOwner = CarOwner::with(['cars.carBrand', 'cars.carType', 'cars.carPower', 'cars.carPlates'])->find($id);
+
         return view('car-owner.show', compact('carOwner'));
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param CarOwner $carOwner
-     * @return View
      */
-    public function edit(CarOwner $carOwner): View
+    public function edit($id): View
     {
+        $carOwner = CarOwner::find($id);
+
         return view('car-owner.edit', compact('carOwner'));
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param UpdateCarOwnerRequest $request
-     * @param CarOwner $carOwner
-     * @return RedirectResponse
      */
-    public function update(UpdateCarOwnerRequest $request, CarOwner $carOwner): RedirectResponse
+    public function update(CarOwnerRequest $request, CarOwner $carOwner): RedirectResponse
     {
-        try {
-            if ($request->validated()) {
-                $carOwner->update($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
-            return Redirect::route('car-owners.index')
-                ->with('toast_success', 'CarOwner updated successfully');
-        } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarOwner Not updated');
-        }
+        $carOwner->update($request->validated());
+
+        return Redirect::route('car-owners.index')
+            ->with('success', 'Car Owner updated successfully');
     }
 
     /**
-     * Delete the specified resource in storage.
-     *
-     * @param CarOwner $carOwner
-     * @return RedirectResponse
+     * Remove the specified resource from storage.
      */
-    public function destroy(CarOwner $carOwner): RedirectResponse
+    public function destroy($id): RedirectResponse
     {
-        try {
-            $carOwner->delete();
-
+        $carOwner = CarOwner::find($id);
+        
+        // Controlla se ci sono veicoli associati
+        if ($carOwner->cars()->count() > 0) {
             return Redirect::route('car-owners.index')
-                ->with('toast_success', 'CarOwner deleted successfully');
-        } catch (\Throwable $e) {
-            Redirect::back()->with('toast_error', 'CarOwner Not deleted');
+                ->with('error', 'Cannot delete owner with associated vehicles. Please reassign vehicles first.');
         }
+        
+        $carOwner->delete();
+
+        return Redirect::route('car-owners.index')
+            ->with('success', 'Car Owner deleted successfully');
+    }
+
+    /**
+     * Get statistics for all owners
+     */
+    public function statistics()
+    {
+        $statistics = CarOwner::withCount('cars')
+            ->with(['cars' => function($query) {
+                $query->selectRaw('car_owner_id, SUM(km) as total_km, AVG(km) as avg_km')
+                      ->groupBy('car_owner_id');
+            }])
+            ->get();
+            
+        return response()->json($statistics);
     }
 }

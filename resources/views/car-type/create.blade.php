@@ -13,7 +13,7 @@
                     <div class="card-header">
                         <span class="card-title">{{ __('Create') }} Car Type</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body bg-white">
                         <form method="POST" action="{{ route('car-types.store') }}"  role="form" enctype="multipart/form-data">
                             @csrf
 

@@ -11,9 +11,9 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Update') }} Car Owner</span>
+                        <span class="card-title">{{ __('Update') }} Car Owner (Proprietario)</span>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body bg-white">
                         <form method="POST" action="{{ route('car-owners.update', $carOwner->id) }}"  role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf

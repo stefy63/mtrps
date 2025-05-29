@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\CarPlate;
+use App\Models\Car;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarPlateRequest;
-use App\Http\Requests\StoreCarPlateRequest;
-use App\Http\Requests\UpdateCarPlateRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -15,112 +14,90 @@ class CarPlateController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return View
      */
     public function index(Request $request): View
     {
-        $carPlates = CarPlate::paginate();
+        $carPlates = CarPlate::with('car', 'car.carBrand', 'car.carType')->paginate();
 
-        confirmDelete('Conferma cancellazione','Sei sicuro di voler cancellare?');
         return view('car-plate.index', compact('carPlates'))
             ->with('i', ($request->input('page', 1) - 1) * $carPlates->perPage());
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
     public function create(): View
     {
         $carPlate = new CarPlate();
-
-        return view('car-plate.create', compact('carPlate'));
+        
+        // Recupera i veicoli per la select
+        $cars = Car::with('carBrand', 'carType')->get()->pluck('full_name_with_details', 'id');
+        
+        return view('car-plate.create', compact('carPlate', 'cars'));
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param StoreCarPlateRequest $request
-     * @return RedirectResponse
      */
-    public function store(StoreCarPlateRequest $request): RedirectResponse
+    public function store(CarPlateRequest $request): RedirectResponse
     {
-        try {
-            if ($request->validated()) {
-                CarPlate::create($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+        CarPlate::create($request->validated());
 
-            return Redirect::route('car-plates.index')
-                ->with('toast_success', 'CarPlate created successfully.');
-        } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarPlate Not created');
-        }
+        return Redirect::route('car-plates.index')
+            ->with('success', 'Car Plate created successfully.');
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param CarPlate $carPlate
-     * @return View
      */
-    public function show(CarPlate $carPlate): View
+    public function show($id): View
     {
+        $carPlate = CarPlate::with('car', 'car.carBrand', 'car.carType', 'car.carOwner')->find($id);
+
         return view('car-plate.show', compact('carPlate'));
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param CarPlate $carPlate
-     * @return View
      */
-    public function edit(CarPlate $carPlate): View
+    public function edit($id): View
     {
-        return view('car-plate.edit', compact('carPlate'));
+        $carPlate = CarPlate::find($id);
+        
+        // Recupera i veicoli per la select
+        $cars = Car::with('carBrand', 'carType')->get()->pluck('full_name_with_details', 'id');
+
+        return view('car-plate.edit', compact('carPlate', 'cars'));
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param UpdateCarPlateRequest $request
-     * @param CarPlate $carPlate
-     * @return RedirectResponse
      */
-    public function update(UpdateCarPlateRequest $request, CarPlate $carPlate): RedirectResponse
+    public function update(CarPlateRequest $request, CarPlate $carPlate): RedirectResponse
     {
-        try {
-            if ($request->validated()) {
-                $carPlate->update($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
-            return Redirect::route('car-plates.index')
-                ->with('toast_success', 'CarPlate updated successfully');
-        } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarPlate Not updated');
-        }
+        $carPlate->update($request->validated());
+
+        return Redirect::route('car-plates.index')
+            ->with('success', 'Car Plate updated successfully');
     }
 
     /**
-     * Delete the specified resource in storage.
-     *
-     * @param CarPlate $carPlate
-     * @return RedirectResponse
+     * Remove the specified resource from storage.
      */
-    public function destroy(CarPlate $carPlate): RedirectResponse
+    public function destroy($id): RedirectResponse
     {
-        try {
-            $carPlate->delete();
+        CarPlate::find($id)->delete();
 
-            return Redirect::route('car-plates.index')
-                ->with('toast_success', 'CarPlate deleted successfully');
-        } catch (\Throwable $e) {
-            Redirect::back()->with('toast_error', 'CarPlate Not deleted');
-        }
+        return Redirect::route('car-plates.index')
+            ->with('success', 'Car Plate deleted successfully');
+    }
+
+    /**
+     * Get plates by car for AJAX requests
+     */
+    public function getByVehicle($carId)
+    {
+        $plates = CarPlate::where('car_id', $carId)->get();
+        return response()->json($plates);
     }
 }

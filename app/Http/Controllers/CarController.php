@@ -3,132 +3,126 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
-use App\Models\CarPlate;
+use App\Models\CarType;
+use App\Models\CarOwner;
+use App\Models\CarBrand;
+use App\Models\CarPower;
+use App\Models\CarProfitAccount;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarRequest;
-use App\Http\Requests\StoreCarRequest;
-use App\Http\Requests\UpdateCarRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class CarController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return View
      */
     public function index(Request $request): View
     {
         $cars = Car::with([
             'carType',
-            'carOwner',
+            'carOwner', 
             'carBrand',
             'carPower',
             'carProfitAccount',
-            'carPlates',
+            'carPlates'
         ])->paginate();
 
-        confirmDelete('Conferma cancellazione','Sei sicuro di voler cancellare?');
         return view('car.index', compact('cars'))
             ->with('i', ($request->input('page', 1) - 1) * $cars->perPage());
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
     public function create(): View
     {
         $car = new Car();
+        
+        // Recupera i dati per le select
+        $carTypes = CarType::pluck('name', 'id');
+        $carOwners = CarOwner::pluck('name', 'id');
+        $carBrands = CarBrand::pluck('name', 'id');
+        $carPowers = CarPower::pluck('name', 'id');
+        $carProfitAccounts = CarProfitAccount::pluck('name', 'id');
 
-        return view('car.create', compact('car'));
+        return view('car.create', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts'));
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param StoreCarRequest $request
-     * @return RedirectResponse
      */
-    public function store(StoreCarRequest $request): RedirectResponse
+    public function store(CarRequest $request): RedirectResponse
     {
-        try {
-            if ($request->validated()) {
-                Car::create($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+        $data = $request->validated();
+        $data['created_by'] = Auth::id();
+        
+        Car::create($data);
 
-            return Redirect::route('cars.index')
-                ->with('toast_success', 'Car created successfully.');
-        } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'Car Not created');
-        }
+        return Redirect::route('cars.index')
+            ->with('success', 'Car created successfully.');
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param Car $car
-     * @return View
      */
-    public function show(Car $car): View
+    public function show($id): View
     {
+        $car = Car::with([
+            'carType',
+            'carOwner',
+            'carBrand', 
+            'carPower',
+            'carProfitAccount',
+            'createdBy',
+            'updatedBy'
+        ])->find($id);
+
         return view('car.show', compact('car'));
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param Car $car
-     * @return View
      */
-    public function edit(Car $car): View
+    public function edit($id): View
     {
-        return view('car.edit', compact('car'));
+        $car = Car::find($id);
+        
+        // Recupera i dati per le select
+        $carTypes = CarType::pluck('name', 'id');
+        $carOwners = CarOwner::pluck('name', 'id');
+        $carBrands = CarBrand::pluck('name', 'id');
+        $carPowers = CarPower::pluck('name', 'id');
+        $carProfitAccounts = CarProfitAccount::pluck('name', 'id');
+
+        return view('car.edit', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts'));
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param UpdateCarRequest $request
-     * @param Car $car
-     * @return RedirectResponse
      */
-    public function update(UpdateCarRequest $request, Car $car): RedirectResponse
+    public function update(CarRequest $request, Car $car): RedirectResponse
     {
-        try {
-            if ($request->validated()) {
-                $car->update($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
-            return Redirect::route('cars.index')
-                ->with('toast_success', 'Car updated successfully');
-        } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'Car Not updated');
-        }
+        $data = $request->validated();
+        $data['updated_by'] = Auth::id();
+        
+        $car->update($data);
+
+        return Redirect::route('cars.index')
+            ->with('success', 'Car updated successfully');
     }
 
     /**
-     * Delete the specified resource in storage.
-     *
-     * @param Car $car
-     * @return RedirectResponse
+     * Remove the specified resource from storage.
      */
-    public function destroy(Car $car): RedirectResponse
+    public function destroy($id): RedirectResponse
     {
-        try {
-            $car->delete();
+        Car::find($id)->delete();
 
-            return Redirect::route('cars.index')
-                ->with('toast_success', 'Car deleted successfully');
-        } catch (\Throwable $e) {
-            Redirect::back()->with('toast_error', 'Car Not deleted');
-        }
+        return Redirect::route('cars.index')
+            ->with('success', 'Car deleted successfully');
     }
 }
