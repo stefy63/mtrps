@@ -2,8 +2,18 @@
 
 namespace App\Http\Requests;
 
-class UpdateCarFuelRequest extends StoreCarFuelRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class UpdateCarFuelRequest extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -11,6 +21,55 @@ class UpdateCarFuelRequest extends StoreCarFuelRequest
      */
     public function rules(): array
     {
-        return parent::rules();
+        return [
+            'car_id' => 'required|exists:cars,id',
+            'user_id' => 'nullable|exists:users,id',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'date_from' => 'required|date|before_or_equal:today',
+            'date_to' => 'nullable|date|after_or_equal:date_from',
+            'note' => 'nullable|string',
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages(): array
+    {
+        return [
+            'car_id.required' => 'Seleziona un veicolo',
+            'car_id.exists' => 'Il veicolo selezionato non è valido',
+            'user_id.exists' => 'L\'utente selezionato non è valido',
+            'name.required' => 'Inserisci una descrizione del rifornimento',
+            'name.max' => 'La descrizione non può superare i 255 caratteri',
+            'description.max' => 'I dettagli non possono superare i 255 caratteri',
+            'date_from.required' => 'Inserisci la data del rifornimento',
+            'date_from.date' => 'La data del rifornimento non è valida',
+            'date_from.before_or_equal' => 'La data del rifornimento non può essere futura',
+            'date_to.date' => 'La data di fine non è valida',
+            'date_to.after_or_equal' => 'La data di fine deve essere successiva o uguale alla data di inizio',
+        ];
+    }
+
+    /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        // Pulizia dei dati
+        if ($this->has('description') && empty($this->description)) {
+            $this->merge(['description' => null]);
+        }
+
+        if ($this->has('date_to') && empty($this->date_to)) {
+            $this->merge(['date_to' => null]);
+        }
+
+        if ($this->has('note') && empty($this->note)) {
+            $this->merge(['note' => null]);
+        }
     }
 }

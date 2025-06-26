@@ -6,8 +6,7 @@ use App\Models\CarProfitAccount;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarProfitAccountRequest;
-use App\Http\Requests\StoreCarProfitAccountRequest;
-use App\Http\Requests\UpdateCarProfitAccountRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -15,112 +14,282 @@ class CarProfitAccountController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @param Request $request
-     * @return View
      */
     public function index(Request $request): View
     {
-        $carProfitAccounts = CarProfitAccount::paginate();
+        $query = CarProfitAccount::with(['creator', 'updater']);
 
-        confirmDelete('Conferma cancellazione','Sei sicuro di voler cancellare?');
-        return view('car-profit-account.index', compact('carProfitAccounts'))
-            ->with('i', ($request->input('page', 1) - 1) * $carProfitAccounts->perPage());
+        // Ricerca
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('department', 'like', "%{$search}%")
+                    ->orWhere('responsible', 'like', "%{$search}%");
+            });
+        }
+
+        // Filtro categoria
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        // Filtro stato
+        if ($request->filled('status')) {
+            switch ($request->status) {
+                case 'active':
+                    $query->valid();
+                    break;
+                case 'inactive':
+                    $query->where('is_active', false);
+                    break;
+                case 'expired':
+                    $query->where('is_active', true)
+                        ->where('valid_to', '<', now());
+                    break;
+            }
+        }
+
+        // Ordinamento
+        $sortField = $request->get('sort', 'code');
+        $sortDirection = $request->get('direction', 'asc');
+        $query->orderBy($sortField, $sortDirection);
+
+        $carProfitAccounts = $query->paginate();
+
+        // Aggiungi conteggio veicoli per ogni account
+        $carProfitAccounts->each(function ($account) {
+            $account->cars_count = $account->cars()->count();
+            $account->active_cars_count = $account->getActiveCarsCountAttribute();
+        });
+
+        // Statistiche
+        $stats = [
+            'total' => CarProfitAccount::count(),
+            'active' => CarProfitAccount::count(),
+            'with_cars' => CarProfitAccount::has('cars')->count(),
+            'expiring_soon' => null,
+        ];
+
+
+        $categories = CarProfitAccount::CATEGORIES;
+
+        confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo centro di costo?');
+
+        return view('car-profit-account.index', compact(
+            'carProfitAccounts',
+            'stats',
+            'categories'
+        ))->with('i', ($request->input('page', 1) - 1) * $carProfitAccounts->perPage());
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return View
      */
     public function create(): View
     {
         $carProfitAccount = new CarProfitAccount();
 
-        return view('car-profit-account.create', compact('carProfitAccount'));
+        // Genera codice suggerito
+        $carProfitAccount->code = CarProfitAccount::generateNextCode();
+
+        // Imposta date di default
+        $carProfitAccount->valid_from = now();
+        $carProfitAccount->is_active = true;
+
+        $categories = CarProfitAccount::CATEGORIES;
+
+        // Suggerimenti per dipartimenti basati su PA
+        $suggestedDepartments = [
+            'Direzione Generale',
+            'Ufficio Tecnico',
+            'Servizi Amministrativi',
+            'Polizia Locale',
+            'Protezione Civile',
+            'Servizi Sociali',
+            'Urbanistica',
+            'Ambiente',
+            'Cultura e Sport',
+            'Economato',
+        ];
+
+        return view('car-profit-account.create', compact(
+            'carProfitAccount',
+            'categories',
+            'suggestedDepartments'
+        ));
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param StoreCarProfitAccountRequest $request
-     * @return RedirectResponse
      */
-    public function store(StoreCarProfitAccountRequest $request): RedirectResponse
+    public function store(CarProfitAccountRequest $request): RedirectResponse
     {
         try {
-            if ($request->validated()) {
-                CarProfitAccount::create($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+            $data = $request->validated();
+            $data['created_by'] = Auth::id();
+
+            CarProfitAccount::create($data);
 
             return Redirect::route('car-profit-accounts.index')
-                ->with('toast_success', 'CarProfitAccount created successfully.');
+                ->with('toast_success', 'Centro di costo creato con successo.');
         } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarProfitAccount Not created');
+            return Redirect::back()
+                ->withInput()
+                ->with('toast_error', 'Errore durante la creazione: ' . $e->getMessage());
         }
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param CarProfitAccount $carProfitAccount
-     * @return View
      */
     public function show(CarProfitAccount $carProfitAccount): View
     {
-        return view('car-profit-account.show', compact('carProfitAccount'));
+        // Carica relazioni
+        $carProfitAccount->load(['cars.carPlates', 'creator', 'updater']);
+
+        // Statistiche utilizzo
+        $usageStats = [
+            'total_cars' => $carProfitAccount->cars->count(),
+            'active_cars' => $carProfitAccount->active_cars_count,
+            'budget_usage' => $carProfitAccount->budget_usage_percentage,
+            'remaining_budget' => $carProfitAccount->remaining_budget_year,
+        ];
+
+        // Veicoli associati con info aggiuntive
+        $cars = $carProfitAccount->cars()
+            ->with(['carPlates', 'carType', 'carBrand'])
+            ->get();
+
+        return view('car-profit-account.show', compact(
+            'carProfitAccount',
+            'usageStats',
+            'cars'
+        ));
     }
 
     /**
      * Show the form for editing the specified resource.
-     *
-     * @param CarProfitAccount $carProfitAccount
-     * @return View
      */
     public function edit(CarProfitAccount $carProfitAccount): View
     {
-        return view('car-profit-account.edit', compact('carProfitAccount'));
+        $categories = CarProfitAccount::CATEGORIES;
+
+        // Suggerimenti per dipartimenti
+        $suggestedDepartments = [
+            'Direzione Generale',
+            'Ufficio Tecnico',
+            'Servizi Amministrativi',
+            'Polizia Locale',
+            'Protezione Civile',
+            'Servizi Sociali',
+            'Urbanistica',
+            'Ambiente',
+            'Cultura e Sport',
+            'Economato',
+        ];
+
+        return view('car-profit-account.edit', compact(
+            'carProfitAccount',
+            'categories',
+            'suggestedDepartments'
+        ));
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param UpdateCarProfitAccountRequest $request
-     * @param CarProfitAccount $carProfitAccount
-     * @return RedirectResponse
      */
-    public function update(UpdateCarProfitAccountRequest $request, CarProfitAccount $carProfitAccount): RedirectResponse
+    public function update(CarProfitAccountRequest $request, CarProfitAccount $carProfitAccount): RedirectResponse
     {
         try {
-            if ($request->validated()) {
-                $carProfitAccount->update($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+            $data = $request->validated();
+            $data['updated_by'] = Auth::id();
+
+            $carProfitAccount->update($data);
+
             return Redirect::route('car-profit-accounts.index')
-                ->with('toast_success', 'CarProfitAccount updated successfully');
+                ->with('toast_success', 'Centro di costo aggiornato con successo.');
         } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarProfitAccount Not updated');
+            return Redirect::back()
+                ->withInput()
+                ->with('toast_error', 'Errore durante l\'aggiornamento: ' . $e->getMessage());
         }
     }
 
     /**
-     * Delete the specified resource in storage.
-     *
-     * @param CarProfitAccount $carProfitAccount
-     * @return RedirectResponse
+     * Remove the specified resource from storage.
      */
     public function destroy(CarProfitAccount $carProfitAccount): RedirectResponse
     {
         try {
+            // Verifica se ci sono veicoli associati
+            if ($carProfitAccount->cars()->exists()) {
+                return Redirect::back()
+                    ->with('toast_error', 'Impossibile eliminare: ci sono veicoli associati a questo centro di costo.');
+            }
+
             $carProfitAccount->delete();
 
             return Redirect::route('car-profit-accounts.index')
-                ->with('toast_success', 'CarProfitAccount deleted successfully');
+                ->with('toast_success', 'Centro di costo eliminato con successo.');
         } catch (\Throwable $e) {
-            Redirect::back()->with('toast_error', 'CarProfitAccount Not deleted');
+            return Redirect::back()
+                ->with('toast_error', 'Errore durante l\'eliminazione.');
         }
+    }
+
+    /**
+     * Toggle active status
+     */
+    public function toggleActive(CarProfitAccount $carProfitAccount): RedirectResponse
+    {
+        try {
+            $carProfitAccount->update([
+                'is_active' => !$carProfitAccount->is_active,
+                'updated_by' => Auth::id()
+            ]);
+
+            $status = $carProfitAccount->is_active ? 'attivato' : 'disattivato';
+
+            return Redirect::back()
+                ->with('toast_success', "Centro di costo {$status} con successo.");
+        } catch (\Throwable $e) {
+            return Redirect::back()
+                ->with('toast_error', 'Errore durante l\'aggiornamento dello stato.');
+        }
+    }
+
+    /**
+     * Export to CSV
+     */
+    public function export()
+    {
+        $accounts = CarProfitAccount::with('cars')
+            ->orderBy('code')
+            ->get();
+
+        $csvData = "Codice,Nome,Categoria,Dipartimento,Responsabile,Email,Telefono,Budget Anno,Stato,Veicoli\n";
+
+        foreach ($accounts as $account) {
+            $csvData .= sprintf(
+                "%s,%s,%s,%s,%s,%s,%s,%s,%s,%d\n",
+                $account->code,
+                $account->name,
+                $account->category_label,
+                $account->department ?? '',
+                $account->responsible ?? '',
+                $account->email ?? '',
+                $account->phone ?? '',
+                $account->budget_year ?? '',
+                $account->status_label,
+                $account->cars_count
+            );
+        }
+
+        return response($csvData)
+            ->header('Content-Type', 'text/csv')
+            ->header('Content-Disposition', 'attachment; filename="centri_di_costo_' . date('Y-m-d') . '.csv"');
     }
 }

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssigneeOffice;
+use App\Models\CarAssignee;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\AssigneeOfficeRequest;
 use App\Http\Requests\StoreAssigneeOfficeRequest;
 use App\Http\Requests\UpdateAssigneeOfficeRequest;
 use Illuminate\Support\Facades\Redirect;
@@ -21,9 +21,18 @@ class AssigneeOfficeController extends Controller
      */
     public function index(Request $request): View
     {
-        $assigneeOffices = AssigneeOffice::with(['carAssignee'])->paginate();
+        $assigneeOffices = AssigneeOffice::with([
+            'carAssignee',
+            'carAssignee.car',
+            'carAssignee.car.carPlates' => function($query) {
+                $query->whereNull('date_to')
+                      ->orWhere('date_to', '>=', now())
+                      ->orderBy('date_from', 'desc');
+            }
+        ])->paginate();
 
-        confirmDelete('Conferma cancellazione','Sei sicuro di voler cancellare?');
+        confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo ufficio?');
+
         return view('assignee-office.index', compact('assigneeOffices'))
             ->with('i', ($request->input('page', 1) - 1) * $assigneeOffices->perPage());
     }
@@ -36,8 +45,13 @@ class AssigneeOfficeController extends Controller
     public function create(): View
     {
         $assigneeOffice = new AssigneeOffice();
+        $carAssignees = CarAssignee::with(['car', 'car.carPlates' => function($query) {
+            $query->whereNull('date_to')
+            ->orWhere('date_to', '>=', now())
+            ->orderBy('date_from', 'desc');
+        }])->get();
 
-        return view('assignee-office.create', compact('assigneeOffice'));
+        return view('assignee-office.create', compact('assigneeOffice', 'carAssignees'));
     }
 
     /**
@@ -49,16 +63,14 @@ class AssigneeOfficeController extends Controller
     public function store(StoreAssigneeOfficeRequest $request): RedirectResponse
     {
         try {
-            if ($request->validated()) {
-                AssigneeOffice::create($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+            AssigneeOffice::create($request->validated());
 
             return Redirect::route('assignee-offices.index')
-                ->with('toast_success', 'AssigneeOffice created successfully.');
+                ->with('toast_success', 'Ufficio assegnatario creato con successo.');
         } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'AssigneeOffice Not created');
+            return Redirect::back()
+                ->withInput()
+                ->with('toast_error', 'Errore nella creazione dell\'ufficio: ' . $e->getMessage());
         }
     }
 
@@ -70,6 +82,19 @@ class AssigneeOfficeController extends Controller
      */
     public function show(AssigneeOffice $assigneeOffice): View
     {
+        $assigneeOffice->load([
+            'carAssignee',
+            'carAssignee.car',
+            'carAssignee.car.carPlates' => function($query) {
+                $query->whereNull('date_to')
+                      ->orWhere('date_to', '>=', now())
+                      ->orderBy('date_from', 'desc');
+            },
+            'carAssignee.car.carType',
+            'carAssignee.car.carBrand',
+            'carAssignee.car.carOwner'
+        ]);
+
         return view('assignee-office.show', compact('assigneeOffice'));
     }
 
@@ -81,7 +106,13 @@ class AssigneeOfficeController extends Controller
      */
     public function edit(AssigneeOffice $assigneeOffice): View
     {
-        return view('assignee-office.edit', compact('assigneeOffice'));
+        $carAssignees = CarAssignee::with(['car', 'car.carPlates' => function($query) {
+            $query->whereNull('date_to')
+                  ->orWhere('date_to', '>=', now())
+                  ->orderBy('date_from', 'desc');
+        }])->get();
+
+        return view('assignee-office.edit', compact('assigneeOffice', 'carAssignees'));
     }
 
     /**
@@ -94,20 +125,19 @@ class AssigneeOfficeController extends Controller
     public function update(UpdateAssigneeOfficeRequest $request, AssigneeOffice $assigneeOffice): RedirectResponse
     {
         try {
-            if ($request->validated()) {
-                $assigneeOffice->update($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+            $assigneeOffice->update($request->validated());
+
             return Redirect::route('assignee-offices.index')
-                ->with('toast_success', 'AssigneeOffice updated successfully');
+                ->with('toast_success', 'Ufficio assegnatario aggiornato con successo.');
         } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'AssigneeOffice Not updated');
+            return Redirect::back()
+                ->withInput()
+                ->with('toast_error', 'Errore nell\'aggiornamento dell\'ufficio: ' . $e->getMessage());
         }
     }
 
     /**
-     * Delete the specified resource in storage.
+     * Remove the specified resource from storage.
      *
      * @param AssigneeOffice $assigneeOffice
      * @return RedirectResponse
@@ -118,9 +148,10 @@ class AssigneeOfficeController extends Controller
             $assigneeOffice->delete();
 
             return Redirect::route('assignee-offices.index')
-                ->with('toast_success', 'AssigneeOffice deleted successfully');
+                ->with('toast_success', 'Ufficio assegnatario eliminato con successo.');
         } catch (\Throwable $e) {
-            Redirect::back()->with('toast_error', 'AssigneeOffice Not deleted');
+            return Redirect::back()
+                ->with('toast_error', 'Errore nell\'eliminazione dell\'ufficio: ' . $e->getMessage());
         }
     }
 }

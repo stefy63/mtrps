@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ __('Update') }} Car Equipment
+    {{ __('Modifica') }} Equipaggiamento
 @endsection
 
 @section('content')
@@ -11,10 +11,17 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Update') }} Car Equipment</span>
+                        <div class="float-left">
+                            <span class="card-title">{{ __('Modifica') }} Equipaggiamento</span>
+                        </div>
+                        <div class="float-right">
+                            <a class="btn btn-primary btn-sm" href="{{ route('car-equipments.index') }}">
+                                <i class="bi bi-arrow-left"></i> {{ __('Indietro') }}
+                            </a>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form method="POST" action="{{ route('car-equipments.update', $carEquipment->id) }}"  role="form" enctype="multipart/form-data">
+                    <div class="card-body bg-white">
+                        <form method="POST" action="{{ route('car-equipments.update', $carEquipment->id) }}" role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
 
