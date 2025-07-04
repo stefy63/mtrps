@@ -43,6 +43,9 @@ class Cig extends Model
      */
     protected $fillable = ['car_id', 'maintenance_garage_id', 'user_rup_id', 'user_support_id', 'user_tender_notice_id', 'user_tester_id', 'date', 'ce', 'description', 'preventive', 'final_report', 'taxable', 'vat', 'cig', 'note'];
 
+    protected $casts = [
+        'date' => 'datetime'
+    ];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -63,7 +66,7 @@ class Cig extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user_rup()
+    public function userRup()
     {
         return $this->belongsTo(\App\Models\User::class, 'user_rup_id', 'id');
     }
@@ -71,7 +74,7 @@ class Cig extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user_support()
+    public function userSupport()
     {
         return $this->belongsTo(\App\Models\User::class, 'user_support_id', 'id');
     }
@@ -79,7 +82,7 @@ class Cig extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user_tender_notice()
+    public function userTenderNotice()
     {
         return $this->belongsTo(\App\Models\User::class, 'user_tender_notice_id', 'id');
     }
@@ -87,7 +90,7 @@ class Cig extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function user_tester()
+    public function userTester()
     {
         return $this->belongsTo(\App\Models\User::class, 'user_tester_id', 'id');
     }
