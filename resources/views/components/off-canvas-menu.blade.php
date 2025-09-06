@@ -51,6 +51,9 @@
                     <x-menu-link :href="route('car-fuels.index')" :active="request()->routeIs('dashboard')">
                         {{ __('Rifornimenti') }}
                     </x-menu-link>
+                    <x-menu-link :href="route('maintenances.index')" :active="request()->routeIs('dashboard')">
+                        {{ __('Manutenzioni') }}
+                    </x-menu-link>
                     <x-menu-link :href="route('maintenance-garages.index')" :active="request()->routeIs('dashboard')">
                         {{ __('Officine') }}
                     </x-menu-link>

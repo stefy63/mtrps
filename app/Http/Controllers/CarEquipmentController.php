@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\CarEquipment;
+use App\Models\Car;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreCarEquipmentRequest;
 use App\Http\Requests\UpdateCarEquipmentRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Throwable;
 
 class CarEquipmentController extends Controller
 {
@@ -21,10 +21,47 @@ class CarEquipmentController extends Controller
      */
     public function index(Request $request): View
     {
-        $carEquipments = CarEquipment::paginate();
+        $query = CarEquipment::with([
+            'car',
+            'car.carPlates' => function($query) {
+                $query->whereNull('date_to')
+                      ->orWhere('date_to', '>=', now())
+                      ->orderBy('date_from', 'desc');
+            },
+            'car.carType',
+            'car.carBrand'
+        ]);
 
-        confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare?');
-        return view('car-equipment.index', compact('carEquipments'))
+        // Filtro per veicolo
+        if ($request->has('car_id') && $request->car_id) {
+            $query->where('car_id', $request->car_id);
+        }
+
+        // Filtro per stato (attivo/inattivo)
+        if ($request->has('status')) {
+            if ($request->status === 'active') {
+                $query->active();
+            } elseif ($request->status === 'inactive') {
+                $query->inactive();
+            }
+        }
+
+        // Ricerca
+        if ($request->has('search') && $request->search) {
+            $query->search($request->search);
+        }
+
+        $carEquipments = $query->orderBy('date_from', 'desc')->paginate();
+
+        // Lista veicoli per il filtro
+        $cars = Car::with(['carPlates' => function($query) {
+            $query->whereNull('date_to')
+                  ->orWhere('date_to', '>=', now());
+        }])->orderBy('name')->get();
+
+        confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo equipaggiamento?');
+
+        return view('car-equipment.index', compact('carEquipments', 'cars'))
             ->with('i', ($request->input('page', 1) - 1) * $carEquipments->perPage());
     }
 
@@ -36,8 +73,13 @@ class CarEquipmentController extends Controller
     public function create(): View
     {
         $carEquipment = new CarEquipment();
+        $cars = Car::with(['carPlates' => function($query) {
+            $query->whereNull('date_to')
+                  ->orWhere('date_to', '>=', now())
+                  ->orderBy('date_from', 'desc');
+        }, 'carType', 'carBrand'])->orderBy('name')->get();
 
-        return view('car-equipment.create', compact('carEquipment'));
+        return view('car-equipment.create', compact('carEquipment', 'cars'));
     }
 
     /**
@@ -49,16 +91,14 @@ class CarEquipmentController extends Controller
     public function store(StoreCarEquipmentRequest $request): RedirectResponse
     {
         try {
-            if ($request->validated()) {
-                CarEquipment::create($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+            CarEquipment::create($request->validated());
 
             return Redirect::route('car-equipments.index')
-                ->with('toast_success', 'CarEquipment created successfully.');
-        } catch (Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarEquipment Not created');
+                ->with('toast_success', 'Equipaggiamento creato con successo.');
+        } catch (\Throwable $e) {
+            return Redirect::back()
+                ->withInput()
+                ->with('toast_error', 'Errore nella creazione dell\'equipaggiamento: ' . $e->getMessage());
         }
     }
 
@@ -70,7 +110,24 @@ class CarEquipmentController extends Controller
      */
     public function show(CarEquipment $carEquipment): View
     {
-        return view('car-equipment.show', compact('carEquipment'));
+        $carEquipment->load([
+            'car',
+            'car.carPlates' => function($query) {
+                $query->orderBy('date_from', 'desc');
+            },
+            'car.carType',
+            'car.carBrand',
+            'car.carOwner',
+            'car.carPower'
+        ]);
+
+        // Altri equipaggiamenti dello stesso veicolo
+        $otherEquipments = CarEquipment::where('car_id', $carEquipment->car_id)
+            ->where('id', '!=', $carEquipment->id)
+            ->orderBy('date_from', 'desc')
+            ->get();
+
+        return view('car-equipment.show', compact('carEquipment', 'otherEquipments'));
     }
 
     /**
@@ -81,7 +138,13 @@ class CarEquipmentController extends Controller
      */
     public function edit(CarEquipment $carEquipment): View
     {
-        return view('car-equipment.edit', compact('carEquipment'));
+        $cars = Car::with(['carPlates' => function($query) {
+            $query->whereNull('date_to')
+                  ->orWhere('date_to', '>=', now())
+                  ->orderBy('date_from', 'desc');
+        }, 'carType', 'carBrand'])->orderBy('name')->get();
+
+        return view('car-equipment.edit', compact('carEquipment', 'cars'));
     }
 
     /**
@@ -94,20 +157,19 @@ class CarEquipmentController extends Controller
     public function update(UpdateCarEquipmentRequest $request, CarEquipment $carEquipment): RedirectResponse
     {
         try {
-            if ($request->validated()) {
-                $carEquipment->update($request->validated());
-            } else {
-                Redirect::back()->withErrors();
-            }
+            $carEquipment->update($request->validated());
+
             return Redirect::route('car-equipments.index')
-                ->with('toast_success', 'CarEquipment updated successfully');
-        } catch (Throwable $e) {
-            return Redirect::back()->with('toast_error', 'CarEquipment Not updated');
+                ->with('toast_success', 'Equipaggiamento aggiornato con successo.');
+        } catch (\Throwable $e) {
+            return Redirect::back()
+                ->withInput()
+                ->with('toast_error', 'Errore nell\'aggiornamento dell\'equipaggiamento: ' . $e->getMessage());
         }
     }
 
     /**
-     * Delete the specified resource in storage.
+     * Remove the specified resource from storage.
      *
      * @param CarEquipment $carEquipment
      * @return RedirectResponse
@@ -118,9 +180,10 @@ class CarEquipmentController extends Controller
             $carEquipment->delete();
 
             return Redirect::route('car-equipments.index')
-                ->with('toast_success', 'CarEquipment deleted successfully');
-        } catch (Throwable $e) {
-            Redirect::back()->with('toast_error', 'CarEquipment Not deleted');
+                ->with('toast_success', 'Equipaggiamento eliminato con successo.');
+        } catch (\Throwable $e) {
+            return Redirect::back()
+                ->with('toast_error', 'Errore nell\'eliminazione dell\'equipaggiamento: ' . $e->getMessage());
         }
     }
 }

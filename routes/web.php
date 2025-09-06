@@ -48,16 +48,49 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('car-brands', CarBrandController::class);
     Route::resource('car-powers', CarPowerController::class);
     Route::resource('car-profit-accounts', CarProfitAccountController::class);
+    Route::prefix('car-profit-accounts')->name('car-profit-accounts.')->group(function () {
+        // Toggle active status
+        Route::patch('{car_profit_account}/toggle-active', [CarProfitAccountController::class, 'toggleActive'])->name('toggleActive');
+
+        // Export CSV
+        Route::get('export', [CarProfitAccountController::class, 'export'])->name('export');
+    });
     Route::resource('car-setups', CarSetupController::class);
+    Route::get('/car-setups/suggestions', [CarSetupController::class, 'getSuggestions'])->name('car-setups.suggestions');
+    Route::get('/car-setups/check-conflicts', [CarSetupController::class, 'checkConflicts'])->name('car-setups.check-conflicts');
     Route::resource('car-plates', CarPlateController::class);
     Route::resource('assignee-offices', AssigneeOfficeController::class);
     Route::resource('car-equipments', CarEquipmentController::class);
     Route::resource('movements', MovementController::class);
-    Route::resource('maintenances', MaintenanceController::class);
+    Route::prefix('movements')->name('movements.')->group(function () {
+        // Update status
+        Route::patch('{movement}/status', [MovementController::class, 'updateStatus'])->name('updateStatus');
+
+        // Check availability (AJAX)
+        Route::post('check-availability', [MovementController::class, 'checkAvailability'])->name('checkAvailability');
+
+        // Get last km (AJAX)
+        Route::get('last-km', [MovementController::class, 'getLastKm'])->name('getLastKm');
+    });
+    Route::get('maintenances/suggestions', [App\Http\Controllers\MaintenanceController::class, 'suggestions'])->name('maintenances.suggestions');
+    Route::get('maintenances/statistics/{car}', [App\Http\Controllers\MaintenanceController::class, 'statistics'])->name('maintenances.statistics');
+    Route::resource('maintenances', App\Http\Controllers\MaintenanceController::class);
+
+
+
+    Route::get('car-fuels/suggestions', [App\Http\Controllers\CarFuelController::class, 'suggestions'])->name('car-fuels.suggestions');
+    Route::get('car-fuels/statistics/{car}', [App\Http\Controllers\CarFuelController::class, 'statistics'])->name('car-fuels.statistics');
     Route::resource('car-fuels', CarFuelController::class);
-    Route::resource('maintenance-garages', MaintenanceGarageController::class);
-    Route::resource('maintenance-types', MaintenanceTypeController::class);
-    Route::resource('cigs', CigController::class);
+    Route::get('maintenance-garages/suggestions', [App\Http\Controllers\MaintenanceGarageController::class, 'suggestions'])->name('maintenance-garages.suggestions');
+    Route::get('maintenance-garages/validate-piva', [App\Http\Controllers\MaintenanceGarageController::class, 'validatePiva'])->name('maintenance-garages.validate-piva');
+    Route::resource('maintenance-garages', App\Http\Controllers\MaintenanceGarageController::class);
+    Route::get('maintenance-types/suggestions', [App\Http\Controllers\MaintenanceTypeController::class, 'suggestions'])->name('maintenance-types.suggestions');
+    Route::get('maintenance-types/statistics/{maintenance}', [App\Http\Controllers\MaintenanceTypeController::class, 'statistics'])->name('maintenance-types.statistics');
+    Route::resource('maintenance-types', App\Http\Controllers\MaintenanceTypeController::class);
+    Route::get('cigs/generate', [App\Http\Controllers\CigController::class, 'generateCig'])->name('cigs.generate');
+    Route::get('cigs/statistics', [App\Http\Controllers\CigController::class, 'statistics'])->name('cigs.statistics');
+    Route::get('cigs/export', [App\Http\Controllers\CigController::class, 'export'])->name('cigs.export');
+    Route::resource('cigs', App\Http\Controllers\CigController::class);
 });
 
 require __DIR__ . '/auth.php';

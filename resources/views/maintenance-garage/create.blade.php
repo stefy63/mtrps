@@ -1,21 +1,31 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ __('Create') }} Maintenance Garage
+    {{ __('Nuova Officina') }}
 @endsection
 
 @section('content')
     <section class="content container-fluid">
         <div class="row">
             <div class="col-md-12">
-
-                <div class="card card-default">
+                <div class="card">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Maintenance Garage</span>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="card-title">
+                                <i class="bi bi-building"></i> {{ __('Nuova Officina') }}
+                            </span>
+                            <a class="btn btn-primary btn-sm" href="{{ route('maintenance-garages.index') }}">
+                                <i class="bi bi-arrow-left"></i> {{ __('Torna alla Lista') }}
+                            </a>
+                        </div>
                     </div>
-                    <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('maintenance-garages.store') }}"  role="form" enctype="multipart/form-data">
+                    <div class="card-body">
+                        <form method="POST" action="{{ route('maintenance-garages.store') }}" role="form" enctype="multipart/form-data">
                             @csrf
+
+                            @if(request()->has('maintenance_id'))
+                                <input type="hidden" name="redirect_to_maintenance" value="1">
+                            @endif
 
                             @include('maintenance-garage.form')
 

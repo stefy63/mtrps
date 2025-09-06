@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ __('Create') }} Assignee Office
+    {{ __('Crea') }} Ufficio Assegnatario
 @endsection
 
 @section('content')
@@ -11,10 +11,17 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Assignee Office</span>
+                        <div class="float-left">
+                            <span class="card-title">{{ __('Crea') }} Ufficio Assegnatario</span>
+                        </div>
+                        <div class="float-right">
+                            <a class="btn btn-primary btn-sm" href="{{ route('assignee-offices.index') }}">
+                                <i class="bi bi-arrow-left"></i> {{ __('Indietro') }}
+                            </a>
+                        </div>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('assignee-offices.store') }}"  role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('assignee-offices.store') }}" role="form" enctype="multipart/form-data">
                             @csrf
 
                             @include('assignee-office.form')

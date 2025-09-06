@@ -16,7 +16,7 @@ class CarOwnerController extends Controller
      */
     public function index(Request $request): View
     {
-        $carOwners = CarOwner::withCount('cars')->paginate();
+        $carOwners = CarOwner::paginate();
 
         return view('car-owner.index', compact('carOwners'))
             ->with('i', ($request->input('page', 1) - 1) * $carOwners->perPage());
@@ -80,13 +80,13 @@ class CarOwnerController extends Controller
     public function destroy($id): RedirectResponse
     {
         $carOwner = CarOwner::find($id);
-        
+
         // Controlla se ci sono veicoli associati
         if ($carOwner->cars()->count() > 0) {
             return Redirect::route('car-owners.index')
                 ->with('error', 'Cannot delete owner with associated vehicles. Please reassign vehicles first.');
         }
-        
+
         $carOwner->delete();
 
         return Redirect::route('car-owners.index')
@@ -104,7 +104,7 @@ class CarOwnerController extends Controller
                       ->groupBy('car_owner_id');
             }])
             ->get();
-            
+
         return response()->json($statistics);
     }
 }
