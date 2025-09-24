@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('car_equipment', function (Blueprint $table) {
+        Schema::create('maintenances', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('car_id')->nullable();
-            $table->unsignedBigInteger('equipment_id')->nullable();
+            $table->unsignedBigInteger('maintenance_garage_id')->nullable();
+            $table->unsignedBigInteger('maintenance_type_id')->nullable();
             $table->date('date_from')->useCurrent();
             $table->date('date_to')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
             $table->foreign('car_id')->references('id')->on('cars');
-            $table->foreign('equipment_id')->references('id')->on('equipments');
+            $table->foreign('maintenance_garage_id')->references('id')->on('maintenance_garages');
+            $table->foreign('maintenance_type_id')->references('id')->on('maintenance_types');
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('car_equipment');
+        Schema::dropIfExists('maintenances');
     }
 };

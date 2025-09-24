@@ -15,6 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('phone_safety')->nullable();
+            $table->string('mail')->nullable();
+            $table->string('pec')->nullable();
+            $table->string('address')->nullable();
+            $table->string('web')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
         });

@@ -13,13 +13,13 @@ return new class extends Migration {
         Schema::create('car_assignees', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('car_id')->nullable();
-            $table->string('name');
-            $table->string('description')->nullable();
+            $table->unsignedBigInteger('office_id')->nullable();
             $table->date('date_from')->useCurrent();
             $table->date('date_to')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
             $table->foreign('car_id')->references('id')->on('cars');
+            $table->foreign('office_id')->references('id')->on('offices');
         });
     }
 

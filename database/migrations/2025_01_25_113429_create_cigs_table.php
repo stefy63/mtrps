@@ -18,11 +18,13 @@ return new class extends Migration {
             $table->date('date')->nullable();
             $table->string('ce')->nullable();
             $table->string('description')->nullable();
+            $table->string('processing_owner')->nullable();
             $table->string('preventive')->nullable();
             $table->string('final_report')->nullable();
             $table->string('taxable')->nullable();
             $table->string('vat')->nullable();
             $table->string('cig')->nullable();
+            $table->string('expenditure_chapter')->nullable();
             $table->string('note')->nullable();
             $table->foreign('car_id')->references('id')->on('cars');
             $table->foreign('maintenance_garage_id')->references('id')->on('maintenance_garages');

@@ -13,19 +13,21 @@ return new class extends Migration
     {
         Schema::create('maintenance_garages', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('maintenance_id')->nullable();
             $table->string('name');
+            $table->string('description')->nullable();
             $table->unsignedBigInteger('piva')->nullable();
             $table->string('cf')->nullable();
             $table->string('iban')->nullable();
+            $table->string('mail')->nullable();
             $table->string('pec')->nullable();
+            $table->string('phone1')->nullable();
+            $table->string('phone2')->nullable();
+            $table->string('phone3')->nullable();
             $table->enum('acc', ['yes', 'no'])->default('no');
             $table->enum('anti_mafia', ['yes', 'no'])->default('no');
             $table->date('durc')->nullable();
-            $table->string('description')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
-            $table->foreign('maintenance_id')->references('id')->on('maintenances');
         });
     }
 

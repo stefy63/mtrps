@@ -14,55 +14,20 @@ class CarTypeSeeder extends Seeder
     {
         $carTypes = [
             [
-                'name' => 'Berlina',
-                'description' => 'Autovettura a 4 porte con bagagliaio separato',
-                'note' => 'Ideale per trasporto persone e servizi di rappresentanza'
+                'name' => 'Autovettura',
+                'description' => 'Autovettura a 4 porte',
+                'note' => ''
             ],
             [
-                'name' => 'SUV',
-                'description' => 'Sport Utility Vehicle - Veicolo ad alta altezza da terra',
-                'note' => 'Adatto per terreni difficili e trasporto misto'
+                'name' => 'Moto',
+                'description' => 'Motocicletta a 2 ruote',
+                'note' => ''
             ],
             [
-                'name' => 'Station Wagon',
-                'description' => 'Autovettura con bagagliaio esteso',
-                'note' => 'Maggiore capacità di carico rispetto alle berline'
+                'name' => 'Blindata',
+                'description' => 'Autovettura blindata',
+                'note' => ''
             ],
-            [
-                'name' => 'Furgone',
-                'description' => 'Veicolo commerciale per trasporto merci',
-                'note' => 'Utilizzato per trasporti e servizi tecnici'
-            ],
-            [
-                'name' => 'Autobus',
-                'description' => 'Veicolo per trasporto pubblico di persone',
-                'note' => 'Per servizi di trasporto collettivo'
-            ],
-            [
-                'name' => 'Motocicletta',
-                'description' => 'Veicolo a due ruote motorizzato',
-                'note' => 'Per servizi rapidi e pattugliamento'
-            ],
-            [
-                'name' => 'Scooter',
-                'description' => 'Motoveicolo di piccola cilindrata',
-                'note' => 'Per servizi urbani e messaggistica'
-            ],
-            [
-                'name' => 'Autocarro',
-                'description' => 'Veicolo pesante per trasporto merci',
-                'note' => 'Per trasporti di materiali e attrezzature pesanti'
-            ],
-            [
-                'name' => 'Pickup',
-                'description' => 'Veicolo con cassone posteriore aperto',
-                'note' => 'Versatile per trasporto misto persone/materiali'
-            ],
-            [
-                'name' => 'Utilitaria',
-                'description' => 'Autovettura di piccole dimensioni',
-                'note' => 'Economica per servizi urbani di base'
-            ]
         ];
 
         foreach ($carTypes as $carType) {
