@@ -41,15 +41,13 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 @click="openModal = false"></button>
                     </div>
-                    <div class="modal-body">
-                        <div x-ref="modalFormContainer">
-                            <form id="modalForm" method="POST" action="/home"  role="form" enctype="multipart/form-data">
-{{--                            <form id="modalForm" @submit.prevent="saveData">--}}
 
-                                <input id="tets" type="text" hidden placeholder="Modello">
-                                <div x-html="modalContent"></div>
-                            </form>
-                        </div>
+                    <div class="modal-body" >
+                        <form x-ref="modalFormContainer">
+{{--                            <div x-html="modalContent"></div>--}}
+                        </form>
+{{--                            <div x-ref="modalFormContainer"></div>--}}
+{{--                        <div x-ref="modalFormContainer" x-html="modalContent"></div>--}}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla
