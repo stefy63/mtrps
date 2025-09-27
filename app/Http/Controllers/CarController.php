@@ -41,14 +41,13 @@ class CarController extends Controller
     public function create(): View
     {
         $car = new Car();
-        
+
         // Recupera i dati per le select
-        $carTypes = CarType::pluck('name', 'id');
-        $carOwners = CarOwner::pluck('name', 'id');
+        $carTypes = CarType::get([ 'id', 'name']);
+        $carOwners = CarOwner::get(['id', 'name']);
         $carBrands = CarBrand::pluck('name', 'id');
         $carPowers = CarPower::pluck('name', 'id');
         $carProfitAccounts = CarProfitAccount::pluck('name', 'id');
-
         return view('car.create', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts'));
     }
 
@@ -90,10 +89,10 @@ class CarController extends Controller
     public function edit($id): View
     {
         $car = Car::find($id);
-        
+
         // Recupera i dati per le select
-        $carTypes = CarType::pluck('name', 'id');
-        $carOwners = CarOwner::pluck('name', 'id');
+        $carTypes = CarType::get([ 'id', 'name']);
+        $carOwners = CarOwner::get(['id', 'name']);
         $carBrands = CarBrand::pluck('name', 'id');
         $carPowers = CarPower::pluck('name', 'id');
         $carProfitAccounts = CarProfitAccount::pluck('name', 'id');

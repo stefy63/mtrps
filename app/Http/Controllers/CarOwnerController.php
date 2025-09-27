@@ -32,6 +32,11 @@ class CarOwnerController extends Controller
         return view('car-owner.create', compact('carOwner'));
     }
 
+    public function getForm(): View
+    {
+        return view('car-owner.modal-form');
+    }
+
     /**
      * Store a newly created resource in storage.
      */

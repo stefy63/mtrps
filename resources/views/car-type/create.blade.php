@@ -19,6 +19,10 @@
 
                             @include('car-type.form')
 
+                            <div class="col-md-12 mt20 mt-2">
+                                <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+                                <a href="{{ route('car-types.index') }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
+                            </div>
                         </form>
                     </div>
                 </div>

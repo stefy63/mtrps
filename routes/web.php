@@ -38,7 +38,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::resource('users', UserController::class);
     Route::resource('cars', CarController::class);
+    Route::get('car-types/get-form', [CarTypeController::class, 'getForm'])->name('car-types.getForm');
     Route::resource('car-types', CarTypeController::class);
+    Route::get('car-owners/get-form', [CarOwnerController::class, 'getForm'])->name('car-owners.getForm');
     Route::resource('car-owners', CarOwnerController::class);
     Route::resource('car-assignees', CarAssigneeController::class);
     Route::get('car-assignees-current', [CarAssigneeController::class, 'current'])->name('car-assignees.current');

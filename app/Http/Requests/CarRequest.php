@@ -22,7 +22,7 @@ class CarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'car_type_id' => 'nullable|exists:car_types,id',
+            'car_type_id' => 'required|exists:car_types,id',
             'car_owner_id' => 'nullable|exists:car_owners,id',
             'car_brand_id' => 'nullable|exists:car_brands,id',
             'car_power_id' => 'nullable|exists:car_powers,id',

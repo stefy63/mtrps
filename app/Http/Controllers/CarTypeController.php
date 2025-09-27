@@ -32,6 +32,11 @@ class CarTypeController extends Controller
         return view('car-type.create', compact('carType'));
     }
 
+    public function getForm(): View
+    {
+        return view('car-type.modal-form');
+    }
+
     /**
      * Store a newly created resource in storage.
      */
