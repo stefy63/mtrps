@@ -1,6 +1,6 @@
 <div
         x-data='dynamicSelect({
-        required: {{ $required ?? 'false' }},
+        required: {{ $required ?? false }},
         value: "{{ $value }}",
         errors: {{ $errors }},
         options: @json($options),
@@ -9,7 +9,8 @@
         labelKey: "{{ $labelKey ?? "name" }}",
         label: "{{ $label ?? "Seleziona" }}",
         modalUrl: "{{ $modalUrl }}",
-        modalTitle: "{{ $modalTitle ?? "Nuovo elemento" }}"
+        modalTitle: "{{ $modalTitle ?? "Nuovo elemento" }}",
+        modalClass: "{{ $modalClass ?? "" }}",
     })'
 >
 

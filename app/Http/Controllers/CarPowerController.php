@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CarPower;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarPowerRequest;
@@ -30,6 +31,22 @@ class CarPowerController extends Controller
         $carPower = new CarPower();
 
         return view('car-power.create', compact('carPower'));
+    }
+
+    public function getForm(): View
+    {
+        $carPower = new CarPower();
+        $button = false;
+        return view('car-power.form', compact('carPower', 'button'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeForm(CarPowerRequest $request): jsonResponse
+    {
+        $carPower = CarPower::create($request->validated());
+        return $this->sendResponse($carPower, 'Tipo alimentazione creato.');
     }
 
     /**

@@ -93,11 +93,11 @@
                                    list="department-suggestions">
                             <label for="department">{{ __('Dipartimento/Ufficio') }}</label>
                             {!! $errors->first('department', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                            <datalist id="department-suggestions">
-                                @foreach($suggestedDepartments as $dept)
-                                    <option value="{{ $dept }}">
-                                @endforeach
-                            </datalist>
+                            {{--                            <datalist id="department-suggestions">--}}
+                            {{--                                @foreach($suggestedDepartments as $dept)--}}
+                            {{--                                    <option value="{{ $dept }}">--}}
+                            {{--                                @endforeach--}}
+                            {{--                            </datalist>--}}
                         </div>
                     </div>
 
@@ -222,7 +222,7 @@
                                    name="is_active"
                                    id="is_active"
                                    value="1"
-                                   {{ old('is_active', $carProfitAccount?->is_active ?? true) ? 'checked' : '' }}>
+                                    {{ old('is_active', $carProfitAccount?->is_active ?? true) ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_active">
                                 <strong>Centro di Costo Attivo</strong>
                             </label>
@@ -293,13 +293,15 @@
                 <div class="card-body">
                     <div class="alert alert-info">
                         <i class="bi bi-info-circle"></i>
-                        Questo centro di costo ha <strong>{{ $carProfitAccount->cars_count }} veicoli</strong> associati.
+                        Questo centro di costo ha <strong>{{ $carProfitAccount->cars_count }} veicoli</strong>
+                        associati.
                         @if($carProfitAccount->active_cars_count > 0)
                             ({{ $carProfitAccount->active_cars_count }} attivi)
                         @endif
                     </div>
                     <p class="mb-0">
-                        <a href="{{ route('car-profit-accounts.show', $carProfitAccount->id) }}" class="btn btn-sm btn-info">
+                        <a href="{{ route('car-profit-accounts.show', $carProfitAccount->id) }}"
+                           class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i> Visualizza veicoli associati
                         </a>
                     </p>
@@ -308,95 +310,100 @@
         @endif
 
     </div>
-    <div class="col-md-12 mt-3">
-        <button type="submit" class="btn btn-primary">
-            <i class="bi bi-save"></i> {{ __('Salva Centro di Costo') }}
-        </button>
-        <a href="{{ route('car-profit-accounts.index') }}" class="btn btn-secondary">
-            <i class="bi bi-x-circle"></i> {{ __('Annulla') }}
-        </a>
-    </div>
+    @if($button)
+        <div class="col-md-12 mt-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> {{ __('Salva Centro di Costo') }}
+            </button>
+            <a href="{{ route('car-profit-accounts.index') }}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> {{ __('Annulla') }}
+            </a>
+        </div>
+    @endif
 </div>
 
 {{-- Script per funzionalità dinamiche --}}
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Uppercase automatico per codice
-    const codeInput = document.getElementById('code');
-    codeInput.addEventListener('input', function() {
-        this.value = this.value.toUpperCase();
-    });
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Uppercase automatico per codice
+            const codeInput = document.getElementById('code');
+            codeInput.addEventListener('input', function () {
+                this.value = this.value.toUpperCase();
+            });
 
-    // Calcolo budget mensile
-    const budgetYear = document.getElementById('budget_year');
-    const budgetMonth = document.getElementById('budget_month');
-    const monthlyInfo = document.getElementById('monthly-budget-info');
+            // Calcolo budget mensile
+            const budgetYear = document.getElementById('budget_year');
+            const budgetMonth = document.getElementById('budget_month');
+            const monthlyInfo = document.getElementById('monthly-budget-info');
 
-    function calculateMonthlyBudget() {
-        const yearValue = parseFloat(budgetYear.value) || 0;
-        const monthlyCalc = yearValue / 12;
-        monthlyInfo.textContent = '€ ' + monthlyCalc.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            function calculateMonthlyBudget() {
+                const yearValue = parseFloat(budgetYear.value) || 0;
+                const monthlyCalc = yearValue / 12;
+                monthlyInfo.textContent = '€ ' + monthlyCalc.toLocaleString('it-IT', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
 
-        // Se il campo mensile è vuoto, suggerisci il valore calcolato
-        if (!budgetMonth.value && yearValue > 0) {
-            budgetMonth.placeholder = monthlyCalc.toFixed(2);
-        }
-    }
+                // Se il campo mensile è vuoto, suggerisci il valore calcolato
+                if (!budgetMonth.value && yearValue > 0) {
+                    budgetMonth.placeholder = monthlyCalc.toFixed(2);
+                }
+            }
 
-    budgetYear.addEventListener('input', calculateMonthlyBudget);
-    calculateMonthlyBudget(); // Init
+            budgetYear.addEventListener('input', calculateMonthlyBudget);
+            calculateMonthlyBudget(); // Init
 
-    // Controllo scadenza
-    const validTo = document.getElementById('valid_to');
-    const expiryAlert = document.getElementById('expiry-alert');
-    const expiryMessage = document.getElementById('expiry-message');
+            // Controllo scadenza
+            const validTo = document.getElementById('valid_to');
+            const expiryAlert = document.getElementById('expiry-alert');
+            const expiryMessage = document.getElementById('expiry-message');
 
-    function checkExpiry() {
-        if (!validTo.value) {
-            expiryAlert.classList.add('d-none');
-            return;
-        }
+            function checkExpiry() {
+                if (!validTo.value) {
+                    expiryAlert.classList.add('d-none');
+                    return;
+                }
 
-        const expiryDate = new Date(validTo.value);
-        const today = new Date();
-        const diffTime = expiryDate - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const expiryDate = new Date(validTo.value);
+                const today = new Date();
+                const diffTime = expiryDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        if (diffDays < 0) {
-            expiryAlert.className = 'alert alert-danger';
-            expiryMessage.textContent = 'Centro di costo scaduto!';
-        } else if (diffDays <= 30) {
-            expiryAlert.className = 'alert alert-warning';
-            expiryMessage.textContent = `Scade tra ${diffDays} giorni`;
-        } else if (diffDays <= 90) {
-            expiryAlert.className = 'alert alert-info';
-            expiryMessage.textContent = `Scade tra ${diffDays} giorni`;
-        } else {
-            expiryAlert.classList.add('d-none');
-            return;
-        }
+                if (diffDays < 0) {
+                    expiryAlert.className = 'alert alert-danger';
+                    expiryMessage.textContent = 'Centro di costo scaduto!';
+                } else if (diffDays <= 30) {
+                    expiryAlert.className = 'alert alert-warning';
+                    expiryMessage.textContent = `Scade tra ${diffDays} giorni`;
+                } else if (diffDays <= 90) {
+                    expiryAlert.className = 'alert alert-info';
+                    expiryMessage.textContent = `Scade tra ${diffDays} giorni`;
+                } else {
+                    expiryAlert.classList.add('d-none');
+                    return;
+                }
 
-        expiryAlert.classList.remove('d-none');
-    }
+                expiryAlert.classList.remove('d-none');
+            }
 
-    validTo.addEventListener('change', checkExpiry);
-    checkExpiry(); // Init
+            validTo.addEventListener('change', checkExpiry);
+            checkExpiry(); // Init
 
-    // Validazione contatti
-    const responsible = document.getElementById('responsible');
-    const email = document.getElementById('email');
-    const phone = document.getElementById('phone');
+            // Validazione contatti
+            const responsible = document.getElementById('responsible');
+            const email = document.getElementById('email');
+            const phone = document.getElementById('phone');
 
-    responsible.addEventListener('blur', function() {
-        if (this.value && !email.value && !phone.value) {
-            email.classList.add('border-warning');
-            phone.classList.add('border-warning');
-        } else {
-            email.classList.remove('border-warning');
-            phone.classList.remove('border-warning');
-        }
-    });
-});
-</script>
+            responsible.addEventListener('blur', function () {
+                if (this.value && !email.value && !phone.value) {
+                    email.classList.add('border-warning');
+                    phone.classList.add('border-warning');
+                } else {
+                    email.classList.remove('border-warning');
+                    phone.classList.remove('border-warning');
+                }
+            });
+        });
+    </script>
 @endpush

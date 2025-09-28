@@ -35,12 +35,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+//    Rotte per le modali dinamiche
+    Route::get('car-types/get-form', [CarTypeController::class, 'getForm'])->name('car-types.getForm');
+    Route::post('car-types/store-form', [CarTypeController::class, 'storeForm'])->name('car-types.storeForm');
+    Route::get('car-owners/get-form', [CarOwnerController::class, 'getForm'])->name('car-owners.getForm');
+    Route::post('car-owners/store-form', [CarOwnerController::class, 'storeForm'])->name('car-owners.storeForm');
+    Route::get('car-brands/get-form', [CarBrandController::class, 'getForm'])->name('car-brands.getForm');
+    Route::post('car-brands/store-form', [CarBrandController::class, 'storeForm'])->name('car-brands.storeForm');
+    Route::get('car-powers/get-form', [CarPowerController::class, 'getForm'])->name('car-powers.getForm');
+    Route::post('car-powers/store-form', [CarPowerController::class, 'storeForm'])->name('car-powers.storeForm');
+    Route::get('car-profit-accounts/get-form', [CarProfitAccountController::class, 'getForm'])->name('car-profit-accounts.getForm');
+    Route::post('car-profit-accounts/store-form', [CarProfitAccountController::class, 'storeForm'])->name('car-profit-accounts.storeForm');
+
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::resource('users', UserController::class);
     Route::resource('cars', CarController::class);
-    Route::get('car-types/get-form', [CarTypeController::class, 'getForm'])->name('car-types.getForm');
     Route::resource('car-types', CarTypeController::class);
-    Route::get('car-owners/get-form', [CarOwnerController::class, 'getForm'])->name('car-owners.getForm');
     Route::resource('car-owners', CarOwnerController::class);
     Route::resource('car-assignees', CarAssigneeController::class);
     Route::get('car-assignees-current', [CarAssigneeController::class, 'current'])->name('car-assignees.current');

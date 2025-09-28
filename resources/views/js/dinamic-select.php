@@ -1,75 +1,92 @@
 <script>
     document.addEventListener('alpine:init', () => {
-        Alpine.data('formPage', () => {
+        Alpine.data('modalHandler', () => {
             return {
                 modalTitle: 'Nuovo Inserimento',
                 modalContent: '',
                 endpoint: '',
                 labelKey: '',
                 idKey: '',
-                optionsRef: null,
-                selectedRef: null,
-                newLabel: '',
+                loading: true,
+                myModal: null,
+                onSelect: null,
+                modalClass: '',
 
-                async loadModal(url, title, optionsRef, selectedRef, endpoint, idKey, labelKey) {
-                    this.modalTitle += title;
-                    this.endpoint = endpoint;
-                    this.idKey = idKey;
-                    this.labelKey = labelKey;
-                    this.optionsRef = optionsRef;
-                    this.selectedRef = selectedRef;
-
-                    let response = await fetch(url, {
-                        headers: {"X-Requested-With": "XMLHttpRequest"}
+                async loadModal({url, title, endpoint, idKey, labelKey, modalClass, onSelect}) {
+                    this.loading = true;
+                    Object.assign(this, {
+                        modalTitle: title,
+                        endpoint,
+                        idKey,
+                        labelKey,
+                        onSelect,
+                        modalClass
                     });
-                    const html = await response.text();
-                    this.modalContent = html;
 
-
-                    // const parser = new DOMParser();
-                    // const doc = parser.parseFromString(html, 'text/html');
-                    // console.log('Parsed Document:', doc);
-                    // const form = doc.querySelector('form');
-                    // if (form) {
-                    //     this.$refs.modalFormContainer.innerHTML = '';
-                    //     this.$refs.modalFormContainer.appendChild(form);
-                    // }
-
-                    // this.$refs.modalFormContainer.innerHTML = await response.text();
-                    // let myModal = new bootstrap.Modal(document.getElementById('dinamicModal'));
-                    // myModal.show();
-                    this.$nextTick(() => {
-                        let existingModal = bootstrap.Modal.getInstance(document.getElementById('dinamicModal'));
-                        if (existingModal) existingModal.dispose();
-                        const myModal = new bootstrap.Modal(document.getElementById('dinamicModal'));
-
-                        myModal.show();
+                    try {
+                        let response = await fetch(url, {
+                            headers: {"X-Requested-With": "XMLHttpRequest"}
+                        });
+                        this.modalContent = await response.text();
+                    } catch (e) {
+                        this.modalContent = '<p>Errore nel caricamento del form</p>';
+                    } finally {
+                        this.loading = false;
+                    }
+                    const modalEl = document.getElementById('dinamicModal');
+                    this.myModal = new bootstrap.Modal(modalEl);
+                    modalEl.addEventListener('hidden.bs.modal', () => {
+                        this.modalContent = '';
                     });
+                    this.myModal.show();
+
                 },
 
-                async saveData() {
-                    const formContainer = this.$refs.modalFormContainer;
-                    // const formContainer = document.getElementById('modalForm');
-                    // const formEl = formContainer.querySelector('form');
-                    console.log('Form Element:', formContainer);
-                    // const formData = new FormData(formEl);
-                    // const serializedData = Object.fromEntries(formData.entries());
-                    // console.log('Dati serializzati:', serializedData);
-                    // if (this.newLabel.trim() === '') return;
-                    //
-                    // let response = await fetch(this.endpoint, {
-                    //     method: "POST",
-                    //     headers: {
-                    //         "Content-Type": "application/json",
-                    //         "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    //     },
-                    //     body: JSON.stringify({[this.labelKey]: this.newLabel})
-                    // });
-                    //
-                    // let data = await response.json();
-                    // this.optionsRef.push(data);
-                    // this.selectedRef = data[this.idKey];
-                    // this.newLabel = '';
+                saveData(event) {
+                    event.preventDefault();
+                    const form = new FormData(this.$refs.innerForm);
+                    const formData = Object.fromEntries(form.entries());
+
+                    fetch(this.endpoint, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify(formData)
+                    }).then(response => {
+                        debugger
+                        if (!response.ok) {
+                            console.log(response);
+                            return false;
+                        }
+                        return response.json();
+                    }).then((data) => {
+                        if (data) {
+                            if (typeof this.onSelect === 'function') {
+                                this.onSelect(data.data);
+                            }
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Salvato!',
+                                text: data.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Errore!',
+                            text: 'Salvataggio non riuscito.',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    }).finally(() => {
+                        this.modalContent = '';
+                        this.myModal.hide();
+                    });
                 }
             }
         });
@@ -83,7 +100,7 @@
             return {
                 required: config.required || false,
                 search: config.search || '',
-                selected: null,
+                selected: config.selected || {},
                 errors: config.errors,
                 options: config.options,
                 endpoint: config.endpoint,
@@ -95,6 +112,8 @@
                 option_id: config.option_id || '',
                 open: false,
                 isInvalid: Object.keys(config.errors).includes('car_type_id') || false,
+                modalClass: config.modalClass || '',
+
 
                 get filteredOptions() {
                     if (this.search === '') return this.options;
@@ -103,18 +122,32 @@
                     );
                 },
 
+
                 openParentModal() {
-                    this.loadModal(
-                        this.modalUrl,
-                        this.modalTitle,
-                        this.options,
-                        this.selected,
-                        this.endpoint,
-                        this.idKey,
-                        this.labelKey
-                    );
-                }
+                    Alpine.store('modal').open({
+                        url: this.modalUrl,
+                        title: this.modalTitle,
+                        endpoint: this.endpoint,
+                        idKey: this.idKey,
+                        labelKey: this.labelKey,
+                        modalClass: this.modalClass,
+                        onSelect: (newItem) => {
+                            this.options.push(newItem);
+                            this.option_id = newItem[this.idKey];
+                            this.search = newItem[this.labelKey];
+                        },
+                    });
+                },
             }
         })
+
+        Alpine.store('modal', {
+            open(config) {
+                const modalComp = Alpine.$data(document.querySelector('#dinamicModal'));
+                modalComp.loadModal(config);
+            }
+        });
+
+
     })
 </script>

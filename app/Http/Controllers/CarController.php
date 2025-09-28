@@ -45,9 +45,9 @@ class CarController extends Controller
         // Recupera i dati per le select
         $carTypes = CarType::get([ 'id', 'name']);
         $carOwners = CarOwner::get(['id', 'name']);
-        $carBrands = CarBrand::pluck('name', 'id');
-        $carPowers = CarPower::pluck('name', 'id');
-        $carProfitAccounts = CarProfitAccount::pluck('name', 'id');
+        $carBrands = CarBrand::get(['id', 'name']);
+        $carPowers = CarPower::get(['id', 'name']);
+        $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
         return view('car.create', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts'));
     }
 
@@ -93,9 +93,9 @@ class CarController extends Controller
         // Recupera i dati per le select
         $carTypes = CarType::get([ 'id', 'name']);
         $carOwners = CarOwner::get(['id', 'name']);
-        $carBrands = CarBrand::pluck('name', 'id');
-        $carPowers = CarPower::pluck('name', 'id');
-        $carProfitAccounts = CarProfitAccount::pluck('name', 'id');
+        $carBrands = CarBrand::get(['id', 'name']);
+        $carPowers = CarPower::get(['id', 'name']);
+        $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
 
         return view('car.edit', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts'));
     }

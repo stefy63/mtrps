@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CarTypeRequest;
 use App\Models\CarType;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\CarTypeRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -34,7 +35,18 @@ class CarTypeController extends Controller
 
     public function getForm(): View
     {
-        return view('car-type.modal-form');
+        $carType = new CarType();
+        $button = false;
+        return view('car-type.form', compact('carType', 'button'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeForm(CarTypeRequest $request): JsonResponse
+    {
+        $carType = CarType::create($request->validated());
+        return $this->sendResponse($carType, 'Tipo vettura creata.');
     }
 
     /**

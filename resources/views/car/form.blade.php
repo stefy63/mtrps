@@ -1,14 +1,14 @@
-<div class="row padding-1 p-1" x-data="formPage()">
+<div class="row padding-1 p-1">
     <div class="col-md-6">
 
         <x-dynamic-select
                 required
                 name="car_type_id"
-                :required="true"
+                :required="'true'"
                 :value="old('car_type_id', $car?->car_type_id)"
                 :options="$carTypes"
                 :errors="$errors"
-                endpoint="{{ route('car-types.store') }}"
+                endpoint="{{ route('car-types.storeForm') }}"
                 label="{{ __('Tipo Veicolo') }}"
                 labelKey="name"
                 idKey="id"
@@ -19,11 +19,11 @@
         <x-dynamic-select
                 required
                 name="car_owner_id"
-                :required="true"
+                :required="'true'"
                 :value="old('car_owner_id', $car?->car_owner_id)"
                 :options="$carOwners"
                 :errors="$errors"
-                endpoint="{{ route('car-owners.store') }}"
+                endpoint="{{ route('car-owners.storeForm') }}"
                 label="{{ __('Proprietario') }}"
                 labelKey="name"
                 idKey="id"
@@ -31,121 +31,63 @@
                 modal-title="Nuovo proprietario"
         />
 
+        <x-dynamic-select
+                name="car_brand_id"
+                :required="'false'"
+                :value="old('car_brand_id', $car?->car_brand_id)"
+                :options="$carBrands"
+                :errors="$errors"
+                endpoint="{{ route('car-brands.storeForm') }}"
+                label="{{ __('Marca') }}"
+                labelKey="name"
+                idKey="id"
+                modal-url="{{ route('car-brands.getForm') }}"
+                modal-title="Nuova Marca"
+        />
 
-        <!-- Modale -->
-        <div class="modal fade" id="dinamicModal" style="display: none" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" x-text="modalTitle">titolo sbagliato</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                @click="openModal = false"></button>
-                    </div>
+        <x-dynamic-select
+                name="car_power_id"
+                :required="'false'"
+                :value="old('car_power_id', $car?->car_power_id)"
+                :options="$carPowers"
+                :errors="$errors"
+                endpoint="{{ route('car-powers.storeForm') }}"
+                label="{{ __('Alimentazione') }}"
+                labelKey="name"
+                idKey="id"
+                modal-url="{{ route('car-powers.getForm') }}"
+                modal-title="Nuovo tipo di alimentazione"
+        />
 
-                    <div class="modal-body" >
-                        <form x-ref="modalFormContainer">
-                            <div x-html="modalContent"></div>
-                        </form>
-{{--                            <div x-ref="modalFormContainer"></div>--}}
-{{--                        <div x-ref="modalFormContainer" x-html="modalContent"></div>--}}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla
-                        </button>
-                        <button type="button" class="btn btn-primary" @click="saveData">Salva</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <x-dynamic-select
+                name="car_profit_account_id"
+                modalClass="modal-xl"
+                :required="'false'"
+                :value="old('car_profit_account_id', $car?->car_profit_account_id)"
+                :options="$carProfitAccounts"
+                :errors="$errors"
+                endpoint="{{ route('car-profit-accounts.storeForm') }}"
+                label="{{ __('Conto Economico') }}"
+                labelKey="name"
+                idKey="id"
+                modal-url="{{ route('car-profit-accounts.getForm') }}"
+                modal-title="Nuovo conto economico"
+        />
 
-
-        <!-- Modale unica -->
-        {{--            <div--}}
-        {{--                    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"--}}
-        {{--                    x-show="openModal"--}}
-        {{--            >--}}
-        {{--                <div class="bg-white p-6 rounded shadow w-1/3">--}}
-        {{--                    <h2 class="text-lg font-bold mb-4" x-text="modalTitle"></h2>--}}
-
-        {{--                    <!-- contenuto caricato via AJAX -->--}}
-        {{--                    <div x-html="modalContent"></div>--}}
-
-        {{--                    <div class="flex justify-end space-x-2 mt-4">--}}
-        {{--                        <button class="px-4 py-2 bg-gray-300 rounded" @click="openModal = false">Annulla</button>--}}
-        {{--                        <button class="px-4 py-2 bg-green-500 text-white rounded" @click="addOption">Salva</button>--}}
-        {{--                    </div>--}}
-        {{--                </div>--}}
-        {{--            </div>--}}
-
-        {{--        <div class="form-group mb-2 mb20">--}}
-        {{--            <label for="car_type_id" class="form-label">{{ __('Tipo Veicolo') }}</label>--}}
-        {{--            <select name="car_type_id" class="form-control @error('car_type_id') is-invalid @enderror" id="car_type_id">--}}
-        {{--                <option value="">Seleziona tipo veicolo</option>--}}
-        {{--                @foreach($carTypes as $id => $name)--}}
-        {{--                    <option value="{{ $id }}" {{ old('car_type_id', $car?->car_type_id) == $id ? 'selected' : '' }}>--}}
-        {{--                        {{ $name }}--}}
-        {{--                    </option>--}}
-        {{--                @endforeach--}}
-        {{--            </select>--}}
-        {{--            {!! $errors->first('car_type_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-        {{--        </div>--}}
-
-        {{--        <div class="form-group mb-2 mb20">--}}
-        {{--            <label for="car_owner_id" class="form-label">{{ __('Proprietario') }}</label>--}}
-        {{--            <select name="car_owner_id" class="form-control @error('car_owner_id') is-invalid @enderror"--}}
-        {{--                    id="car_owner_id">--}}
-        {{--                <option value="">Seleziona proprietario</option>--}}
-        {{--                @foreach($carOwners as $id => $name)--}}
-        {{--                    <option value="{{ $id }}" {{ old('car_owner_id', $car?->car_owner_id) == $id ? 'selected' : '' }}>--}}
-        {{--                        {{ $name }}--}}
-        {{--                    </option>--}}
-        {{--                @endforeach--}}
-        {{--            </select>--}}
-        {{--            {!! $errors->first('car_owner_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-        {{--        </div>--}}
-
-        <div class="form-group mb-2 mb20">
-            <label for="car_brand_id" class="form-label">{{ __('Marca') }}</label>
-            <select name="car_brand_id" class="form-control @error('car_brand_id') is-invalid @enderror"
-                    id="car_brand_id">
-                <option value="">Seleziona marca</option>
-                @foreach($carBrands as $id => $name)
-                    <option value="{{ $id }}" {{ old('car_brand_id', $car?->car_brand_id) == $id ? 'selected' : '' }}>
-                        {{ $name }}
-                    </option>
-                @endforeach
-            </select>
-            {!! $errors->first('car_brand_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-        </div>
-
-        <div class="form-group mb-2 mb20">
-            <label for="car_power_id" class="form-label">{{ __('Alimentazione') }}</label>
-            <select name="car_power_id" class="form-control @error('car_power_id') is-invalid @enderror"
-                    id="car_power_id">
-                <option value="">Seleziona alimentazione</option>
-                @foreach($carPowers as $id => $name)
-                    <option value="{{ $id }}" {{ old('car_power_id', $car?->car_power_id) == $id ? 'selected' : '' }}>
-                        {{ $name }}
-                    </option>
-                @endforeach
-            </select>
-            {!! $errors->first('car_power_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-        </div>
-
-        <div class="form-group mb-2 mb20">
-            <label for="car_profit_account_id" class="form-label">{{ __('Conto Economico') }}</label>
-            <select name="car_profit_account_id"
-                    class="form-control @error('car_profit_account_id') is-invalid @enderror"
-                    id="car_profit_account_id">
-                <option value="">Seleziona conto economico</option>
-                @foreach($carProfitAccounts as $id => $name)
-                    <option value="{{ $id }}" {{ old('car_profit_account_id', $car?->car_profit_account_id) == $id ? 'selected' : '' }}>
-                        {{ $name }}
-                    </option>
-                @endforeach
-            </select>
-            {!! $errors->first('car_profit_account_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-        </div>
+{{--        <div class="form-group mb-2 mb20">--}}
+{{--            <label for="car_profit_account_id" class="form-label">{{ __('Conto Economico') }}</label>--}}
+{{--            <select name="car_profit_account_id"--}}
+{{--                    class="form-control @error('car_profit_account_id') is-invalid @enderror"--}}
+{{--                    id="car_profit_account_id">--}}
+{{--                <option value="">Seleziona conto economico</option>--}}
+{{--                @foreach($carProfitAccounts as $id => $name)--}}
+{{--                    <option value="{{ $id }}" {{ old('car_profit_account_id', $car?->car_profit_account_id) == $id ? 'selected' : '' }}>--}}
+{{--                        {{ $name }}--}}
+{{--                    </option>--}}
+{{--                @endforeach--}}
+{{--            </select>--}}
+{{--            {!! $errors->first('car_profit_account_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
+{{--        </div>--}}
 
         <div class="form-group mb-2 mb20">
             <label for="name" class="form-label">{{ __('Nome') }} <span class="text-danger">*</span></label>
@@ -287,7 +229,3 @@
         <a href="{{ route('cars.index') }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
     </div>
 </div>
-
-@push('scripts')
-    @include('js.dinamic-select')
-@endpush

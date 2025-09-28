@@ -17,7 +17,7 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body>
-<div id="app">
+<div id="app" >
     <x-off-canvas-menu id="offcanvasmenu" label="Menu"></x-off-canvas-menu>
     <nav class="navbar navbar-expand-md shadow-sm">
 
@@ -80,8 +80,26 @@
         @yield('content')
     </main>
 
+    @include('components.generic-select-modal')
 </div>
+
+@push('scripts')
+    @include('js.dinamic-select')
+@endpush
 @stack('scripts')
 @include('sweetalert::alert')
+<script>
+    // attende 3 secondi (3000 ms) e poi nasconde l'alert con un effetto fade-out
+    setTimeout(function () {
+        let alert = document.querySelector('.alert');
+        if (alert) {
+            alert.style.transition = "opacity 1s ease"; // durata dissolvenza
+            alert.style.opacity = 0;
+            setTimeout(() => {
+                alert.style.display = "none"; // rimuove l'alert dopo il fade
+            }, 500); // tempo uguale alla durata della transition
+        }
+    }, 5000);
+</script>
 </body>
 </html>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CarOwner;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarOwnerRequest;
@@ -34,7 +35,18 @@ class CarOwnerController extends Controller
 
     public function getForm(): View
     {
-        return view('car-owner.modal-form');
+        $carOwner = new CarOwner();
+        $button = false;
+        return view('car-owner.form', compact('carOwner', 'button'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeForm(CarOwnerRequest $request): JsonResponse
+    {
+        $carOwner = CarOwner::create($request->validated());
+        return $this->sendResponse($carOwner, 'Proprietario creato.');
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CarBrand;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarBrandRequest;
@@ -30,6 +31,22 @@ class CarBrandController extends Controller
         $carBrand = new CarBrand();
 
         return view('car-brand.create', compact('carBrand'));
+    }
+
+    public function getForm(): View
+    {
+        $carBrand = new CarBrand();
+        $button = false;
+        return view('car-brand.form', compact('carBrand', 'button'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeForm(CarBrandRequest $request):  JsonResponse
+    {
+        $carBrand = CarBrand::create($request->validated());
+        return $this->sendResponse($carBrand, 'Marca vettura creata con successo.');
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CarProfitAccount;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarProfitAccountRequest;
@@ -120,6 +121,26 @@ class CarProfitAccountController extends Controller
             'categories',
             'suggestedDepartments'
         ));
+    }
+
+    public function getForm(): View
+    {
+        $carProfitAccount = new CarProfitAccount();
+        $categories = CarProfitAccount::CATEGORIES;
+        $button = false;
+        return view('car-profit-account.form', compact(
+            'carProfitAccount',
+            'categories',
+            'button'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeForm(CarProfitAccountRequest $request): JsonResponse
+    {
+        $carProfitAccount = CarProfitAccount::create($request->validated());
+        return $this->sendResponse($carProfitAccount, 'Tipo vettura creata.');
     }
 
     /**
