@@ -44,7 +44,7 @@
 
                     <div class="modal-body" >
                         <form x-ref="modalFormContainer">
-{{--                            <div x-html="modalContent"></div>--}}
+                            <div x-html="modalContent"></div>
                         </form>
 {{--                            <div x-ref="modalFormContainer"></div>--}}
 {{--                        <div x-ref="modalFormContainer" x-html="modalContent"></div>--}}

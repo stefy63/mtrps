@@ -23,17 +23,17 @@
                         headers: {"X-Requested-With": "XMLHttpRequest"}
                     });
                     const html = await response.text();
-                    // this.modalContent = html;
+                    this.modalContent = html;
 
 
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    console.log('Parsed Document:', doc);
-                    const form = doc.querySelector('form');
-                    if (form) {
-                        this.$refs.modalFormContainer.innerHTML = '';
-                        this.$refs.modalFormContainer.appendChild(form);
-                    }
+                    // const parser = new DOMParser();
+                    // const doc = parser.parseFromString(html, 'text/html');
+                    // console.log('Parsed Document:', doc);
+                    // const form = doc.querySelector('form');
+                    // if (form) {
+                    //     this.$refs.modalFormContainer.innerHTML = '';
+                    //     this.$refs.modalFormContainer.appendChild(form);
+                    // }
 
                     // this.$refs.modalFormContainer.innerHTML = await response.text();
                     // let myModal = new bootstrap.Modal(document.getElementById('dinamicModal'));
