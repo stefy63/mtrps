@@ -74,6 +74,20 @@
                 modal-title="Nuovo conto economico"
         />
 
+        <x-dynamic-select
+                name="car_employment_code_id"
+                :required="'false'"
+                :value="old('car_employment_code_id', $car?->car_employment_code_id)"
+                :options="$carEmployment"
+                :errors="$errors"
+                endpoint="{{ route('home') }}"
+                label="{{ __('Codice di impiego') }}"
+                labelKey="extended"
+                idKey="id"
+                modal-url="{{ route('home') }}"
+                modal-title="Nuovo codice di impiego"
+        />
+
 {{--        <div class="form-group mb-2 mb20">--}}
 {{--            <label for="car_profit_account_id" class="form-label">{{ __('Conto Economico') }}</label>--}}
 {{--            <select name="car_profit_account_id"--}}

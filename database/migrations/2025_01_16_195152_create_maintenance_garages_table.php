@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->unsignedBigInteger('piva')->nullable();
+            $table->string('piva')->nullable();
             $table->string('cf')->nullable();
             $table->string('iban')->nullable();
             $table->string('mail')->nullable();

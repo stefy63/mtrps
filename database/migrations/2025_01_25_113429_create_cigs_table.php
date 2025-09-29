@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('user_support_id')->nullable();
             $table->unsignedBigInteger('user_tender_notice_id')->nullable();
             $table->unsignedBigInteger('user_tester_id')->nullable();
+            $table->unsignedBigInteger('maintenance_types_id')->nullable();
             $table->date('date')->nullable();
             $table->string('ce')->nullable();
             $table->string('description')->nullable();
@@ -32,6 +33,7 @@ return new class extends Migration {
             $table->foreign('user_support_id')->references('id')->on('users');
             $table->foreign('user_tender_notice_id')->references('id')->on('users');
             $table->foreign('user_tester_id')->references('id')->on('users');
+            $table->foreign('maintenance_types_id')->references('id')->on('maintenance_types');
             $table->timestamps();
         });
     }

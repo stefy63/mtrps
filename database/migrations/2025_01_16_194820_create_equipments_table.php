@@ -1,5 +1,6 @@
 <?php
 
+use Database\Seeders\EquipmentSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,15 +12,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('maintenance_types', function (Blueprint $table) {
+        Schema::create('equipments', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
         });
-        $maintenanceTypeSeeder = new \Database\Seeders\MaintenaceGarageTypeSeeder();
-        $maintenanceTypeSeeder->run();
+        $carEquipment = new EquipmentSeeder();
+        $carEquipment->run();
     }
 
     /**
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('maintenance_types');
+        Schema::dropIfExists('equipments');
     }
 };

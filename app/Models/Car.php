@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property $car_brand_id
  * @property $car_power_id
  * @property $car_profit_account_id
+ * @property car_employment_code_id
  * @property $name
  * @property $model
  * @property $color
@@ -39,6 +40,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CarOwner $carOwner
  * @property CarPower $carPower
  * @property CarProfitAccount $carProfitAccount
+ * @property CarEmploymentCode $carEmploymentCode
  * @property CarType $carType
  * @property User $createdBy
  * @property User $updatedBy
@@ -69,6 +71,7 @@ class Car extends Model
         'car_brand_id',
         'car_power_id',
         'car_profit_account_id',
+        'car_employment_code_id',
         'name',
         'model',
         'color',
@@ -89,12 +92,33 @@ class Car extends Model
         'updatedBy'
     ];
 
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function carEquipment()
+    {
+        return $this->belongsToMany(\App\Models\Equipment::class, 'car_equipment', 'car_id', 'equipment_id')
+            ->withPivot('date_from', 'date_to', 'note')
+            ->withTimestamps();
+    }
+
+
     /**
      * @return BelongsTo
      */
-    public function carBrand()
+    public function carEmployment(): BelongsTo
     {
-        return $this->belongsTo(CarBrand::class, 'car_brand_id', 'id');
+        return $this->belongsTo(CarEmploymentCode::class);
+    }
+
+
+    /**
+     * @return BelongsTo
+     */
+    public function carBrand(): BelongsTo
+    {
+        return $this->belongsTo(CarBrand::class);
     }
 
     /**

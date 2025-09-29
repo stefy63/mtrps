@@ -2,21 +2,22 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\CarType;
 
-class CarTypeSeeder extends Seeder
+class OfficeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        $csvFile = __DIR__.'/excel/ELENCO_MODELLI.csv';
+        $csvFile = __DIR__.'/excel/ELENCO_UFFICI_SEZIONI.csv';
         $file_handle = fopen($csvFile, 'r');
         while ($csvRow = fgetcsv($file_handle, null, ';')) {
-            \DB::table('car_types')->insert([
-                'name' => $csvRow[0] ?? '',
+            \DB::table('offices')->insert([
+                'ente' => $csvRow[0] ?? '',
+                'name' => $csvRow[1] ?? '',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

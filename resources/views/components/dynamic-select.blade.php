@@ -46,8 +46,8 @@
                 style="max-height: 200px; overflow-y: auto; z-index: 10">
                 <template x-for="option in filteredOptions" :key="option[idKey]">
                     <li class="list-group-item list-group-item-action"
-                        @click="option_id = option.id; search = option.name; open = false"
-                        x-text="option.name">
+                        @click="option_id = option.id; search = option[labelKey]; open = false"
+                        x-text="option[labelKey]">
                     </li>
                 </template>
             </ul>

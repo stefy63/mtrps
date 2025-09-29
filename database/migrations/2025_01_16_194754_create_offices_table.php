@@ -22,6 +22,8 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->timestamps();
         });
+        $officeSeeder = new \Database\Seeders\OfficeSeeder();
+        $officeSeeder->run();
     }
 
     /**

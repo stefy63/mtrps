@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class CarBrand
@@ -16,7 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property Car[] $cars
  * @package App
- * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin Builder
  */
 class CarBrand extends Model
 {
@@ -32,11 +34,11 @@ class CarBrand extends Model
 
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
-    public function cars()
+    public function cars(): HasMany
     {
-        return $this->hasMany(\App\Models\Car::class, 'id', 'car_brand_id');
+        return $this->hasMany(Car::class);
     }
     
 }

@@ -1,5 +1,6 @@
 <?php
 
+use Database\Seeders\CarTypeSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,6 +21,8 @@ return new class extends Migration
             $table->timestamps();
             $table->foreign('employment_code_id')->references('id')->on('employment_codes')->onDelete('set null');
         });
+        $catTypes = new CarTypeSeeder();
+        $catTypes->run();
     }
 
     /**

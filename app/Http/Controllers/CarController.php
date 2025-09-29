@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\CarEmploymentCode;
 use App\Models\CarType;
 use App\Models\CarOwner;
 use App\Models\CarBrand;
@@ -48,7 +49,9 @@ class CarController extends Controller
         $carBrands = CarBrand::get(['id', 'name']);
         $carPowers = CarPower::get(['id', 'name']);
         $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
-        return view('car.create', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts'));
+        $carEmployment = CarEmploymentCode::get(['id', 'extended']);
+
+        return view('car.create', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment'));
     }
 
     /**
@@ -96,8 +99,9 @@ class CarController extends Controller
         $carBrands = CarBrand::get(['id', 'name']);
         $carPowers = CarPower::get(['id', 'name']);
         $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
+        $carEmployment = CarEmploymentCode::get(['id', 'extended']);
 
-        return view('car.edit', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts'));
+        return view('car.edit', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment'));
     }
 
     /**

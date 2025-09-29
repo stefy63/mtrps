@@ -103,6 +103,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('cigs/statistics', [App\Http\Controllers\CigController::class, 'statistics'])->name('cigs.statistics');
     Route::get('cigs/export', [App\Http\Controllers\CigController::class, 'export'])->name('cigs.export');
     Route::resource('cigs', App\Http\Controllers\CigController::class);
+
+//    Rotte di import
+
 });
 
 require __DIR__ . '/auth.php';
