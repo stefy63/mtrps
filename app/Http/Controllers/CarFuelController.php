@@ -63,7 +63,7 @@ class CarFuelController extends Controller
         $carFuels = $query->paginate(20);
 
         // Dati per i filtri
-        $cars = Car::with('carPlates')->orderBy('name')->get();
+        $cars = Car::with('carPlates')->orderBy('model')->get();
         $users = User::orderBy('name')->get();
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo rifornimento?');
@@ -80,7 +80,7 @@ class CarFuelController extends Controller
     public function create(): View
     {
         $carFuel = new CarFuel();
-        $cars = Car::with(['carPlates', 'carBrand', 'carPower'])->orderBy('name')->get();
+        $cars = Car::with(['carPlates', 'carBrand', 'carPower'])->orderBy('model')->get();
         $users = User::orderBy('name')->get();
         return view('car-fuel.create', compact('carFuel', 'cars', 'users'));
     }
@@ -140,7 +140,7 @@ class CarFuelController extends Controller
      */
     public function edit(CarFuel $carFuel): View
     {
-        $cars = Car::with(['carPlates', 'carBrand', 'carPower'])->orderBy('name')->get();
+        $cars = Car::with(['carPlates', 'carBrand', 'carPower'])->orderBy('model')->get();
         $users = User::orderBy('name')->get();
 
         return view('car-fuel.edit', compact('carFuel', 'cars', 'users'));

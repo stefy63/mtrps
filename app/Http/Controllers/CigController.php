@@ -61,7 +61,7 @@ class CigController extends Controller
         $cigs = $query->paginate(20);
 
         // Dati per i filtri
-        $cars = Car::with('carPlates')->orderBy('name')->get();
+        $cars = Car::with('carPlates')->orderBy('model')->get();
         $garages = MaintenanceGarage::with('maintenance')->orderBy('name')->get();
         $years = Cig::selectRaw('YEAR(date) as year')
             ->distinct()
@@ -90,7 +90,7 @@ class CigController extends Controller
     public function create(Request $request): View
     {
         $cig = new Cig();
-        $cars = Car::with(['carPlates', 'carBrand'])->orderBy('name')->get();
+        $cars = Car::with(['carPlates', 'carBrand'])->orderBy('model')->get();
         $garages = MaintenanceGarage::with(['maintenance.car'])->orderBy('name')->get();
         $users = User::orderBy('name')->get();
 
@@ -167,7 +167,7 @@ class CigController extends Controller
      */
     public function edit(Cig $cig): View
     {
-        $cars = Car::with(['carPlates', 'carBrand'])->orderBy('name')->get();
+        $cars = Car::with(['carPlates', 'carBrand'])->orderBy('model')->get();
         $garages = MaintenanceGarage::with(['maintenance.car'])->orderBy('name')->get();
         $users = User::orderBy('name')->get();
 

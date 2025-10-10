@@ -77,7 +77,7 @@ class CarSetupController extends Controller
 
 
             // Ottieni tutti i veicoli per il filtro
-            $cars = Car::with('carPlates')->orderBy('name')->get();
+            $cars = Car::with('carPlates')->orderBy('model')->get();
             // Categorie per il filtro
             $categories = CarSetup::SETUP_CATEGORIES;
 
@@ -105,7 +105,7 @@ class CarSetupController extends Controller
     {
         $carSetup = new CarSetup();
 
-        $cars = Car::with(['carPlates', 'carType', 'carBrand'])->orderBy('name')->get();
+        $cars = Car::with(['carPlates', 'carType', 'carBrand'])->orderBy('model')->get();
 
         $categories = CarSetup::SETUP_CATEGORIES;
 
@@ -151,7 +151,7 @@ class CarSetupController extends Controller
      */
     public function edit(CarSetup $carSetup): View
     {
-        $cars = Car::with(['carPlates', 'carType', 'carBrand'])->orderBy('name')->get();
+        $cars = Car::with(['carPlates', 'carType', 'carBrand'])->orderBy('model')->get();
 
         $categories = CarSetup::SETUP_CATEGORIES;
 

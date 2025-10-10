@@ -61,7 +61,7 @@ class CarController extends Controller
     {
         $data = $request->validated();
         $data['created_by'] = Auth::id();
-        
+
         Car::create($data);
 
         return Redirect::route('cars.index')

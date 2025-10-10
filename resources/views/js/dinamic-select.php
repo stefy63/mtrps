@@ -113,6 +113,7 @@
                 open: false,
                 isInvalid: Object.keys(config.errors).includes('car_type_id') || false,
                 modalClass: config.modalClass || '',
+                class: config.class || '',
 
 
                 get filteredOptions() {

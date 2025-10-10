@@ -16,11 +16,11 @@ class Equipment extends Model
     protected $fillable = ['name', 'description', 'note'];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function cars()
     {
-        return $this->belongsToMany(\App\Models\Car::class, 'car_equipment', 'equipment_id', 'car_id')
+        return $this->belongsToMany(Car::class, 'car_equipment')
                     ->withPivot('date_from', 'date_to', 'note')
                     ->withTimestamps();
     }

@@ -17,13 +17,18 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body>
-<div id="app" >
-    <x-off-canvas-menu id="offcanvasmenu" label="Menu"></x-off-canvas-menu>
+<div id="app">
+    @if(Auth::check())
+        <x-off-canvas-menu id="offcanvasmenu" label="Menu"></x-off-canvas-menu>
+    @endif
     <nav class="navbar navbar-expand-md shadow-sm">
 
-        <button class="btn shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasmenu" aria-controls="offcanvasmenu">
-            <i class="bi bi-list"></i>
-        </button>
+        @if(Auth::check())
+            <button class="btn shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasmenu"
+                    aria-controls="offcanvasmenu">
+                <i class="bi bi-list"></i>
+            </button>
+        @endif
 
         <div class="container-fluid w-100">
             <div>
@@ -50,7 +55,8 @@
                         @endif
                     @else
                         <li class="nav-item dropdown">
-                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 {{ Auth::user()->name }}
                             </a>
 

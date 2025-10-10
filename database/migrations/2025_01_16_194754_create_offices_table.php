@@ -1,5 +1,6 @@
 <?php
 
+use Database\Seeders\OfficeSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -22,7 +23,7 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->timestamps();
         });
-        $officeSeeder = new \Database\Seeders\OfficeSeeder();
+        $officeSeeder = new OfficeSeeder();
         $officeSeeder->run();
     }
 

@@ -26,26 +26,17 @@ class MovementController extends Controller
                 $query->orderBy('date_from', 'desc');
             },
             'car.carBrand',
-            'driver',
-            'requester'
         ]);
 
         // Filtri
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('code', 'like', "%{$search}%")
-                    ->orWhere('departure_location', 'like', "%{$search}%")
-                    ->orWhere('arrival_location', 'like', "%{$search}%")
-                    ->orWhere('purpose', 'like', "%{$search}%")
-                    ->orWhereHas('car', function ($q2) use ($search) {
-                        $q2->where('name', 'like', "%{$search}%");
+                $q->where('car', function ($q2) use ($search) {
+                        $q2->where('model', 'like', "%{$search}%");
                     })
                     ->orWhereHas('car.carPlates', function ($q3) use ($search) {
                         $q3->where('name', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('driver', function ($q4) use ($search) {
-                        $q4->where('name', 'like', "%{$search}%");
                     });
             });
         }
@@ -54,62 +45,23 @@ class MovementController extends Controller
             $query->where('car_id', $request->car_id);
         }
 
-        if ($request->filled('driver_id')) {
-            $query->where('driver_id', $request->driver_id);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
-
         if ($request->filled('date_from')) {
-            $query->where('departure_datetime', '>=', $request->date_from);
+            $query->where('date_from', '>=', $request->date_from);
         }
 
         if ($request->filled('date_to')) {
-            $query->where('departure_datetime', '<=', $request->date_to . ' 23:59:59');
+            $query->where('date_to', '<=', $request->date_to);
         }
-
-        // Ordinamento
-        $sortField = $request->get('sort', 'departure_datetime');
-        $sortDirection = $request->get('direction', 'desc');
-
-        $query->orderBy($sortField, $sortDirection);
 
         $movements = $query->paginate();
 
-        // Dati per i filtri
-        $cars = Car::with('carPlates')->orderBy('name')->get();
-        $drivers = User::orderBy('name')->get();
-        $statuses = Movement::getStatuses();
-        $types = Movement::getTypes();
-
-        // Statistiche
-        $stats = [
-            'total' => Movement::count(),
-            'pending' => Movement::pending()->count(),
-            'in_progress' => Movement::inProgress()->count(),
-            'completed_month' => Movement::completed()
-                ->whereMonth('departure_datetime', Carbon::now()->month)
-                ->count(),
-            'total_km_month' => Movement::completed()
-                ->whereMonth('departure_datetime', Carbon::now()->month)
-                ->sum('km_total'),
-        ];
+        $cars = Car::with('carPlates')->orderBy('model')->get();
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo movimento?');
 
         return view('movement.index', compact(
             'movements',
             'cars',
-            'drivers',
-            'statuses',
-            'types',
-            'stats'
         ))->with('i', ($request->input('page', 1) - 1) * $movements->perPage());
     }
 
@@ -134,12 +86,8 @@ class MovementController extends Controller
 
         $cars = Car::with(['carPlates' => function ($query) {
             $query->orderBy('date_from', 'desc');
-        }])->orderBy('name')->get();
-
-        $drivers = User::orderBy('name')->get();
+        }])->orderBy('model')->get();
         $users = User::orderBy('name')->get();
-        $statuses = Movement::getStatuses();
-        $types = Movement::getTypes();
 
         // Suggerimenti destinazioni frequenti
         $frequentDestinations = $this->getFrequentDestinations();
@@ -147,10 +95,7 @@ class MovementController extends Controller
         return view('movement.create', compact(
             'movement',
             'cars',
-            'drivers',
             'users',
-            'statuses',
-            'types',
             'frequentDestinations'
         ));
     }
@@ -190,17 +135,11 @@ class MovementController extends Controller
             'car.carBrand',
             'car.carType',
             'car.carPower',
-            'driver',
-            'requester',
-            'authorizer',
             'creator',
             'updater'
         ]);
 
-        // Timeline del movimento
-        $timeline = $this->buildMovementTimeline($movement);
-
-        return view('movement.show', compact('movement', 'timeline'));
+        return view('movement.show', compact('movement'));
     }
 
     /**
@@ -210,28 +149,14 @@ class MovementController extends Controller
     {
         $cars = Car::with(['carPlates' => function ($query) {
             $query->orderBy('date_from', 'desc');
-        }])->orderBy('name')->get();
+        }])->orderBy('model')->get();
 
-        $drivers = User::orderBy('name')->get();
         $users = User::orderBy('name')->get();
-        $statuses = Movement::getStatuses();
-        $types = Movement::getTypes();
-
-        // Suggerimenti destinazioni frequenti
-        $frequentDestinations = $this->getFrequentDestinations();
-
-        // Ultimo km del veicolo
-        $lastKm = $this->getLastKmForCar($movement->car_id, $movement->id);
 
         return view('movement.edit', compact(
             'movement',
             'cars',
-            'drivers',
             'users',
-            'statuses',
-            'types',
-            'frequentDestinations',
-            'lastKm'
         ));
     }
 
@@ -361,12 +286,13 @@ class MovementController extends Controller
      */
     private function getFrequentDestinations(): array
     {
-        $destinations = Movement::select('arrival_location', DB::raw('count(*) as count'))
-            ->groupBy('arrival_location')
-            ->orderBy('count', 'desc')
-            ->limit(10)
-            ->pluck('arrival_location')
-            ->toArray();
+        $destinations = [];
+//        Movement::select('arrival_location', DB::raw('count(*) as count'))
+//            ->groupBy('arrival_location')
+//            ->orderBy('count', 'desc')
+//            ->limit(10)
+////            ->pluck('arrival_location')
+//            ->toArray();
 
         // Aggiungi destinazioni predefinite per enti pubblici
         $defaultDestinations = [
@@ -390,19 +316,7 @@ class MovementController extends Controller
      */
     private function getLastKmForCar($carId, $excludeId = null): ?int
     {
-        $query = Movement::where('car_id', $carId)
-            ->where('status', Movement::STATUS_COMPLETED)
-            ->whereNotNull('km_end');
-
-        if ($excludeId) {
-            $query->where('id', '!=', $excludeId);
-        }
-
-        $lastMovement = $query->orderBy('actual_arrival', 'desc')
-            ->orderBy('arrival_datetime', 'desc')
-            ->first();
-
-        return $lastMovement?->km_end;
+        return 0;
     }
 
     /**

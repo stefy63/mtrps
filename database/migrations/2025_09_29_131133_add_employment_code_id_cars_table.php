@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('cars', function (Blueprint $table) {
             $table->unsignedBigInteger('car_employment_code_id')->nullable()->after('id');
+            $table->string('car_typology')->nullable()->after('chassis');
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('cars', function (Blueprint $table) {
             $table->dropColumn('car_employment_code_id');
+            $table->dropColumn('car_typology');
         });
     }
 };

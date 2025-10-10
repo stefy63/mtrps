@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->unsignedBigInteger('car_brand_id')->nullable();
             $table->unsignedBigInteger('car_power_id')->nullable();
             $table->unsignedBigInteger('car_profit_account_id')->nullable();
-            $table->string('name');
             $table->string('model')->nullable();
             $table->string('color')->nullable();
             $table->string('cod_model')->nullable();

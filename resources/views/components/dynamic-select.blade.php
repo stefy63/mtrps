@@ -11,13 +11,14 @@
         modalUrl: "{{ $modalUrl }}",
         modalTitle: "{{ $modalTitle ?? "Nuovo elemento" }}",
         modalClass: "{{ $modalClass ?? "" }}",
+        class: "{{ $class ?? "" }}",
     })'
 >
 
 
     <!-- Campo di selezione dinamica con ricerca -->
-    <div class="form-group mb-2 mb20">
-        <label for="car_type_id" x-text="label"></label>
+    <div class="form-group mb-2" :class="class ? class : ''" >
+        <label class="form-label" for="car_type_id" x-text="label"></label>
         <div class="position-relative">
             <div class="input-group">
                 <!-- Input ricerca -->

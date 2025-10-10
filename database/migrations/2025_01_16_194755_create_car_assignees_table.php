@@ -18,8 +18,8 @@ return new class extends Migration {
             $table->date('date_to')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
-            $table->foreign('car_id')->references('id')->on('cars');
-            $table->foreign('office_id')->references('id')->on('offices');
+            $table->foreign('car_id')->references('id')->on('cars')->onDelete('set null');
+            $table->foreign('office_id')->references('id')->on('offices')->onDelete('set null');
         });
     }
 

@@ -47,7 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('car-profit-accounts/get-form', [CarProfitAccountController::class, 'getForm'])->name('car-profit-accounts.getForm');
     Route::post('car-profit-accounts/store-form', [CarProfitAccountController::class, 'storeForm'])->name('car-profit-accounts.storeForm');
 
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('/home', [MovementController::class, 'index'])->name('home');
     Route::resource('users', UserController::class);
     Route::resource('cars', CarController::class);
     Route::resource('car-types', CarTypeController::class);
@@ -105,7 +105,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('cigs', App\Http\Controllers\CigController::class);
 
 //    Rotte di import
-
+    Route::get('imports/{type}', [App\Http\Controllers\ImportController::class, 'index'])->name('imports.index');
+//    Route::post('imports/owners', [App\Http\Controllers\ImportController::class, 'importOwners'])->name('imports.owners');
+//    Route::post('imports/types', [App\Http\Controllers\ImportController::class, 'importTypes'])->name('imports.types');
+//    Route::post('imports/brands', [App\Http\Controllers\ImportController::class, 'importBrands'])->name('imports.brands');
+//    Route::post('imports/powers', [App\Http\Controllers\ImportController::class, 'importPowers'])->name('imports.powers');
+//    Route::post('imports/profit-accounts', [App\Http\Controllers\ImportController::class, 'importProfitAccounts'])->name('imports.profit-accounts');
+//    Route::post('imports/setups', [App\Http\Controllers\ImportController::class, 'importSetups'])->name('imports.setups');
+//    Route::post('imports/plates', [App\Http\Controllers\ImportController::class, 'importPlates'])->name('imports.plates');
+//    Route::post('imports/offices', [App\Http\Controllers\ImportController::class, 'importOffices'])->name('imports.offices');
+//    Route::post('imports/equipments', [App\Http\Controllers\ImportController::class, 'importEquipments'])->name('imports.equipments');
+    Route::get('export/template/{template}', [App\Http\Controllers\ImportController::class, 'export'])->name('export.template');
+    Route::post('imports/cars', [App\Http\Controllers\ImportController::class, 'importCars'])->name('imports.cars');
+//    Route::post('imports/car-assignees', [App\Http\Controllers\ImportController::class, 'importCarAssignees'])->name('imports.car-assignees');
+//    Route::post('imports/maintenance-garages', [App\Http\Controllers\ImportController::class, 'importMaintenanceGarages'])->name('imports.maintenance-garages');
+//    Route::post('imports/maintenance-types', [App\Http\Controllers\ImportController::class, 'importMaintenanceTypes'])->name('imports.maintenance-types');
+//    Route::post('imports/maintenances', [App\Http\Controllers\ImportController::class, 'importMaintenances'])->name('imports.maintenances');
+//    Route::post('imports/car-fuels', [App\Http\Controllers\ImportController::class, 'importCarFuels'])->name('imports.car-fuels');
 });
 
 require __DIR__ . '/auth.php';

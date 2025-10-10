@@ -2,6 +2,21 @@
     <div class="col-md-6">
 
         <x-dynamic-select
+                name="car_brand_id"
+                :class="'mb-2'"
+                :required="'false'"
+                :value="old('car_brand_id', $car?->car_brand_id)"
+                :options="$carBrands"
+                :errors="$errors"
+                endpoint="{{ route('car-brands.storeForm') }}"
+                label="{{ __('Marca') }}"
+                labelKey="name"
+                idKey="id"
+                modal-url="{{ route('car-brands.getForm') }}"
+                modal-title="Nuova Marca"
+        />
+
+        <x-dynamic-select
                 required
                 name="car_type_id"
                 :required="'true'"
@@ -9,7 +24,7 @@
                 :options="$carTypes"
                 :errors="$errors"
                 endpoint="{{ route('car-types.storeForm') }}"
-                label="{{ __('Tipo Veicolo') }}"
+                label="{{ __('Modello') }}"
                 labelKey="name"
                 idKey="id"
                 modal-url="{{ route('car-types.getForm') }}"
@@ -29,20 +44,6 @@
                 idKey="id"
                 modal-url="{{ route('car-owners.getForm') }}"
                 modal-title="Nuovo proprietario"
-        />
-
-        <x-dynamic-select
-                name="car_brand_id"
-                :required="'false'"
-                :value="old('car_brand_id', $car?->car_brand_id)"
-                :options="$carBrands"
-                :errors="$errors"
-                endpoint="{{ route('car-brands.storeForm') }}"
-                label="{{ __('Marca') }}"
-                labelKey="name"
-                idKey="id"
-                modal-url="{{ route('car-brands.getForm') }}"
-                modal-title="Nuova Marca"
         />
 
         <x-dynamic-select
@@ -103,37 +104,33 @@
 {{--            {!! $errors->first('car_profit_account_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
 {{--        </div>--}}
 
-        <div class="form-group mb-2 mb20">
-            <label for="name" class="form-label">{{ __('Nome') }} <span class="text-danger">*</span></label>
-            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                   value="{{ old('name', $car?->name) }}" id="name" placeholder="Nome veicolo">
-            {!! $errors->first('name', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-        </div>
+{{--        <div class="form-group mb-2 mb20">--}}
+{{--            <label for="name" class="form-label">{{ __('Nome') }} <span class="text-danger">*</span></label>--}}
+{{--            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"--}}
+{{--                   value="{{ old('name', $car?->name) }}" id="name" placeholder="Nome veicolo">--}}
+{{--            {!! $errors->first('name', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
+{{--        </div>--}}
 
-        <div class="form-group mb-2 mb20">
-            <label for="model" class="form-label">{{ __('Modello') }}</label>
-            <input type="text" name="model" class="form-control @error('model') is-invalid @enderror"
-                   value="{{ old('model', $car?->model) }}" id="model" placeholder="Modello">
-            {!! $errors->first('model', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-        </div>
+{{--        <div class="form-group mb-2 mb20">--}}
+{{--            <label for="model" class="form-label">{{ __('Modello') }}</label>--}}
+{{--            <input type="text" name="model" class="form-control @error('model') is-invalid @enderror"--}}
+{{--                   value="{{ old('model', $car?->model) }}" id="model" placeholder="Modello">--}}
+{{--            {!! $errors->first('model', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
+{{--        </div>--}}
 
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2">
             <label for="color" class="form-label">{{ __('Colore') }}</label>
             <input type="text" name="color" class="form-control @error('color') is-invalid @enderror"
                    value="{{ old('color', $car?->color) }}" id="color" placeholder="Colore">
             {!! $errors->first('color', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
 
-        <div class="form-group mb-2 mb20">
-            <label for="cod_model" class="form-label">{{ __('Codice Modello') }}</label>
-            <input type="text" name="cod_model" class="form-control @error('cod_model') is-invalid @enderror"
-                   value="{{ old('cod_model', $car?->cod_model) }}" id="cod_model" placeholder="Codice modello">
-            {!! $errors->first('cod_model', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-        </div>
-
-    </div>
-
-    <div class="col-md-6">
+{{--        <div class="form-group mb-2 mb20">--}}
+{{--            <label for="cod_model" class="form-label">{{ __('Codice Modello') }}</label>--}}
+{{--            <input type="text" name="cod_model" class="form-control @error('cod_model') is-invalid @enderror"--}}
+{{--                   value="{{ old('cod_model', $car?->cod_model) }}" id="cod_model" placeholder="Codice modello">--}}
+{{--            {!! $errors->first('cod_model', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
+{{--        </div>--}}
 
         <div class="form-group mb-2 mb20">
             <label for="profit_account" class="form-label">{{ __('Conto Profitto') }}</label>
@@ -144,6 +141,10 @@
             {!! $errors->first('profit_account', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
 
+
+    </div>
+
+    <div class="col-md-6">
         <div class="form-group mb-2 mb20">
             <label for="tank" class="form-label">{{ __('Serbatoio (L)') }}</label>
             <input type="number" name="tank" class="form-control @error('tank') is-invalid @enderror"
@@ -159,7 +160,7 @@
             {!! $errors->first('km', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
 
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 mb20" style="margin-top: 1.3rem">
             <label for="winter_wheels" class="form-label">{{ __('Pneumatici Invernali') }}</label>
             <div class="form-check">
                 <input type="hidden" name="winter_wheels" value="0">

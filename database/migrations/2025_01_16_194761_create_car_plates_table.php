@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('car_id')->nullable();
             $table->string('name');
-            $table->enum('type', ['POL', 'CIV', 'ALTRO'])->default('POL');
+            $table->enum('type', ['POLIZIA', 'CIVILE', 'ORIGINALE'])->default('POLIZIA');
             $table->date('date_from')->useCurrent();
             $table->date('date_to')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
-            $table->foreign('car_id')->references('id')->on('cars');
+            $table->foreign('car_id')->references('id')->on('cars')->onDelete('set null');
         });
     }
 

@@ -50,23 +50,23 @@ class Maintenance extends Model
      */
     public function car()
     {
-        return $this->belongsTo(\App\Models\Car::class, 'car_id', 'id');
+        return $this->belongsTo(Car::class);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function maintenanceGarages()
     {
-        return $this->hasMany(\App\Models\MaintenanceGarage::class, 'id', 'maintenance_id');
+        return $this->belongsTo(MaintenanceGarage::class);
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function maintenanceTypes()
     {
-        return $this->hasMany(\App\Models\MaintenanceType::class, 'id', 'maintenance_id');
+        return $this->belongsTo(MaintenanceType::class);
     }
 
 }

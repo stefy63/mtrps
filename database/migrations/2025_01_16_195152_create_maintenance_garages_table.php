@@ -1,5 +1,6 @@
 <?php
 
+use Database\Seeders\MaintenanceGarageSeeder;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -29,6 +30,8 @@ return new class extends Migration
             $table->text('note')->nullable();
             $table->timestamps();
         });
+        $garageSeeder = new MaintenanceGarageSeeder();
+        $garageSeeder->run();
     }
 
     /**

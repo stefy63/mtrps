@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property $car_brand_id
  * @property $car_power_id
  * @property $car_profit_account_id
- * @property car_employment_code_id
+ * @property $car_employment_code_id
  * @property $name
  * @property $model
  * @property $color
@@ -92,13 +92,24 @@ class Car extends Model
         'updatedBy'
     ];
 
+    public function assignees()
+    {
+        return $this->hasMany(CarAssignee::class);
+    }
+
+    public function carOffices()
+    {
+        return $this->belongsToMany(Office::class, 'car_assignees')
+            ->withPivot('date_from', 'date_to', 'note')
+            ->withTimestamps();
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function carEquipment()
     {
-        return $this->belongsToMany(\App\Models\Equipment::class, 'car_equipment', 'car_id', 'equipment_id')
+        return $this->belongsToMany(Equipment::class, 'car_equipment')
             ->withPivot('date_from', 'date_to', 'note')
             ->withTimestamps();
     }
@@ -109,7 +120,7 @@ class Car extends Model
      */
     public function carEmployment(): BelongsTo
     {
-        return $this->belongsTo(CarEmploymentCode::class);
+        return $this->belongsTo(CarEmploymentCode::class, 'car_employment_code_id');
     }
 
 
@@ -153,44 +164,13 @@ class Car extends Model
         return $this->belongsTo(CarType::class, 'car_type_id', 'id');
     }
 
-    /**
-     * @return BelongsTo
-     */
-    public function createdBy()
-    {
-        return $this->belongsTo(User::class, 'created_by', 'id');
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function updatedBy()
-    {
-        return $this->belongsTo(User::class, 'updated_by', 'id');
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function carAssignees()
-    {
-        return $this->hasMany(CarAssignee::class, 'id', 'car_id');
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function carEquipments()
-    {
-        return $this->hasMany(CarEquipment::class, 'id', 'car_id');
-    }
 
     /**
      * @return HasMany
      */
     public function carFuels()
     {
-        return $this->hasMany(CarFuel::class, 'id', 'car_id');
+        return $this->hasMany(CarFuel::class);
     }
 
     /**
@@ -206,7 +186,7 @@ class Car extends Model
      */
     public function carSetups()
     {
-        return $this->hasMany(CarSetup::class, 'id', 'car_id');
+        return $this->hasMany(CarSetup::class);
     }
 
     /**
@@ -214,7 +194,7 @@ class Car extends Model
      */
     public function cigs()
     {
-        return $this->hasMany(Cig::class, 'id', 'car_id');
+        return $this->hasMany(Cig::class);
     }
 
     /**
@@ -222,7 +202,7 @@ class Car extends Model
      */
     public function maintenances()
     {
-        return $this->hasMany(Maintenance::class, 'id', 'car_id');
+        return $this->hasMany(Maintenance::class);
     }
 
     /**
@@ -230,19 +210,7 @@ class Car extends Model
      */
     public function movements()
     {
-        return $this->hasMany(Movement::class, 'id', 'car_id');
-    }
-
-    /**
-     * Accessor per nome completo con dettagli per le select
-     */
-    public function getFullNameWithDetailsAttribute()
-    {
-        $brand = $this->carBrand?->name ?? 'N/A';
-        $model = $this->model ?? '';
-        $type = $this->carType?->name ?? 'N/A';
-        
-        return "{$this->name} - {$brand} {$model} ({$type})";
+        return $this->hasMany(Movement::class);
     }
 
     /**
@@ -267,20 +235,5 @@ class Car extends Model
         return $this->activePlates()->first();
     }
 
-    /**
-     * Scope per veicoli con targa attiva
-     */
-    public function scopeWithActivePlate($query)
-    {
-        return $query->whereHas('activePlates');
-    }
-
-    /**
-     * Scope per veicoli senza targa attiva
-     */
-    public function scopeWithoutActivePlate($query)
-    {
-        return $query->whereDoesntHave('activePlates');
-    }
 
 }

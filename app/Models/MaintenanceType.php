@@ -33,11 +33,11 @@ class MaintenanceType extends Model
 
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function maintenance()
     {
-        return $this->belongsTo(\App\Models\Maintenance::class, 'maintenance_id', 'id');
+        return $this->hasMany(Maintenance::class, 'maintenance_id', 'id');
     }
     
 }

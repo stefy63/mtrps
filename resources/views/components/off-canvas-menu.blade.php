@@ -9,7 +9,7 @@
         <div class="offcanvas-body">
             <div class="dropdown mt-3">
                 <ul class="nav flex-column">
-                    <x-menu-link :href="route('home')" :active="request()->routeIs('home')">
+                    <x-menu-link :href="route('movements.index')" :active="request()->routeIs('movements')">
                         {{ __('Home') }}
                     </x-menu-link>
                     <x-menu-link :href="route('users.index')" :active="request()->routeIs('dashboard')">
@@ -62,6 +62,9 @@
                     </x-menu-link>
                     <x-menu-link :href="route('cigs.index')" :active="request()->routeIs('dashboard')">
                         {{ __('CIG') }}
+                    </x-menu-link>
+                    <x-menu-link :href="route('imports.index',['type' => 'cars'])" :active="request()->routeIs('imports/cars')">
+                        {{ __('Import massivo') }}
                     </x-menu-link>
                 </ul>
             </div>

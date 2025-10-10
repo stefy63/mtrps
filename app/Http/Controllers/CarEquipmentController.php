@@ -57,7 +57,7 @@ class CarEquipmentController extends Controller
         $cars = Car::with(['carPlates' => function($query) {
             $query->whereNull('date_to')
                   ->orWhere('date_to', '>=', now());
-        }])->orderBy('name')->get();
+        }])->orderBy('model')->get();
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo equipaggiamento?');
 
@@ -77,7 +77,7 @@ class CarEquipmentController extends Controller
             $query->whereNull('date_to')
                   ->orWhere('date_to', '>=', now())
                   ->orderBy('date_from', 'desc');
-        }, 'carType', 'carBrand'])->orderBy('name')->get();
+        }, 'carType', 'carBrand'])->orderBy('model')->get();
 
         return view('car-equipment.create', compact('carEquipment', 'cars'));
     }
@@ -142,7 +142,7 @@ class CarEquipmentController extends Controller
             $query->whereNull('date_to')
                   ->orWhere('date_to', '>=', now())
                   ->orderBy('date_from', 'desc');
-        }, 'carType', 'carBrand'])->orderBy('name')->get();
+        }, 'carType', 'carBrand'])->orderBy('model')->get();
 
         return view('car-equipment.edit', compact('carEquipment', 'cars'));
     }

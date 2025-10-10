@@ -65,7 +65,7 @@ class MaintenanceController extends Controller
         $maintenances = $query->paginate(20);
 
         // Dati per i filtri
-        $cars = Car::with('carPlates')->orderBy('name')->get();
+        $cars = Car::with('carPlates')->orderBy('model')->get();
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questa manutenzione?');
 
@@ -81,7 +81,7 @@ class MaintenanceController extends Controller
     public function create(): View
     {
         $maintenance = new Maintenance();
-        $cars = Car::with(['carPlates', 'carBrand'])->orderBy('name')->get();
+        $cars = Car::with(['carPlates', 'carBrand'])->orderBy('model')->get();
 
         return view('maintenance.create', compact('maintenance', 'cars'));
     }
@@ -143,7 +143,7 @@ class MaintenanceController extends Controller
      */
     public function edit(Maintenance $maintenance): View
     {
-        $cars = Car::with(['carPlates', 'carBrand'])->orderBy('name')->get();
+        $cars = Car::with(['carPlates', 'carBrand'])->orderBy('model')->get();
 
         return view('maintenance.edit', compact('maintenance', 'cars'));
     }
