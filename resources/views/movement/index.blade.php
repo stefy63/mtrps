@@ -271,18 +271,18 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <strong>{{ $movement->car->full_name }}</strong>
-                                                @if($movement->car->carPlates->first())
+                                                <strong>{{ $movement->car?->full_name }}</strong>
+                                                @if($movement->car?->carPlates->first())
                                                     <br>
                                                     <small class="text-muted">
-                                                        <i class="bi bi-credit-card"></i> {{ $movement->car->carPlates->first()->name }}
+                                                        <i class="bi bi-credit-card"></i> {{ $movement->car?->carPlates->first()->name }}
                                                     </small>
                                                 @endif
                                             </div>
                                         </td>
                                         <td>
                                             <div>
-                                                {{$movement->office->full_name ?? ''}}
+                                                {{$movement->office?->full_name ?? ''}}
                                             </div>
                                         </td>
                                         <td>

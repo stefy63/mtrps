@@ -19,10 +19,6 @@ return new class extends Migration
             $table->date('date_from')->useCurrent();
             $table->date('date_to')->nullable();
             $table->text('note')->nullable();
-
-            // Metadati
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();
 
             // Indici e foreign keys
