@@ -18,15 +18,16 @@
 
     <!-- Campo di selezione dinamica con ricerca -->
     <div class="form-group mb-2" :class="class ? class : ''" >
-        <label class="form-label" for="car_type_id" x-text="label"></label>
+        <label class="form-label @error($name) is-invalid @enderror" for="select_id" x-text="label"></label>
         <div class="position-relative">
             <div class="input-group">
                 <!-- Input ricerca -->
                 <input type="text"
+                       id="select_id"
                        :required="required"
                        aria-describedby="button-add-type"
                        :class="{'is-invalid': isInvalid}"
-                       class="form-control"
+                       class="form-floating"
                        placeholder="Seleziona..."
                        x-model="search"
                        @focus="open = true, search = '', option_id = null"
@@ -37,7 +38,7 @@
                         id="button-add-type">+
                 </button>
                 <template x-if="isInvalid">
-                    <div class="invalid-feedback" role="alert"><strong>{{$errors->first('car_type_id')}}</strong></div>
+                    <div class="invalid-feedback" role="alert"><strong>{{$errors->first($name)}}</strong></div>
                 </template>
             </div>
 

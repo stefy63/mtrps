@@ -24,14 +24,16 @@ trait NewCatTrait
         "Colore" => 'color',
         "Pntermici" => 'winter_wheels',
         "TipologiaDiMezzo" => 'car_typology',
-//        "OP" => null,
+        "Conto" => 'profit_account',
+        "CodicePanFuelCardQ8" => null,
+        "CodicePanFuelCardIp" => null,
 //        "INIZIORicoveroDal" => null,
 //        "DisattivTetra" => null,
-        "Note" => 'note',
+        "Ente" => null,
         "Serb" => 'tank',
         "ModelloPneumatici" => 'wheels_type',
 //        "Termiche" => null,
-        "NTelaio" => 'chassis',
+        "Telaio" => 'chassis',
         "DataRevisione" => 'date_revision',
     ];
 
@@ -62,17 +64,16 @@ trait NewCatTrait
             $car->carOwner()->associate($this->firstOrCreate(new CarOwner(), $fieldName, $data['Proprieta']));
         }
         $this->getConversion($car, 'Colore', $data);
-        $this->getConversion($car, 'Pntermici', $data, true);
+//        $this->getConversion($car, 'Pntermici', $data, true);
         $this->getConversion($car, 'TipologiaDiMezzo', $data);
-        $this->getConversion($car, 'Note', $data);
-        $this->getConversion($car, 'Serb', $data);
-        $this->getConversion($car, 'ModelloPneumatici', $data);
-        $this->getConversion($car, 'NTelaio', $data);
-        $data['DataRevisione'] = new \Carbon\Carbon($data['DataRevisione']);
-        $this->getConversion($car, 'DataRevisione', $data);
-        $car['note'] = "Ricoveri: {$data['Ricoveri']}\n
-                  Tetra: {$data['DisattivTetra']}\n
-                  note: {$data['Note']}";
+//        $this->getConversion($car, 'Note', $data);
+//        $this->getConversion($car, 'Serb', $data);
+//        $this->getConversion($car, 'ModelloPneumatici', $data);
+        $this->getConversion($car, 'Telaio', $data);
+        $this->getConversion($car, 'Conto', $data);
+//        $data['DataRevisione'] = new \Carbon\Carbon($data['DataRevisione']);
+//        $this->getConversion($car, 'DataRevisione', $data);
+        $car['note'] = "Ente: {$data['Ente']}\nCODICE PAN Fuel Card IP: {$data['CodicePanFuelCardIp']}\nCODICE PAN Fuel Card Q8: {$data['CodicePanFuelCardQ8']}";
 
 
         $car->save();

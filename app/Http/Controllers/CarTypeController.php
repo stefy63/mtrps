@@ -19,6 +19,8 @@ class CarTypeController extends Controller
     {
         $carTypes = CarType::paginate();
 
+        confirmDelete('Cancella Tipo Vettura!', 'Sei sicuro di voler cancellare questo Tipo?');
+
         return view('car-type.index', compact('carTypes'))
             ->with('i', ($request->input('page', 1) - 1) * $carTypes->perPage());
     }

@@ -36,6 +36,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 //    Rotte per le modali dinamiche
+    Route::get('car/get-form', [CarController::class, 'getForm'])->name('car.getForm');
+    Route::post('car/store-form', [CarController::class, 'storeForm'])->name('car.storeForm');
+
     Route::get('car-types/get-form', [CarTypeController::class, 'getForm'])->name('car-types.getForm');
     Route::post('car-types/store-form', [CarTypeController::class, 'storeForm'])->name('car-types.storeForm');
     Route::get('car-owners/get-form', [CarOwnerController::class, 'getForm'])->name('car-owners.getForm');

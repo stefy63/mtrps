@@ -89,34 +89,34 @@
                 modal-title="Nuovo codice di impiego"
         />
 
-{{--        <div class="form-group mb-2 mb20">--}}
-{{--            <label for="car_profit_account_id" class="form-label">{{ __('Conto Economico') }}</label>--}}
-{{--            <select name="car_profit_account_id"--}}
-{{--                    class="form-control @error('car_profit_account_id') is-invalid @enderror"--}}
-{{--                    id="car_profit_account_id">--}}
-{{--                <option value="">Seleziona conto economico</option>--}}
-{{--                @foreach($carProfitAccounts as $id => $name)--}}
-{{--                    <option value="{{ $id }}" {{ old('car_profit_account_id', $car?->car_profit_account_id) == $id ? 'selected' : '' }}>--}}
-{{--                        {{ $name }}--}}
-{{--                    </option>--}}
-{{--                @endforeach--}}
-{{--            </select>--}}
-{{--            {!! $errors->first('car_profit_account_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-{{--        </div>--}}
+        {{--        <div class="form-group mb-2 mb20">--}}
+        {{--            <label for="car_profit_account_id" class="form-label">{{ __('Conto Economico') }}</label>--}}
+        {{--            <select name="car_profit_account_id"--}}
+        {{--                    class="form-control @error('car_profit_account_id') is-invalid @enderror"--}}
+        {{--                    id="car_profit_account_id">--}}
+        {{--                <option value="">Seleziona conto economico</option>--}}
+        {{--                @foreach($carProfitAccounts as $id => $name)--}}
+        {{--                    <option value="{{ $id }}" {{ old('car_profit_account_id', $car?->car_profit_account_id) == $id ? 'selected' : '' }}>--}}
+        {{--                        {{ $name }}--}}
+        {{--                    </option>--}}
+        {{--                @endforeach--}}
+        {{--            </select>--}}
+        {{--            {!! $errors->first('car_profit_account_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
+        {{--        </div>--}}
 
-{{--        <div class="form-group mb-2 mb20">--}}
-{{--            <label for="name" class="form-label">{{ __('Nome') }} <span class="text-danger">*</span></label>--}}
-{{--            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"--}}
-{{--                   value="{{ old('name', $car?->name) }}" id="name" placeholder="Nome veicolo">--}}
-{{--            {!! $errors->first('name', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-{{--        </div>--}}
+        {{--        <div class="form-group mb-2 mb20">--}}
+        {{--            <label for="name" class="form-label">{{ __('Nome') }} <span class="text-danger">*</span></label>--}}
+        {{--            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"--}}
+        {{--                   value="{{ old('name', $car?->name) }}" id="name" placeholder="Nome veicolo">--}}
+        {{--            {!! $errors->first('name', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
+        {{--        </div>--}}
 
-{{--        <div class="form-group mb-2 mb20">--}}
-{{--            <label for="model" class="form-label">{{ __('Modello') }}</label>--}}
-{{--            <input type="text" name="model" class="form-control @error('model') is-invalid @enderror"--}}
-{{--                   value="{{ old('model', $car?->model) }}" id="model" placeholder="Modello">--}}
-{{--            {!! $errors->first('model', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-{{--        </div>--}}
+        {{--        <div class="form-group mb-2 mb20">--}}
+        {{--            <label for="model" class="form-label">{{ __('Modello') }}</label>--}}
+        {{--            <input type="text" name="model" class="form-control @error('model') is-invalid @enderror"--}}
+        {{--                   value="{{ old('model', $car?->model) }}" id="model" placeholder="Modello">--}}
+        {{--            {!! $errors->first('model', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
+        {{--        </div>--}}
 
         <div class="form-group mb-2">
             <label for="color" class="form-label">{{ __('Colore') }}</label>
@@ -125,20 +125,20 @@
             {!! $errors->first('color', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
 
-{{--        <div class="form-group mb-2 mb20">--}}
-{{--            <label for="cod_model" class="form-label">{{ __('Codice Modello') }}</label>--}}
-{{--            <input type="text" name="cod_model" class="form-control @error('cod_model') is-invalid @enderror"--}}
-{{--                   value="{{ old('cod_model', $car?->cod_model) }}" id="cod_model" placeholder="Codice modello">--}}
-{{--            {!! $errors->first('cod_model', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-{{--        </div>--}}
+        {{--        <div class="form-group mb-2 mb20">--}}
+        {{--            <label for="cod_model" class="form-label">{{ __('Codice Modello') }}</label>--}}
+        {{--            <input type="text" name="cod_model" class="form-control @error('cod_model') is-invalid @enderror"--}}
+        {{--                   value="{{ old('cod_model', $car?->cod_model) }}" id="cod_model" placeholder="Codice modello">--}}
+        {{--            {!! $errors->first('cod_model', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
+        {{--        </div>--}}
 
         <div class="form-group mb-2 mb20">
-            <label for="profit_account" class="form-label">{{ __('Conto Profitto') }}</label>
-            <input type="text" name="profit_account"
-                   class="form-control @error('profit_account') is-invalid @enderror"
-                   value="{{ old('profit_account', $car?->profit_account) }}" id="profit_account"
-                   placeholder="Conto profitto">
-            {!! $errors->first('profit_account', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+            <label for="car_typology" class="form-label">{{ __('Tipologia di Mezzo') }}</label>
+            <input type="text" name="car_typology"
+                   class="form-control @error('car_typology') is-invalid @enderror"
+                   value="{{ old('car_typology', $car?->car_typology) }}" id="car_typology"
+                   placeholder="Tipologia di Mezzo">
+            {!! $errors->first('car_typology', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
 
 
@@ -239,8 +239,10 @@
         </div>
 
     </div>
-    <div class="col-md-12 mt20 mt-2">
-        <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
-        <a href="{{ route('cars.index') }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
-    </div>
+    @if($button)
+        <div class="col-md-12 mt20 mt-2">
+            <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+            <a href="{{ route('cars.index') }}" class="btn btn-secondary">{{ __('Cancel') }}</a>
+        </div>
+    @endif
 </div>

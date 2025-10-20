@@ -40,8 +40,7 @@ class ImportController extends Controller
         $request->validate([
             'cars_csv_file' => 'required|extensions:csv',
         ]);
-        $path = $request->file('cars_csv_file')->store('csv_uploads');
-        $fullPath = storage_path('app/private/'.$path);
+        $fullPath = storage_path('app/private/'.$request->file('cars_csv_file')->store('csv_uploads'));
         $stream = fopen($fullPath, 'r');
         if (!$stream) {
             return back()->withErrors(['cars_csv_file' => 'Impossibile aprire il file CSV.']);
@@ -58,13 +57,14 @@ class ImportController extends Controller
             }
             $rowNumber++;
             $row = array_combine($expectedHeaders, array_map(fn($val) => $this->cleanValue($val), $row));
-//            dd($row);
             // logica di importazione
             $importCarsService->insert($row);
             $inserted++;
         }
         fclose($stream);
-        Storage::delete($path);
+        if (file_exists($fullPath)) {
+            unlink($fullPath);
+        }
 
         // Preparazione del messaggio di ritorno
         $msg = "Import completato. Inserite righe: {$inserted}.";
@@ -72,7 +72,7 @@ class ImportController extends Controller
             $msg .= " Ci sono errori in alcune righe.";
         }
 
-        return back()
+        return redirect('cars')
             ->with('success', $msg)
             ->with('csv_errors', $errors);
     }

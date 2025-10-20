@@ -20,6 +20,10 @@ class UserController extends Controller
     {
         $users = User::paginate();
 
+        $title = 'Cancella Utente!';
+        $text = "Sei sicuro di voler cancellare questo utente?";
+        confirmDelete($title, $text);
+
         return view('user.index', compact('users'))
             ->with('i', ($request->input('page', 1) - 1) * $users->perPage());
     }

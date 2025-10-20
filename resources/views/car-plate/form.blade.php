@@ -20,14 +20,14 @@
     </div>
     
     <div class="col-md-6">
-        
+
         <div class="form-group mb-2 mb20">
             <label for="car_id" class="form-label">{{ __('Veicolo') }} <span class="text-danger">*</span></label>
             <select name="car_id" class="form-control @error('car_id') is-invalid @enderror" id="car_id">
                 <option value="">Seleziona veicolo</option>
-                @foreach($cars as $id => $carName)
-                    <option value="{{ $id }}" {{ old('car_id', $carPlate?->car_id) == $id ? 'selected' : '' }}>
-                        {{ $carName }}
+                @foreach($cars as $c)
+                    <option value="{{ $c->id }}" {{ old('car_id', $carPlate?->car_id) == $c->id ? 'selected' : '' }}>
+                        {{ $c->carBrand->name }} - {{ $c->carType->name }}
                     </option>
                 @endforeach
             </select>
@@ -46,11 +46,11 @@
             <label for="type" class="form-label">{{ __('Tipo Targa') }} <span class="text-danger">*</span></label>
             <select name="type" class="form-control @error('type') is-invalid @enderror" id="type">
                 <option value="">Seleziona tipo</option>
-                <option value="CIV" {{ old('type', $carPlate?->type) == 'CIV' ? 'selected' : '' }}>
-                    CIV - Civile (Standard)
+                <option value="CIVILE" {{ old('type', $carPlate?->type) == 'CIVILE' ? 'selected' : '' }}>
+                    CIVILE - Civile (Standard)
                 </option>
-                <option value="POL" {{ old('type', $carPlate?->type) == 'POL' ? 'selected' : '' }}>
-                    POL - Polizia (Forze dell'Ordine)
+                <option value="POLIZIA" {{ old('type', $carPlate?->type) == 'POLIZIA' ? 'selected' : '' }}>
+                    POLIZIA - Polizia (Forze dell'Ordine)
                 </option>
                 <option value="ALTRO" {{ old('type', $carPlate?->type) == 'ALTRO' ? 'selected' : '' }}>
                     ALTRO - Altro tipo
@@ -66,14 +66,14 @@
         
         <div class="form-group mb-2 mb20">
             <label for="date_from" class="form-label">{{ __('Data Inizio') }} <span class="text-danger">*</span></label>
-            <input type="date" name="date_from" class="form-control @error('date_from') is-invalid @enderror" value="{{ old('date_from', $carPlate?->date_from) }}" id="date_from">
+            <input type="date" name="date_from" class="form-control @error('date_from') is-invalid @enderror" value="{{ old('date_from', $carPlate?->date_from?->format('Y-m-d')) }}" id="date_from">
             {!! $errors->first('date_from', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
             <small class="form-text text-muted">Data di assegnazione della targa al veicolo</small>
         </div>
         
         <div class="form-group mb-2 mb20">
             <label for="date_to" class="form-label">{{ __('Data Fine') }}</label>
-            <input type="date" name="date_to" class="form-control @error('date_to') is-invalid @enderror" value="{{ old('date_to', $carPlate?->date_to) }}" id="date_to">
+            <input type="date" name="date_to" class="form-control @error('date_to') is-invalid @enderror" value="{{ old('date_to', $carPlate?->date_to?->format('Y-m-d')) }}" id="date_to">
             {!! $errors->first('date_to', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
             <small class="form-text text-muted">Data di scadenza o rimozione (lasciare vuoto se attiva)</small>
         </div>
@@ -177,16 +177,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewPlate = document.getElementById('preview-plate');
     const previewText = document.getElementById('preview-text');
     const previewDescription = document.getElementById('preview-description');
-    
+
     // Gestisci i suggerimenti di formato
     document.querySelectorAll('.plate-suggestion').forEach(button => {
         button.addEventListener('click', function() {
             const format = this.dataset.format;
             const description = this.dataset.description;
-            
+
             nameInput.value = format;
             updatePreview();
-            
+
             // Evidenzia temporaneamente
             this.classList.add('active');
             setTimeout(() => {
@@ -194,24 +194,24 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         });
     });
-    
+
     // Aggiorna anteprima in tempo reale
     function updatePreview() {
         const name = nameInput.value || 'AA 123 BB';
-        const type = typeSelect.value || 'CIV';
-        
+        const type = typeSelect.value || 'CIVILE';
+
         previewText.textContent = name;
-        
+
         // Aggiorna stile in base al tipo
         previewPlate.className = 'plate';
         let description = '';
-        
+
         switch(type) {
-            case 'POL':
+            case 'POLIZIA':
                 previewPlate.classList.add('plate-police');
                 description = 'Targa Polizia/Forze dell\'Ordine';
                 break;
-            case 'CIV':
+            case 'CIVILE':
                 previewPlate.classList.add('plate-civil');
                 description = 'Targa Civile Standard';
                 break;
@@ -219,19 +219,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 previewPlate.classList.add('plate-other');
                 description = 'Altro tipo di targa';
         }
-        
+
         previewDescription.textContent = description;
     }
-    
+
     // Ascolta i cambiamenti
     nameInput.addEventListener('input', function() {
         // Converte automaticamente in maiuscolo
         this.value = this.value.toUpperCase();
         updatePreview();
     });
-    
+
     typeSelect.addEventListener('change', updatePreview);
-    
+
     // Inizializza anteprima
     updatePreview();
     
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
     nameInput.addEventListener('input', function() {
         const value = this.value;
         const isValid = /^[A-Z0-9\s]*$/.test(value);
-        
+
         if (!isValid && value) {
             this.classList.add('is-invalid');
             if (!document.getElementById('format-error')) {

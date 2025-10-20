@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('car_setups', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('car_id')->nullable();
-            $table->string('name');
-            $table->string('description')->nullable();
-            $table->date('date_from')->useCurrent();
-            $table->date('date_to')->nullable();
-            $table->text('note')->nullable();
-            $table->timestamps();
-            $table->foreign('car_id')->references('id')->on('cars');
-        });
+//        Schema::create('car_setups', function (Blueprint $table) {
+//            $table->id();
+//            $table->unsignedBigInteger('car_id')->nullable();
+//            $table->string('name');
+//            $table->string('description')->nullable();
+//            $table->date('date_from')->useCurrent();
+//            $table->date('date_to')->nullable();
+//            $table->text('note')->nullable();
+//            $table->timestamps();
+//            $table->foreign('car_id')->references('id')->on('cars');
+//        });
     }
 
     /**
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('car_setups');
+//        Schema::dropIfExists('car_setups');
     }
 };

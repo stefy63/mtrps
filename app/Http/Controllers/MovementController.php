@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Movement;
 use App\Models\Car;
+use App\Models\Office;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,10 +23,9 @@ class MovementController extends Controller
     public function index(Request $request): View
     {
         $query = Movement::with([
-            'car.carPlates' => function ($query) {
-                $query->orderBy('date_from', 'desc');
-            },
+            'car.carPlates' => fn ($query) => $query->orderBy('date_from', 'desc'),
             'car.carBrand',
+            'office',
         ]);
 
         // Filtri
@@ -33,16 +33,12 @@ class MovementController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('car', function ($q2) use ($search) {
-                        $q2->where('model', 'like', "%{$search}%");
+                        $q2->where('full_name', 'like', "%{$search}%");
                     })
                     ->orWhereHas('car.carPlates', function ($q3) use ($search) {
                         $q3->where('name', 'like', "%{$search}%");
                     });
             });
-        }
-
-        if ($request->filled('car_id')) {
-            $query->where('car_id', $request->car_id);
         }
 
         if ($request->filled('date_from')) {
@@ -56,12 +52,20 @@ class MovementController extends Controller
         $movements = $query->paginate();
 
         $cars = Car::with('carPlates')->orderBy('model')->get();
+        $stats = [
+            'total' => Movement::count(),
+            'pending' => 1,
+            'in_progress' => 2,
+            'completed_month' => 3,
+            'total_km_month' => 4,
+        ];
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo movimento?');
 
         return view('movement.index', compact(
             'movements',
             'cars',
+            'stats'
         ))->with('i', ($request->input('page', 1) - 1) * $movements->perPage());
     }
 
@@ -84,19 +88,15 @@ class MovementController extends Controller
         $movement->departure_datetime = Carbon::now()->addDay()->setTime(8, 0);
         $movement->arrival_datetime = Carbon::now()->addDay()->setTime(18, 0);
 
-        $cars = Car::with(['carPlates' => function ($query) {
+        $cars = Car::with(['carBrand', 'carPlates' => function ($query) {
             $query->orderBy('date_from', 'desc');
-        }])->orderBy('model')->get();
-        $users = User::orderBy('name')->get();
-
-        // Suggerimenti destinazioni frequenti
-        $frequentDestinations = $this->getFrequentDestinations();
+        }])->get();
+        $offices = Office::get();
 
         return view('movement.create', compact(
             'movement',
             'cars',
-            'users',
-            'frequentDestinations'
+            'offices',
         ));
     }
 
@@ -111,7 +111,7 @@ class MovementController extends Controller
             $data = $request->validated();
             $data['created_by'] = Auth::id();
 
-            $movement = Movement::create($data);
+            Movement::create($data);
 
             DB::commit();
 
@@ -135,8 +135,7 @@ class MovementController extends Controller
             'car.carBrand',
             'car.carType',
             'car.carPower',
-            'creator',
-            'updater'
+            'office',
         ]);
 
         return view('movement.show', compact('movement'));
@@ -149,14 +148,13 @@ class MovementController extends Controller
     {
         $cars = Car::with(['carPlates' => function ($query) {
             $query->orderBy('date_from', 'desc');
-        }])->orderBy('model')->get();
-
-        $users = User::orderBy('name')->get();
+        }])->get();
+        $offices = Office::get();
 
         return view('movement.edit', compact(
             'movement',
             'cars',
-            'users',
+            'offices',
         ));
     }
 

@@ -23,7 +23,7 @@ class StoreMaintenanceRequest extends FormRequest
     {
         return [
             'car_id' => 'required|exists:cars,id',
-            'name' => 'required|string|max:255',
+//            'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:255',
             'date_from' => 'required|date',
             'date_to' => 'nullable|date|after_or_equal:date_from',

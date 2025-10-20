@@ -14,62 +14,9 @@ class ImportCarsService
     use NewCarPlateTrait;
     use NewCarMovementTrait;
 
-    private $carModelField = [
-        "Ricoveri" => null,
-        "InCessioneTemporaneaDal" => null,
-        "Colore" => null,
-        "Pntermici" => null,
-        "TipologiaDiMezzo" => null,
-        "OP" => null,
-        "INIZIORicoveroDal" => null,
-        "DisattivTetra" => null,
-        "Note" => null,
-        "Serb" => null,
-        "ModelloPneumatici" => null,
-        "Termiche" => null,
-        "NTelaio" => null,
-        "DataRevisione" => null,
-    ];
-
-
-    private array $carPower = [
-        "Alimentazione" => null,
-    ];
-
-
-    private array $proterty = [
-        "Proprieta" => null,
-    ];
-
-    private array $movement = [
-        "AutorimVtirrenoDal" => null,
-        "AutorimVtirreno-Motivazione" => null,
-        "DittaEsternaDal" => null,
-        "DittaEsterna-Nome" => null,
-        "DittaEsternaTipologia" => null,
-        "FINERicoveroDal" => null,
-    ];
-
-    private array $carEquipment = [
-        "Tetra" => null,
-        "Telepass" => null,
-    ];
-
-    private array $carPLatesField = [
-        "TgPol" => null,
-        "TgCivile" => null,
-        "TgOriginale" => null,
-    ];
-
-    private array $officeModelField = [
-        "EnteAssegnatario" => null,
-        "Sezione" => null,
-    ];
-
     public function insert(array $data)
     {
         $car = $this->newCar($data);
-
         if (!empty($data['EnteAssegnatario']) && $fieldName = $this->conversion['EnteAssegnatario']) {
             $section = $this->conversion['Sezione'] ?? '';
             $office = Office::where($fieldName, $data['EnteAssegnatario'])
@@ -78,10 +25,16 @@ class ImportCarsService
         }
 
         if (!empty($data['Tetra']) && $equipement = Equipment::where('name', 'Radio TETRA')->first()) {
-            $car->carEquipment()->attach($equipement->id, ['date_from' => now()]);
+            $car->carEquipment()->attach($equipement->id, ['date_from' => now(), 'note' => $data['Issi'] ?? '']);
         }
         if (!empty($data['Telepass']) && $equipement = Equipment::where('name', 'Telepass')->first()) {
-            $car->carEquipment()->attach($equipement->id, ['date_from' => now()]);
+            $car->carEquipment()->attach($equipement->id, ['date_from' => now(), 'note' => $data['TelepassSeriale'] ?? '']);
+        }
+        if (!empty($data['CodicePanFuelCardIp']) && $equipement = Equipment::where('name', 'Fuel Card IP')->first()) {
+            $car->carEquipment()->attach($equipement->id, ['date_from' => now(), 'note' => $data['CodicePanFuelCardIp'] ?? '']);
+        }
+        if (!empty($data['CodicePanFuelCardQ8']) && $equipement = Equipment::where('name', 'Fuel Card Q8')->first()) {
+            $car->carEquipment()->attach($equipement->id, ['date_from' => now(), 'note' => $data['CodicePanFuelCardQ8'] ?? '']);
         }
 
         $this->insertPlate($car, $data);

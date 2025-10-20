@@ -17,7 +17,9 @@ class CarPlateController extends Controller
      */
     public function index(Request $request): View
     {
-        $carPlates = CarPlate::with('car', 'car.carBrand', 'car.carType')->paginate();
+        $carPlates = CarPlate::with('car.carBrand', 'car.carType')->paginate();
+
+        confirmDelete('Cancella Targa!', 'Sei sicuro di voler cancellare questa Targa?');
 
         return view('car-plate.index', compact('carPlates'))
             ->with('i', ($request->input('page', 1) - 1) * $carPlates->perPage());
@@ -31,7 +33,7 @@ class CarPlateController extends Controller
         $carPlate = new CarPlate();
         
         // Recupera i veicoli per la select
-        $cars = Car::with('carBrand', 'carType')->get()->pluck('full_name_with_details', 'id');
+        $cars = Car::with('carBrand', 'carType')->get();
         
         return view('car-plate.create', compact('carPlate', 'cars'));
     }
@@ -54,6 +56,8 @@ class CarPlateController extends Controller
     {
         $carPlate = CarPlate::with('car', 'car.carBrand', 'car.carType', 'car.carOwner')->find($id);
 
+        confirmDelete('Cancella Targa!', 'Sei sicuro di voler cancellare questa Targa?');
+
         return view('car-plate.show', compact('carPlate'));
     }
 
@@ -65,7 +69,7 @@ class CarPlateController extends Controller
         $carPlate = CarPlate::find($id);
         
         // Recupera i veicoli per la select
-        $cars = Car::with('carBrand', 'carType')->get()->pluck('full_name_with_details', 'id');
+        $cars = Car::with('carBrand', 'carType')->get();
 
         return view('car-plate.edit', compact('carPlate', 'cars'));
     }

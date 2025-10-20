@@ -11,7 +11,7 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Update') }} Car</span>
+                        <span class="card-title">{{ __('Modifica Vettura') }} : {{ $car->carBrand?->name }}</span>
                     </div>
                     <div class="card-body bg-white">
                         <form method="POST" action="{{ route('cars.update', $car->id) }}"  role="form" enctype="multipart/form-data">

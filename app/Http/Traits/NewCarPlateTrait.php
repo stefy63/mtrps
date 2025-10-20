@@ -19,6 +19,7 @@ trait NewCarPlateTrait
     {
         foreach( $this->carPlatesField as $k => $plate) {
             if (!empty($data[$k])) {
+                $data[$k] = str_replace('*', ' ', $data[$k]);
                 $tg = $this->firstOrCreate(new CarPlate(), $plate[0], $data[$k], [
                     'type' => $plate[1],
                     'date_from' => now()

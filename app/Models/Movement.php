@@ -83,6 +83,7 @@ class Movement extends Model
     protected $fillable = [
         'car_id',
         'office_id',
+        'code',
         'date_from',
         'date_to',
         'note',

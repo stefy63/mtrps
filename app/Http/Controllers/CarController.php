@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CarRequest;
 use App\Models\Car;
-use App\Models\CarEmploymentCode;
-use App\Models\CarType;
-use App\Models\CarOwner;
 use App\Models\CarBrand;
+use App\Models\CarEmploymentCode;
+use App\Models\CarOwner;
 use App\Models\CarPower;
 use App\Models\CarProfitAccount;
+use App\Models\CarType;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\CarRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Auth;
 
 class CarController extends Controller
 {
@@ -25,15 +26,39 @@ class CarController extends Controller
     {
         $cars = Car::with([
             'carType',
-            'carOwner', 
+            'carOwner',
             'carBrand',
             'carPower',
             'carProfitAccount',
             'carPlates'
         ])->paginate();
 
+        $title = 'Cancella Vettura!';
+        $text = "Sei sicuro di voler cancellare questa vettura?";
+        confirmDelete($title, $text);
+
         return view('car.index', compact('cars'))
             ->with('i', ($request->input('page', 1) - 1) * $cars->perPage());
+    }
+
+    public function getForm(): View
+    {
+        $car = new Car();
+        $carTypes = CarType::get(['id', 'name']);
+        $carOwners = CarOwner::get(['id', 'name']);
+        $carBrands = CarBrand::get(['id', 'name']);
+        $carPowers = CarPower::get(['id', 'name']);
+        $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
+        $carEmployment = CarEmploymentCode::get(['id', 'extended']);
+        $button = false;
+        return view('car.form',
+            compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment', 'button'));
+    }
+
+    public function storeForm(CarRequest $request):  JsonResponse
+    {
+        $carBrand = Car::create($request->validated());
+        return $this->sendResponse($carBrand, 'Vettura creata con successo.');
     }
 
     /**
@@ -44,14 +69,16 @@ class CarController extends Controller
         $car = new Car();
 
         // Recupera i dati per le select
-        $carTypes = CarType::get([ 'id', 'name']);
+        $carTypes = CarType::get(['id', 'name']);
         $carOwners = CarOwner::get(['id', 'name']);
         $carBrands = CarBrand::get(['id', 'name']);
         $carPowers = CarPower::get(['id', 'name']);
         $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
         $carEmployment = CarEmploymentCode::get(['id', 'extended']);
+        $button = true;
 
-        return view('car.create', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment'));
+        return view('car.create',
+            compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment', 'button'));
     }
 
     /**
@@ -76,13 +103,16 @@ class CarController extends Controller
         $car = Car::with([
             'carType',
             'carOwner',
-            'carBrand', 
+            'carBrand',
             'carPower',
-            'carProfitAccount',
-            'createdBy',
-            'updatedBy'
-        ])->find($id);
-
+            'carPlates',
+            'assignees' => fn ($q) => $q->with('office')->whereNull('date_to'),
+            'carEquipment' => fn ($q) => $q->wherePivotNull('date_to'),
+            'movements' => fn ($q) => $q->with(['office'])->orderBy('date_to', 'asc')->limit(10),
+            'maintenances' => fn ($q) => $q->with(['maintenanceGarages','maintenanceTypes'])->orderBy('date_to', 'asc')->limit(10),
+        ])
+            ->find($id);
+//dd($car->toArray());
         return view('car.show', compact('car'));
     }
 
@@ -94,14 +124,16 @@ class CarController extends Controller
         $car = Car::find($id);
 
         // Recupera i dati per le select
-        $carTypes = CarType::get([ 'id', 'name']);
+        $carTypes = CarType::get(['id', 'name']);
         $carOwners = CarOwner::get(['id', 'name']);
         $carBrands = CarBrand::get(['id', 'name']);
         $carPowers = CarPower::get(['id', 'name']);
         $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
         $carEmployment = CarEmploymentCode::get(['id', 'extended']);
+        $button = true;
 
-        return view('car.edit', compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment'));
+        return view('car.edit',
+            compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment', 'button'));
     }
 
     /**
@@ -111,7 +143,7 @@ class CarController extends Controller
     {
         $data = $request->validated();
         $data['updated_by'] = Auth::id();
-        
+
         $car->update($data);
 
         return Redirect::route('cars.index')

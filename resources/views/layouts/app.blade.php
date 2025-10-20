@@ -82,6 +82,17 @@
         </div>
     </nav>
 
+    @if ($message = Session::get('success'))
+        <div class="alert alert-success m-4">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
+    @if ($message = Session::get('error'))
+        <div class="alert alert-danger m-4">
+            <p>{{ $message }}</p>
+        </div>
+    @endif
+
     <main class="py-4">
         @yield('content')
     </main>

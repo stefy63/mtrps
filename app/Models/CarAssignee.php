@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class CarAssignee extends Pivot
 {
 
+    protected $table = 'car_assignees';
     /**
      * The attributes that should be cast.
      *

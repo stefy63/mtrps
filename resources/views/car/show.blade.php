@@ -9,9 +9,10 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="card-header"
+                         style="display: flex; justify-content: space-between; align-items: center;">
                         <div class="float-left">
-                            <span class="card-title">{{ __('Show') }} Car: {{ $car->name }}</span>
+                            <span class="card-title">{{ __('Dati Vettura') }} : {{ $car->carBrand?->name }}</span>
                         </div>
                         <div class="float-right">
                             <a class="btn btn-primary btn-sm" href="{{ route('cars.index') }}"> {{ __('Back') }}</a>
@@ -19,158 +20,221 @@
                     </div>
 
                     <div class="card-body bg-white">
-                        <div class="row">
-                            <div class="col-md-6">
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Tipo Veicolo:</strong>
-                                    {{ $car->carType?->name ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Proprietario:</strong>
-                                    {{ $car->carOwner?->name ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Marca:</strong>
-                                    {{ $car->carBrand?->name ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Alimentazione:</strong>
-                                    {{ $car->carPower?->name ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Conto Economico:</strong>
-                                    {{ $car->carProfitAccount?->name ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Nome:</strong>
-                                    {{ $car->name }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Modello:</strong>
-                                    {{ $car->model ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Colore:</strong>
-                                    {{ $car->color ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Codice Modello:</strong>
-                                    {{ $car->cod_model ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Conto Profitto:</strong>
-                                    {{ $car->profit_account ?? 'N/A' }}
-                                </div>
+                        <nav>
+                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                <button class="nav-link active" id="nav-car-tab" data-bs-toggle="tab"
+                                        data-bs-target="#nav-car" type="button" role="tab" aria-controls="nav-car"
+                                        aria-selected="true">Vettura
+                                </button>
+                                <button class="nav-link" id="nav-movement-tab" data-bs-toggle="tab"
+                                        data-bs-target="#nav-movement" type="button" role="tab"
+                                        aria-controls="nav-movement" aria-selected="false">Movimenti
+                                </button>
+                                <button class="nav-link" id="nav-maintenance-tab" data-bs-toggle="tab"
+                                        data-bs-target="#nav-maintenance" type="button" role="tab"
+                                        aria-controls="nav-maintenance" aria-selected="false">Manutenzioni
+                                </button>
                             </div>
-                            
-                            <div class="col-md-6">
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Serbatoio:</strong>
-                                    {{ $car->tank ? $car->tank . ' L' : 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Chilometraggio:</strong>
-                                    {{ $car->km ? number_format($car->km) . ' km' : 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Pneumatici Invernali:</strong>
-                                    <span class="badge badge-{{ $car->winter_wheels ? 'success' : 'secondary' }}">
+                        </nav>
+
+
+                        <div class="tab-content" id="nav-tabContent">
+                            <div class="tab-pane fade show active" id="nav-car" role="tabpanel" aria-labelledby="nav-car-tab">
+                                <div class="row">
+                                    <div class="col-md-6">
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Marca:</strong>
+                                            {{ $car->carBrand?->name ?? 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Tipo Veicolo:</strong>
+                                            {{ $car->carType?->name ?? 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Proprietario:</strong>
+                                            {{ $car->carOwner?->name ?? 'N/A' }}
+                                        </div>
+
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Alimentazione:</strong>
+                                            {{ $car->carPower?->name ?? 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Conto:</strong>
+                                            {{ $car->profit_account ?? 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Tipologia di Mezzo:</strong>
+                                            {{ $car->car_typology ?? 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Colore:</strong>
+                                            {{ $car->color ?? 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Serbatoio:</strong>
+                                            {{ $car->tank ? $car->tank . ' L' : 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Chilometraggio:</strong>
+                                            {{ $car->km ? number_format($car->km) . ' km' : 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Pneumatici Invernali:</strong>
+                                            <span class="badge badge-{{ $car->winter_wheels ? 'success' : 'secondary' }}">
                                         {{ $car->winter_wheels ? 'Sì' : 'No' }}
                                     </span>
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Tipo Pneumatici:</strong>
-                                    {{ $car->wheels_type ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Garanzia:</strong>
-                                    {{ $car->warranty ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Telefono Assistenza:</strong>
-                                    {{ $car->tel_warranty ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Telaio:</strong>
-                                    {{ $car->chassis ?? 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Data Revisione:</strong>
-                                    {{ $car->date_revision ? \Carbon\Carbon::parse($car->date_revision)->format('d/m/Y') : 'N/A' }}
-                                </div>
-                                
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Data Documento:</strong>
-                                    {{ $car->doc ? \Carbon\Carbon::parse($car->doc)->format('d/m/Y') : 'N/A' }}
-                                </div>
-                                
-                                @if($car->createdBy)
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Creato da:</strong>
-                                    {{ $car->createdBy->name }}
-                                </div>
-                                @endif
-                                
-                                @if($car->updatedBy)
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Aggiornato da:</strong>
-                                    {{ $car->updatedBy->name }}
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                        
-                        @if($car->description)
-                        <div class="row mt-3">
-                            <div class="col-md-12">
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Descrizione:</strong>
-                                    <p>{{ $car->description }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                        
-                        @if($car->note)
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Note:</strong>
-                                    <p>{{ $car->note }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-                        
-                        <div class="row mt-3">
-                            <div class="col-md-12">
-                                <div class="form-group mb-2 mb20">
-                                    <small class="text-muted">
-                                        <strong>Creato:</strong> {{ $car->created_at->format('d/m/Y H:i') }} |
-                                        <strong>Aggiornato:</strong> {{ $car->updated_at->format('d/m/Y H:i') }}
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
+                                        </div>
 
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Tipo Pneumatici:</strong>
+                                            {{ $car->wheels_type ?? 'N/A' }}
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Garanzia:</strong>
+                                            {{ $car->warranty ?? 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Telefono Assistenza:</strong>
+                                            {{ $car->tel_warranty ?? 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Telaio:</strong>
+                                            {{ $car->chassis ?? 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Data Revisione:</strong>
+                                            {{ $car->date_revision ? \Carbon\Carbon::parse($car->date_revision)->format('d/m/Y') : 'N/A' }}
+                                        </div>
+
+                                        <div class="form-group mb-2 mb20">
+                                            <strong>Targhe:</strong>
+                                            @foreach($car->carPlates as $c)
+                                                <div class="row ms-3"><u class="col-3">{{ $c->type }}:</u> <strong
+                                                            class="col">{{ $c->name }}</strong></div>
+                                            @endforeach
+                                        </div>
+
+                                        @if($car->assignees)
+                                            <div class="form-group mb-2 mb20">
+                                                <strong>Assegnatario:</strong>
+                                                {{ $car->assignees[0]->office->ente }}
+                                                - {{$car->assignees[0]->office->name}}
+                                            </div>
+                                        @endif
+
+                                        @if($car->carEquipment)
+                                            <div class="form-group mb-2 mb20">
+                                                <strong>Equipaggiamento:</strong>
+                                                @foreach($car->carEquipment as $c)
+                                                    <div class="ms-3 row"><u class="col-3">{{ $c->name }}:</u> <strong
+                                                                class="col">{{ $c->pivot->note }}</strong></div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                                @if($car->description)
+                                    <div class="row mt-3">
+                                        <div class="col-md-12">
+                                            <div class="form-group mb-2 mb20">
+                                                <strong>Descrizione:</strong>
+                                                <p>{{ $car->description }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if($car->note)
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group mb-2 mb20" x-data="{note: '{{str_replace(["\r\n", "\n", "\r"], '<br>', $car->note)}}'}">
+                                                <strong>Note:</strong>
+                                                <p x-html="note"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-2 mb20">
+                                            <small class="text-muted">
+                                                <strong>Creato:</strong> {{ $car->created_at->format('d/m/Y H:i') }} |
+                                                <strong>Aggiornato:</strong> {{ $car->updated_at->format('d/m/Y H:i') }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="nav-movement" role="tabpanel" aria-labelledby="nav-movement-tab">
+                                @if(count($car->movements))
+                                    <table class="table table-hover table-responsive">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Ufficio</th>
+                                            <th scope="col">Dal</th>
+                                            <th scope="col">Al</th>
+                                            <th scope="col">Note</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($car->movements as $m)
+                                            <tr>
+                                                <td class="col-3">{{$m->office->full_name}}</td>
+                                                <td class="col-3">{{date('d/m/Y', strtotime($m->date_from))}}</td>
+                                                <td class="col-3">{{$m->date_to ? date('d/m/Y', strtotime($m->date_to)) : '---'}}</td>
+                                                <td class="col-3">{{$m->note}}</td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                @endif
+                            </div>
+                            <div class="tab-pane fade" id="nav-maintenance" role="tabpanel" aria-labelledby="nav-maintenance-tab">
+                                @if($car->maintenances)
+                                    <table class="table table-hover table-responsive">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Officina</th>
+                                            <th scope="col">Tipo intervento</th>
+                                            <th scope="col">Dal</th>
+                                            <th scope="col">Al</th>
+                                            <th scope="col">Note</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($car->maintenances as $m)
+                                            <tr>
+                                                <td class="col-3">{{$m->maintenanceGarages->name ?? ''}}</td>
+                                                <td class="col-3">{{$m->maintenanceTypes->name ?? ''}}</td>
+                                                <td class="col-3">{{date('d/m/Y', strtotime($m->date_from))}}</td>
+                                                <td class="col-3">{{$m->date_to ? date('d/m/Y', strtotime($m->date_to)) : '---'}}</td>
+                                                <td class="col-3">{{$m->note}}</td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                @endif
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

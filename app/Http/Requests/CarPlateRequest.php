@@ -31,7 +31,7 @@ class CarPlateRequest extends FormRequest
                 'regex:/^[A-Z0-9\s]+$/',
                 Rule::unique('car_plates', 'name')->ignore($this->car_plate?->id)
             ],
-            'type' => 'required|in:POL,CIV,ALTRO',
+            'type' => 'required|in:POLIZIA,CIVILE,ALTRO',
             'date_from' => 'required|date',
             'date_to' => 'nullable|date|after_or_equal:date_from',
             'note' => 'nullable|string'
