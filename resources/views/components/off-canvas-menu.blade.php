@@ -33,18 +33,18 @@
                     <x-menu-link :href="route('car-powers.index')" :active="request()->routeIs('dashboard')">
                         {{ __('Alimentazioni') }}
                     </x-menu-link>
-                    <x-menu-link :href="route('car-assignees.index')" :active="request()->routeIs('dashboard')">
-                        {{ __('Uffici') }}
-                    </x-menu-link>
-                    <x-menu-link :href="route('assignee-offices.index')" :active="request()->routeIs('dashboard')">
-                        {{ __('Sezioni') }}
-                    </x-menu-link>
-                    <x-menu-link :href="route('car-equipments.index')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dotazioni') }}
-                    </x-menu-link>
-                    <x-menu-link :href="route('car-setups.index')" :active="request()->routeIs('dashboard')">
-                        {{ __('Allestimenti') }}
-                    </x-menu-link>
+{{--                    <x-menu-link :href="route('car-assignees.index')" :active="request()->routeIs('dashboard')">--}}
+{{--                        {{ __('Uffici') }}--}}
+{{--                    </x-menu-link>--}}
+{{--                    <x-menu-link :href="route('assignee-offices.index')" :active="request()->routeIs('dashboard')">--}}
+{{--                        {{ __('Sezioni') }}--}}
+{{--                    </x-menu-link>--}}
+{{--                    <x-menu-link :href="route('car-equipments.index')" :active="request()->routeIs('dashboard')">--}}
+{{--                        {{ __('Dotazioni') }}--}}
+{{--                    </x-menu-link>--}}
+{{--                    <x-menu-link :href="route('car-setups.index')" :active="request()->routeIs('dashboard')">--}}
+{{--                        {{ __('Allestimenti') }}--}}
+{{--                    </x-menu-link>--}}
                     <x-menu-link :href="route('movements.index')" :active="request()->routeIs('dashboard')">
                         {{ __('Movimenti') }}
                     </x-menu-link>
@@ -54,15 +54,15 @@
                     <x-menu-link :href="route('maintenances.index')" :active="request()->routeIs('dashboard')">
                         {{ __('Manutenzioni') }}
                     </x-menu-link>
-                    <x-menu-link :href="route('maintenance-garages.index')" :active="request()->routeIs('dashboard')">
-                        {{ __('Officine') }}
-                    </x-menu-link>
-                    <x-menu-link :href="route('maintenance-types.index')" :active="request()->routeIs('dashboard')">
-                        {{ __('Tipi di intervento') }}
-                    </x-menu-link>
-                    <x-menu-link :href="route('cigs.index')" :active="request()->routeIs('dashboard')">
-                        {{ __('CIG') }}
-                    </x-menu-link>
+{{--                    <x-menu-link :href="route('maintenance-garages.index')" :active="request()->routeIs('dashboard')">--}}
+{{--                        {{ __('Officine') }}--}}
+{{--                    </x-menu-link>--}}
+{{--                    <x-menu-link :href="route('maintenance-types.index')" :active="request()->routeIs('dashboard')">--}}
+{{--                        {{ __('Tipi di intervento') }}--}}
+{{--                    </x-menu-link>--}}
+{{--                    <x-menu-link :href="route('cigs.index')" :active="request()->routeIs('dashboard')">--}}
+{{--                        {{ __('CIG') }}--}}
+{{--                    </x-menu-link>--}}
                     <x-menu-link :href="route('imports.index',['type' => 'cars'])" :active="request()->routeIs('imports/cars')">
                         {{ __('Import massivo') }}
                     </x-menu-link>

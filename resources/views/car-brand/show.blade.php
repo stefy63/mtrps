@@ -15,7 +15,7 @@
                             <div class="brand-logo d-flex align-items-center justify-content-center bg-primary text-white rounded-circle me-3" style="width: 50px; height: 50px;">
                                 <i class="fas fa-car fa-lg"></i>
                             </div>
-                            <span class="card-title">{{ __('Show') }} Car Brand: {{ $carBrand->name }}</span>
+                            <span class="card-title">{{ __('Visualizza ') }} marca vettura: {{ $carBrand->name }}</span>
                         </div>
                         <div class="float-right">
                             <a class="btn btn-primary btn-sm" href="{{ route('car-brands.index') }}"> {{ __('Back') }}</a>
@@ -49,34 +49,6 @@
                             </div>
                             
                             <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h6 class="mb-0">Informazioni Sistema</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-group mb-2">
-                                            <strong>ID:</strong>
-                                            <span class="badge badge-secondary">#{{ $carBrand->id }}</span>
-                                        </div>
-                                        
-                                        <div class="form-group mb-2">
-                                            <strong>Creato:</strong>
-                                            <br><small>{{ $carBrand->created_at->format('d/m/Y H:i') }}</small>
-                                        </div>
-                                        
-                                        <div class="form-group mb-2">
-                                            <strong>Aggiornato:</strong>
-                                            <br><small>{{ $carBrand->updated_at->format('d/m/Y H:i') }}</small>
-                                        </div>
-                                        
-                                        <div class="form-group mb-2">
-                                            <strong>Veicoli associati:</strong>
-                                            <span class="badge badge-{{ $carBrand->cars->count() > 0 ? 'success' : 'secondary' }} badge-lg">
-                                                {{ $carBrand->cars->count() ?? 0 }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
                                 
                                 <!-- Statistiche aggiuntive -->
                                 @if($carBrand->cars->count() > 0)
@@ -137,28 +109,26 @@
                                         <thead class="table-light">
                                             <tr>
                                                 <th>Nome</th>
-                                                <th>Modello</th>
                                                 <th>Tipo</th>
                                                 <th>Colore</th>
                                                 <th>Km</th>
-                                                <th>Azioni</th>
+                                                <th class="text-center">Azioni</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach($carBrand->cars->take(10) as $car)
                                             <tr>
-                                                <td><strong>{{ $car->name }}</strong></td>
-                                                <td>{{ $car->model ?? 'N/A' }}</td>
+                                                <td><strong>{{ $car->full_name }}</strong></td>
                                                 <td>
-                                                    @if($car->carType)
-                                                    <span class="badge badge-outline-secondary">{{ $car->carType->name }}</span>
+                                                    @if($car->carType->name)
+                                                    <span class="badge bg-secondary w-75">{{ $car->carType->name }}</span>
                                                     @else
                                                     <span class="text-muted">N/A</span>
                                                     @endif
                                                 </td>
                                                 <td>
                                                     @if($car->color)
-                                                    <span class="badge" style="background-color: {{ strtolower($car->color) }}; color: white;">
+                                                    <span class="badge bg-primary w-75" style="background-color: {{ strtolower($car->color) }}; color: white;">
                                                         {{ $car->color }}
                                                     </span>
                                                     @else
@@ -172,12 +142,12 @@
                                                     <span class="text-muted">N/A</span>
                                                     @endif
                                                 </td>
-                                                <td>
+                                                <td class="text-end">
                                                     <a href="{{ route('cars.show', $car->id) }}" class="btn btn-sm btn-outline-primary">
-                                                        <i class="fa fa-eye"></i>
+                                                        <i class="bi bi-eye"></i>
                                                     </a>
                                                     <a href="{{ route('cars.edit', $car->id) }}" class="btn btn-sm btn-outline-success">
-                                                        <i class="fa fa-edit"></i>
+                                                        <i class="bi bi-pencil"></i>
                                                     </a>
                                                 </td>
                                             </tr>

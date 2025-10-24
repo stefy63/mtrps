@@ -18,6 +18,7 @@ class CarBrandController extends Controller
     public function index(Request $request): View
     {
         $carBrands = CarBrand::paginate();
+        confirmDelete('Cancella Marca Vettura!', "Sei sicuro di voler cancellare questa Marca di Autovettura?");
 
         return view('car-brand.index', compact('carBrands'))
             ->with('i', ($request->input('page', 1) - 1) * $carBrands->perPage());
@@ -29,8 +30,9 @@ class CarBrandController extends Controller
     public function create(): View
     {
         $carBrand = new CarBrand();
+        $button = true;
 
-        return view('car-brand.create', compact('carBrand'));
+        return view('car-brand.create', compact('carBrand', 'button'));
     }
 
     public function getForm(): View
@@ -65,7 +67,10 @@ class CarBrandController extends Controller
      */
     public function show($id): View
     {
-        $carBrand = CarBrand::find($id);
+        $carBrand = CarBrand::with([
+            'cars.carPlates',
+            'cars.carType',
+            ])->find($id);
 
         return view('car-brand.show', compact('carBrand'));
     }
@@ -76,8 +81,9 @@ class CarBrandController extends Controller
     public function edit($id): View
     {
         $carBrand = CarBrand::find($id);
+        $button = true;
 
-        return view('car-brand.edit', compact('carBrand'));
+        return view('car-brand.edit', compact('carBrand', 'button'));
     }
 
     /**

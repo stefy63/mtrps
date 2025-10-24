@@ -29,7 +29,6 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
                                         <th>Marca</th>
                                         <th>Descrizione</th>
                                         <th>Veicoli</th>
@@ -40,26 +39,19 @@
                                 <tbody>
                                     @foreach ($carBrands as $carBrand)
                                         <tr>
-                                            <td>{{ ++$i }}</td>
                                             <td>
                                                 <strong class="text-primary">{{ $carBrand->name }}</strong>
                                             </td>
                                             <td>{{ Str::limit($carBrand->description ?? 'N/A', 60) }}</td>
                                             <td>
-                                                <span class="badge badge-info">
+                                                <span class="badge bg-info w-50">
                                                     {{ $carBrand->cars->count() ?? 0 }}
                                                 </span>
                                             </td>
                                             <td>{{ $carBrand->created_at->format('d/m/Y') }}</td>
 
-                                            <td>
-                                                <form action="{{ route('car-brands.destroy', $carBrand->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('car-brands.show', $carBrand->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('car-brands.edit', $carBrand->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Sei sicuro di voler eliminare questa marca?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
-                                                </form>
+                                            <td class="text-end">
+                                                <x-action-table-button :item="$carBrand" :label="'Marca'"  itemRoute="car-brands" />
                                             </td>
                                         </tr>
                                     @endforeach

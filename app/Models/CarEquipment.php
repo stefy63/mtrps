@@ -58,7 +58,7 @@ class CarEquipment extends Model
      */
     public function car()
     {
-        return $this->belongsTo(\App\Models\Car::class);
+        return $this->belongsTo(Car::class);
     }
 
     /**
@@ -66,9 +66,14 @@ class CarEquipment extends Model
      */
     public function cars()
     {
-        return $this->belongsToMany(\App\Models\Car::class, 'car_equipment', 'equipment_id', 'car_id')
+        return $this->belongsToMany(Car::class, 'car_equipment', 'equipment_id', 'car_id')
             ->withPivot('date_from', 'date_to', 'note')
             ->withTimestamps();
+    }
+
+    public function equipments()
+    {
+        return $this->belongsTo(Equipment::class);
     }
 
 }

@@ -117,7 +117,6 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
                                         <th>Tipo</th>
                                         <th>Equipaggiamento</th>
                                         <th>Veicolo</th>
@@ -132,11 +131,10 @@
                                 <tbody>
                                     @forelse ($carEquipments as $equipment)
                                         <tr>
-                                            <td>{{ ++$i }}</td>
                                             <td>
-                                                <i class="bi {{ $equipment->getCategoryIcon() }}"
+                                                <i class="bi bi-plug"
                                                    data-bs-toggle="tooltip"
-                                                   title="{{ ucfirst($equipment->getCategory()) }}"></i>
+                                                   title="---------"></i>
                                             </td>
                                             <td>
                                                 <strong>{{ $equipment->name }}</strong>

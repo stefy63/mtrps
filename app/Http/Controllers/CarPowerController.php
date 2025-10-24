@@ -17,7 +17,10 @@ class CarPowerController extends Controller
      */
     public function index(Request $request): View
     {
-        $carPowers = CarPower::paginate();
+        $carPowers = CarPower::with([
+            'cars.carPlates'
+        ])->paginate();
+        confirmDelete('Cancella tipo  alimentazio!', "Sei sicuro di voler cancellare questo tipo di alimentazione?");
 
         return view('car-power.index', compact('carPowers'))
             ->with('i', ($request->input('page', 1) - 1) * $carPowers->perPage());
@@ -29,8 +32,9 @@ class CarPowerController extends Controller
     public function create(): View
     {
         $carPower = new CarPower();
+        $button = true;
 
-        return view('car-power.create', compact('carPower'));
+        return view('car-power.create', compact('carPower', 'button'));
     }
 
     public function getForm(): View
@@ -65,7 +69,9 @@ class CarPowerController extends Controller
      */
     public function show($id): View
     {
-        $carPower = CarPower::find($id);
+        $carPower = CarPower::with([
+            'cars.carPlates'
+        ])->find($id);
 
         return view('car-power.show', compact('carPower'));
     }
@@ -76,8 +82,9 @@ class CarPowerController extends Controller
     public function edit($id): View
     {
         $carPower = CarPower::find($id);
+        $button = true;
 
-        return view('car-power.edit', compact('carPower'));
+        return view('car-power.edit', compact('carPower', 'button'));
     }
 
     /**

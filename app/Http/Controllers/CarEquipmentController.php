@@ -22,14 +22,14 @@ class CarEquipmentController extends Controller
     public function index(Request $request): View
     {
         $query = CarEquipment::with([
-            'car',
             'car.carPlates' => function($query) {
                 $query->whereNull('date_to')
                       ->orWhere('date_to', '>=', now())
                       ->orderBy('date_from', 'desc');
             },
             'car.carType',
-            'car.carBrand'
+            'car.carBrand',
+            'equipments'
         ]);
 
         // Filtro per veicolo
@@ -58,7 +58,7 @@ class CarEquipmentController extends Controller
             $query->whereNull('date_to')
                   ->orWhere('date_to', '>=', now());
         }])->orderBy('model')->get();
-
+dd($carEquipments->toArray());
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo equipaggiamento?');
 
         return view('car-equipment.index', compact('carEquipments', 'cars'))
