@@ -33,7 +33,7 @@ class CarPlateController extends Controller
         $carPlate = new CarPlate();
         
         // Recupera i veicoli per la select
-        $cars = Car::with('carBrand', 'carType')->get();
+        $cars = Car::get();
         
         return view('car-plate.create', compact('carPlate', 'cars'));
     }
@@ -69,7 +69,7 @@ class CarPlateController extends Controller
         $carPlate = CarPlate::find($id);
         
         // Recupera i veicoli per la select
-        $cars = Car::with('carBrand', 'carType')->get();
+        $cars = Car::get();
 
         return view('car-plate.edit', compact('carPlate', 'cars'));
     }
@@ -82,7 +82,7 @@ class CarPlateController extends Controller
         $carPlate->update($request->validated());
 
         return Redirect::route('car-plates.index')
-            ->with('success', 'Car Plate updated successfully');
+            ->with('success', 'Targa aggiornata con successo');
     }
 
     /**

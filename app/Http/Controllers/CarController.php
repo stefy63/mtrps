@@ -10,6 +10,7 @@ use App\Models\CarOwner;
 use App\Models\CarPower;
 use App\Models\CarProfitAccount;
 use App\Models\CarType;
+use App\Services\FilterCarService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,20 +25,34 @@ class CarController extends Controller
      */
     public function index(Request $request): View
     {
-        $cars = Car::with([
+        $query = Car::with([
             'carType',
             'carOwner',
             'carBrand',
             'carPower',
             'carProfitAccount',
             'carPlates'
-        ])->paginate();
+        ]);
 
-        $title = 'Cancella Vettura!';
-        $text = "Sei sicuro di voler cancellare questa vettura?";
-        confirmDelete($title, $text);
+        // Filtri
+        if ($search = $request->search) {
+            $query = FilterCarService::getRelationWithFilter($query, $search);
+            $query->orWhereHas('carOffices', function ($q) use ($search) {
+                $q->where('ente', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%");
+            })->orWhereHas('carOwner', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })->orWhereHas('carEquipment', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })->orWhereHas('carPower', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            });
+        }
 
-        return view('car.index', compact('cars'))
+        confirmDelete('Cancella Vettura!', "Sei sicuro di voler cancellare questa vettura?");
+
+        $cars = $query->paginate();
+        return view('car.index', compact('cars', 'search'))
             ->with('i', ($request->input('page', 1) - 1) * $cars->perPage());
     }
 
@@ -52,10 +67,11 @@ class CarController extends Controller
         $carEmployment = CarEmploymentCode::get(['id', 'extended']);
         $button = false;
         return view('car.form',
-            compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment', 'button'));
+            compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment',
+                'button'));
     }
 
-    public function storeForm(CarRequest $request):  JsonResponse
+    public function storeForm(CarRequest $request): JsonResponse
     {
         $carBrand = Car::create($request->validated());
         return $this->sendResponse($carBrand, 'Vettura creata con successo.');
@@ -78,7 +94,8 @@ class CarController extends Controller
         $button = true;
 
         return view('car.create',
-            compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment', 'button'));
+            compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment',
+                'button'));
     }
 
     /**
@@ -106,10 +123,11 @@ class CarController extends Controller
             'carBrand',
             'carPower',
             'carPlates',
-            'assignees' => fn ($q) => $q->with('office')->whereNull('date_to'),
-            'carEquipment' => fn ($q) => $q->wherePivotNull('date_to'),
-            'movements' => fn ($q) => $q->with(['office'])->orderBy('date_to', 'asc')->limit(10),
-            'maintenances' => fn ($q) => $q->with(['maintenanceGarages','maintenanceTypes'])->orderBy('date_to', 'asc')->limit(10),
+            'assignees' => fn($q) => $q->with('office')->whereNull('date_to'),
+            'carEquipment' => fn($q) => $q->wherePivotNull('date_to'),
+            'movements' => fn($q) => $q->with(['office'])->orderBy('date_to', 'asc')->limit(10),
+            'maintenances' => fn($q) => $q->with(['maintenanceGarages', 'maintenanceTypes'])->orderBy('date_to',
+                'asc')->limit(10),
         ])
             ->find($id);
 //dd($car->toArray());
@@ -133,7 +151,8 @@ class CarController extends Controller
         $button = true;
 
         return view('car.edit',
-            compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment', 'button'));
+            compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment',
+                'button'));
     }
 
     /**

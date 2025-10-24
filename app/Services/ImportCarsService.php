@@ -7,6 +7,7 @@ use App\Http\Traits\NewCarPlateTrait;
 use App\Http\Traits\NewCatTrait;
 use App\Models\Equipment;
 use App\Models\Office;
+use PHPUnit\Event\Code\Throwable;
 
 class ImportCarsService
 {
@@ -18,9 +19,10 @@ class ImportCarsService
     {
         $car = $this->newCar($data);
         if (!empty($data['EnteAssegnatario']) && $fieldName = $this->conversion['EnteAssegnatario']) {
-            $section = $this->conversion['Sezione'] ?? '';
+            $section = $this->conversion['Sezione'] ?? null;
             $office = Office::where($fieldName, $data['EnteAssegnatario'])
-                ->where($section, $data['Sezione'])->first();
+                ->when($data['Sezione'], fn ($q) => $q->where($section, $data['Sezione']))
+                ->first();
             $car->carOffices()->attach($office->id, ['date_from' => now()]);
         }
 
@@ -39,7 +41,6 @@ class ImportCarsService
 
         $this->insertPlate($car, $data);
         $this->insertMovement($car, $data);
-
     }
 
 

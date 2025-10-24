@@ -29,97 +29,37 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
-                                        <th>Tipo</th>
-                                        <th>Proprietario</th>
-                                        <th>Descrizione</th>
-                                        <th>Veicoli</th>
-                                        <th>Valore Flotta</th>
-                                        <th>Data Creazione</th>
-                                        <th></th>
+                                        <th class="col-3">Proprietario</th>
+                                        <th class="col-1">Veicoli</th>
+                                        <th class="col-2">Telefono Assistenza</th>
+                                        <th class="col-2">Mail/Pec</th>
+                                        <th class="col-3">Indirizzo</th>
+                                        <th class="col-1"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($carOwners as $carOwner)
                                         <tr>
-                                            <td>{{ ++$i }}</td>
-                                            <td>
-                                                <!-- Icona tipo proprietario -->
-                                                @php
-                                                    $ownerName = strtolower($carOwner->name);
-                                                    if (str_contains($ownerName, 'stato') || str_contains($ownerName, 'ministero') || str_contains($ownerName, 'governo')) {
-                                                        $icon = 'fas fa-landmark text-primary';
-                                                        $bgColor = 'bg-primary';
-                                                        $badge = 'Pubblico';
-                                                        $badgeClass = 'primary';
-                                                    } elseif (str_contains($ownerName, 'comune') || str_contains($ownerName, 'provincia') || str_contains($ownerName, 'regione')) {
-                                                        $icon = 'fas fa-city text-info';
-                                                        $bgColor = 'bg-info';
-                                                        $badge = 'Ente Locale';
-                                                        $badgeClass = 'info';
-                                                    } elseif (str_contains($ownerName, 'polizia') || str_contains($ownerName, 'carabinieri') || str_contains($ownerName, 'guardia')) {
-                                                        $icon = 'fas fa-shield-alt text-danger';
-                                                        $bgColor = 'bg-danger';
-                                                        $badge = 'Forze Ordine';
-                                                        $badgeClass = 'danger';
-                                                    } elseif (str_contains($ownerName, 'azienda') || str_contains($ownerName, 'spa') || str_contains($ownerName, 'srl')) {
-                                                        $icon = 'fas fa-building text-success';
-                                                        $bgColor = 'bg-success';
-                                                        $badge = 'Privato';
-                                                        $badgeClass = 'success';
-                                                    } else {
-                                                        $icon = 'fas fa-user text-secondary';
-                                                        $bgColor = 'bg-secondary';
-                                                        $badge = 'Generico';
-                                                        $badgeClass = 'secondary';
-                                                    }
-                                                @endphp
-                                                
-                                                <div class="d-flex flex-column align-items-center">
-                                                    <div class="owner-icon d-flex align-items-center justify-content-center {{ $bgColor }} bg-opacity-10 rounded-circle mb-1" style="width: 35px; height: 35px;">
-                                                        <i class="{{ $icon }}"></i>
-                                                    </div>
-                                                    <span class="badge badge-{{ $badgeClass }} badge-sm">{{ $badge }}</span>
-                                                </div>
-                                            </td>
                                             <td>
                                                 <strong class="text-primary">{{ $carOwner->name }}</strong>
                                             </td>
-                                            <td>{{ Str::limit($carOwner->description ?? 'N/A', 60) }}</td>
                                             <td class="text-center">
                                                 @if($carOwner->cars_count > 0)
-                                                <span class="badge badge-info badge-lg">
-                                                    <i class="fas fa-car"></i> {{ $carOwner->cars_count }}
+                                                <span class="badge bg-primary w-75 d-flex justify-content-around">
+                                                    <i class="bi bi-car-front"></i> {{ $carOwner->cars_count }}
                                                 </span>
                                                 @else
-                                                <span class="badge badge-secondary">
-                                                    <i class="fas fa-minus"></i> 0
+                                                <span class="badge bg-warning w-75 d-flex justify-content-around">
+                                                    <i class="bi bi-dash-circle-fill text-danger"></i> 0
                                                 </span>
                                                 @endif
                                             </td>
-                                            <td>
-                                                @if($carOwner->cars_count > 0)
-                                                @php
-                                                    // Simulazione valore flotta (in un'app reale avresti i prezzi)
-                                                    $estimatedValue = $carOwner->cars_count * 25000; // €25k medio per veicolo
-                                                @endphp
-                                                <span class="text-success">
-                                                    <i class="fas fa-euro-sign"></i> {{ number_format($estimatedValue, 0, ',', '.') }}
-                                                </span>
-                                                @else
-                                                <span class="text-muted">-</span>
-                                                @endif
-                                            </td>
-                                            <td>{{ $carOwner->created_at->format('d/m/Y') }}</td>
+                                            <td>{{$carOwner->phone_safety}}</td>
+                                            <td>{{$carOwner->mail}}<br>{{$carOwner->pec}}</td>
+                                            <td>{{ $carOwner->address }}</td>
 
-                                            <td>
-                                                <form action="{{ route('car-owners.destroy', $carOwner->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('car-owners.show', $carOwner->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('car-owners.edit', $carOwner->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Sei sicuro di voler eliminare questo proprietario? Questa azione è possibile solo se non ci sono veicoli associati.') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
-                                                </form>
+                                            <td class="text-end">
+                                                <x-action-table-button :item="$carOwner" :label="'Proprietà'"  itemRoute="car-owners" />
                                             </td>
                                         </tr>
                                     @endforeach

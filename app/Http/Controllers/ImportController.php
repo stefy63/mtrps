@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Traits\Utils;
 use App\Services\ImportCarsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 
 class ImportController extends Controller
@@ -37,44 +39,54 @@ class ImportController extends Controller
         Request $request
     )
     {
-        $request->validate([
-            'cars_csv_file' => 'required|extensions:csv',
-        ]);
-        $fullPath = storage_path('app/private/'.$request->file('cars_csv_file')->store('csv_uploads'));
-        $stream = fopen($fullPath, 'r');
-        if (!$stream) {
-            return back()->withErrors(['cars_csv_file' => 'Impossibile aprire il file CSV.']);
-        }
-        $rowNumber = 0;
-        $errors = [];
-        $inserted = 0;
-        $expectedHeaders = [];
-        while (($row = fgetcsv($stream, 0, ';')) !== false) {
-            if ($rowNumber === 0) {
-                $expectedHeaders = array_map(fn($val) => $this->cleanValue($val, true), $row);
-                $rowNumber++;
-                continue;
+        try {
+            $request->validate([
+                'cars_csv_file' => 'required|extensions:csv',
+            ]);
+            $fullPath = storage_path('app/private/'.$request->file('cars_csv_file')->store('csv_uploads'));
+            $stream = fopen($fullPath, 'r');
+            if (!$stream) {
+                return back()->withErrors(['cars_csv_file' => 'Impossibile aprire il file CSV.']);
             }
-            $rowNumber++;
-            $row = array_combine($expectedHeaders, array_map(fn($val) => $this->cleanValue($val), $row));
-            // logica di importazione
-            $importCarsService->insert($row);
-            $inserted++;
-        }
-        fclose($stream);
-        if (file_exists($fullPath)) {
-            unlink($fullPath);
+            $rowNumber = 0;
+            $errors = [];
+            $inserted = 0;
+            $expectedHeaders = [];
+            DB::beginTransaction();
+            while (($row = fgetcsv($stream, 0, ';')) !== false) {
+                if ($rowNumber === 0) {
+                    $expectedHeaders = array_map(fn($val) => $this->cleanValue($val, true), $row);
+                    $rowNumber++;
+                    continue;
+                }
+                $rowNumber++;
+                $row = array_combine($expectedHeaders, array_map(fn($val) => $this->cleanValue($val), $row));
+                // logica di importazione
+                $importCarsService->insert($row);
+                $inserted++;
+            }
+            fclose($stream);
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
+
+            // Preparazione del messaggio di ritorno
+            $msg = "Import completato. Inserite righe: {$inserted}.";
+            if (!empty($errors)) {
+                $msg .= " Ci sono errori in alcune righe.";
+            }
+            DB::commit();
+            return redirect('cars')
+                ->with('success', $msg)
+                ->with('csv_errors', $errors);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return Redirect::back()
+                ->withInput()
+                ->with('toast_error', 'Errore nell\'importazione del file: ' . $e->getMessage());
+
         }
 
-        // Preparazione del messaggio di ritorno
-        $msg = "Import completato. Inserite righe: {$inserted}.";
-        if (!empty($errors)) {
-            $msg .= " Ci sono errori in alcune righe.";
-        }
-
-        return redirect('cars')
-            ->with('success', $msg)
-            ->with('csv_errors', $errors);
     }
 
 

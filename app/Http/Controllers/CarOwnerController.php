@@ -19,6 +19,7 @@ class CarOwnerController extends Controller
     {
         $carOwners = CarOwner::paginate();
 
+        confirmDelete('Cancella Proprietario!', "Sei sicuro di voler cancellare questo proprietario?");
         return view('car-owner.index', compact('carOwners'))
             ->with('i', ($request->input('page', 1) - 1) * $carOwners->perPage());
     }
@@ -76,8 +77,9 @@ class CarOwnerController extends Controller
     public function edit($id): View
     {
         $carOwner = CarOwner::find($id);
+        $button = true;
 
-        return view('car-owner.edit', compact('carOwner'));
+        return view('car-owner.edit', compact('carOwner', 'button'));
     }
 
     /**

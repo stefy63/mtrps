@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class CarOwner
@@ -30,13 +32,22 @@ class CarOwner extends Model
      */
     protected $fillable = ['name', 'description', 'note'];
 
+    protected $appends = ['cars_count'];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function cars()
     {
-        return $this->hasMany(\App\Models\Car::class, 'id', 'car_owner_id');
+        return $this->hasMany(Car::class, 'car_owner_id', 'id');
+    }
+
+
+    protected function CarsCount(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->cars()->count(),
+        );
     }
     
 }

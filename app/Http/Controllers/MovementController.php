@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Movement;
+use App\Http\Requests\MovementRequest;
 use App\Models\Car;
+use App\Models\Movement;
 use App\Models\Office;
-use App\Models\User;
+use App\Services\FilterCarService;
+use App\Services\FilterOfficeService;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\MovementRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use Carbon\Carbon;
 
 class MovementController extends Controller
 {
@@ -23,7 +24,7 @@ class MovementController extends Controller
     public function index(Request $request): View
     {
         $query = Movement::with([
-            'car.carPlates' => fn ($query) => $query->orderBy('date_from', 'desc'),
+            'car.carPlates' => fn($query) => $query->orderBy('date_from', 'desc'),
             'car.carBrand',
             'office',
         ]);
@@ -31,14 +32,9 @@ class MovementController extends Controller
         // Filtri
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('car', function ($q2) use ($search) {
-                        $q2->where('full_name', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('car.carPlates', function ($q3) use ($search) {
-                        $q3->where('name', 'like', "%{$search}%");
-                    });
-            });
+            $query = FilterCarService::getCarWithFilter($query, $search);
+            $query = FilterOfficeService::getOfficeWithFilter($query, $search)
+                ->orWhere('code', 'like', "%{$search}%");
         }
 
         if ($request->filled('date_from')) {
@@ -49,15 +45,34 @@ class MovementController extends Controller
             $query->where('date_to', '<=', $request->date_to);
         }
 
+        $pending = (clone $query)
+            ->whereNull('date_to')
+            ->whereNull('date_from')
+            ->count();
+        $notPending = (clone $query)
+            ->whereNotNull('date_to')
+            ->whereNotNull('date_from')
+            ->whereMonth('date_to', Carbon::now()->month)
+            ->count();
+        $inProgress = (clone $query)
+            ->whereNotNull('date_from')
+            ->whereNull('date_to')
+            ->count();
+        $inProgressMonth = (clone $query)
+            ->whereNotNull('date_from')
+            ->whereNull('date_to')
+            ->whereMonth('date_to', Carbon::now()->month)
+            ->count();
+
         $movements = $query->paginate();
 
         $cars = Car::with('carPlates')->orderBy('model')->get();
         $stats = [
             'total' => Movement::count(),
-            'pending' => 1,
-            'in_progress' => 2,
-            'completed_month' => 3,
-            'total_km_month' => 4,
+            'pending' => $pending,
+            'in_progress' => $inProgress,
+            'completed_month' => $notPending,
+            'in_progress_month' => $inProgressMonth,
         ];
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo movimento?');
@@ -88,9 +103,11 @@ class MovementController extends Controller
         $movement->departure_datetime = Carbon::now()->addDay()->setTime(8, 0);
         $movement->arrival_datetime = Carbon::now()->addDay()->setTime(18, 0);
 
-        $cars = Car::with(['carBrand', 'carPlates' => function ($query) {
-            $query->orderBy('date_from', 'desc');
-        }])->get();
+        $cars = Car::with([
+            'carBrand', 'carPlates' => function ($query) {
+                $query->orderBy('date_from', 'desc');
+            }
+        ])->get();
         $offices = Office::get();
 
         return view('movement.create', compact(
@@ -109,7 +126,6 @@ class MovementController extends Controller
             DB::beginTransaction();
 
             $data = $request->validated();
-            $data['created_by'] = Auth::id();
 
             Movement::create($data);
 
@@ -121,7 +137,7 @@ class MovementController extends Controller
             DB::rollBack();
             return Redirect::back()
                 ->withInput()
-                ->with('toast_error', 'Errore durante la registrazione del movimento: ' . $e->getMessage());
+                ->with('toast_error', 'Errore durante la registrazione del movimento: '.$e->getMessage());
         }
     }
 
@@ -146,9 +162,11 @@ class MovementController extends Controller
      */
     public function edit(Movement $movement): View
     {
-        $cars = Car::with(['carPlates' => function ($query) {
-            $query->orderBy('date_from', 'desc');
-        }])->get();
+        $cars = Car::with([
+            'carPlates' => function ($query) {
+                $query->orderBy('date_from', 'desc');
+            }
+        ])->get();
         $offices = Office::get();
 
         return view('movement.edit', compact(
@@ -167,7 +185,6 @@ class MovementController extends Controller
             DB::beginTransaction();
 
             $data = $request->validated();
-            $data['updated_by'] = Auth::id();
 
             $movement->update($data);
 
@@ -179,7 +196,7 @@ class MovementController extends Controller
             DB::rollBack();
             return Redirect::back()
                 ->withInput()
-                ->with('toast_error', 'Errore durante l\'aggiornamento del movimento: ' . $e->getMessage());
+                ->with('toast_error', 'Errore durante l\'aggiornamento del movimento: '.$e->getMessage());
         }
     }
 
@@ -206,7 +223,7 @@ class MovementController extends Controller
     public function updateStatus(Request $request, Movement $movement): RedirectResponse
     {
         $request->validate([
-            'status' => ['required', 'in:' . implode(',', array_keys(Movement::getStatuses()))]
+            'status' => ['required', 'in:'.implode(',', array_keys(Movement::getStatuses()))]
         ]);
 
         try {

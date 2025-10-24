@@ -26,13 +26,10 @@ class MovementRequest extends FormRequest
         $rules = [
             'car_id' => [
                 'required',
-                'exists:cars,id',
-                function ($attribute, $value, $fail) {
-                    $this->validateCarAvailability($value, $fail);
-                }
+                'exists:cars,id'
             ],
             'office_id' => 'required|exists:offices,id',
-            'code' => 'required|string|max:100|unique:movements,code',
+            'code' => 'required|string|max:100',
         ];
         $rules['date_from'] = 'required|date';
         $rules['date_to'] = 'nullable|date|after:date_from';
@@ -40,28 +37,6 @@ class MovementRequest extends FormRequest
         return $rules;
     }
 
-    /**
-     * Validate car availability for the period
-     */
-    protected function validateCarAvailability($carId, $fail)
-    {
-        if (!$this->date_from) {
-            return;
-        }
-
-        $car = Car::find($carId);
-        if (!$car) {
-            return;
-        }
-
-        // Controlla sovrapposizioni con altri movimenti
-        $overlappingMovements = Movement::where('car_id', $carId)
-            ->whereNull('date_to');
-
-        if ($overlappingMovements->exists()) {
-            $fail('Il veicolo non è disponibile perchè già impegnato.');
-        }
-    }
 
     /**
      * Get custom validation messages

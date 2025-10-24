@@ -31,8 +31,7 @@
                                 <thead class="thead">
                                 <tr>
                                     <th>Targa</th>
-                                    <th>Tipo</th>
-                                    <th>Marca</th>
+                                    <th>Vettura</th>
                                     <th>Modello</th>
                                     <th>Dal</th>
                                     <th>Al</th>
@@ -83,16 +82,9 @@
                                         </td>
                                         <td>
                                             @if($carPlate->car)
-                                                <strong>{{ $carPlate->car->carBrand?->name ?? 'N/A' }}</strong>
+                                                <strong>{{ $carPlate->car->full_name ?? 'N/A' }}</strong>
                                             @else
                                                 <span class="text-muted">Da assegnare</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($carPlate->car)
-                                                {{ $carPlate->car->carType?->name ?? 'N/A' }}
-                                            @else
-                                                <span class="text-muted">N/A</span>
                                             @endif
                                         </td>
                                         <td>

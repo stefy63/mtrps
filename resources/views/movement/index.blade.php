@@ -96,10 +96,10 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                            KM Totali ({{ now()->format('F') }})
+                                            In Corso ({{ now()->format('F') }})
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            {{ number_format($stats['total_km_month']) }} km
+                                            {{ number_format($stats['in_progress_month']) }} km
                                         </div>
                                     </div>
                                     <div class="col-auto">
@@ -234,9 +234,6 @@
                                         <button type="submit" class="btn btn-primary">
                                             <i class="bi bi-search"></i>
                                         </button>
-                                        {{--                                        <a href="{{ route('movements.index') }}" class="btn btn-secondary">--}}
-                                        {{--                                            <i class="bi bi-x-circle"></i>--}}
-                                        {{--                                        </a>--}}
                                     </div>
                                 </form>
                             </div>
