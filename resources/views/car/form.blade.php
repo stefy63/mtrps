@@ -59,7 +59,50 @@
                 modal-url="{{ route('car-powers.getForm') }}"
                 modal-title="Nuovo tipo di alimentazione"
         />
-
+<div class="input-group justify-content-between">
+    <x-dynamic-select
+            name="car_police_plate_id"
+            modalClass="modal-xl"
+            :required="'false'"
+            :value="old('car_police_plate_id', $car_police_plate_id?->id)"
+            :options="$polPlates"
+            :errors="$errors"
+            endpoint="{{ route('car-plates.storeForm') }}"
+            label="{{ __('Targa Polizia') }}"
+            labelKey="name"
+            idKey="id"
+            modal-url="{{ route('car-plates.getForm') }}"
+            modal-title="Nuova targa"
+    />
+    <x-dynamic-select
+            name="car_civil_plate_id"
+            modalClass="modal-xl"
+            :required="'false'"
+            :value="old('car_civil_plate_id', $car_civil_plate_id?->id)"
+            :options="$civPlates"
+            :errors="$errors"
+            endpoint="{{ route('car-plates.storeForm') }}"
+            label="{{ __('Targa Civile') }}"
+            labelKey="name"
+            idKey="id"
+            modal-url="{{ route('car-plates.getForm') }}"
+            modal-title="Nuova targa"
+    />
+    <x-dynamic-select
+            name="car_origin_plate_id"
+            modalClass="modal-xl"
+            :required="'false'"
+            :value="old('car_origin_plate_id', $car_origin_plate_id?->id)"
+            :options="$origPlates"
+            :errors="$errors"
+            endpoint="{{ route('car-plates.storeForm') }}"
+            label="{{ __('Targa Originale') }}"
+            labelKey="name"
+            idKey="id"
+            modal-url="{{ route('car-plates.getForm') }}"
+            modal-title="Nuova targa"
+    />
+</div>
         <x-dynamic-select
                 name="car_profit_account_id"
                 modalClass="modal-xl"
@@ -89,34 +132,19 @@
                 modal-title="Nuovo codice di impiego"
         />
 
-        {{--        <div class="form-group mb-2 mb20">--}}
-        {{--            <label for="car_profit_account_id" class="form-label">{{ __('Conto Economico') }}</label>--}}
-        {{--            <select name="car_profit_account_id"--}}
-        {{--                    class="form-control @error('car_profit_account_id') is-invalid @enderror"--}}
-        {{--                    id="car_profit_account_id">--}}
-        {{--                <option value="">Seleziona conto economico</option>--}}
-        {{--                @foreach($carProfitAccounts as $id => $name)--}}
-        {{--                    <option value="{{ $id }}" {{ old('car_profit_account_id', $car?->car_profit_account_id) == $id ? 'selected' : '' }}>--}}
-        {{--                        {{ $name }}--}}
-        {{--                    </option>--}}
-        {{--                @endforeach--}}
-        {{--            </select>--}}
-        {{--            {!! $errors->first('car_profit_account_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-        {{--        </div>--}}
-
-        {{--        <div class="form-group mb-2 mb20">--}}
-        {{--            <label for="name" class="form-label">{{ __('Nome') }} <span class="text-danger">*</span></label>--}}
-        {{--            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"--}}
-        {{--                   value="{{ old('name', $car?->name) }}" id="name" placeholder="Nome veicolo">--}}
-        {{--            {!! $errors->first('name', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-        {{--        </div>--}}
-
-        {{--        <div class="form-group mb-2 mb20">--}}
-        {{--            <label for="model" class="form-label">{{ __('Modello') }}</label>--}}
-        {{--            <input type="text" name="model" class="form-control @error('model') is-invalid @enderror"--}}
-        {{--                   value="{{ old('model', $car?->model) }}" id="model" placeholder="Modello">--}}
-        {{--            {!! $errors->first('model', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-        {{--        </div>--}}
+        <x-dynamic-select
+                name="assignee_id"
+                :required="'false'"
+                :value="$car->carOffices?->first()->id ?? 0"
+                :options="$offices"
+                :errors="$errors"
+                endpoint="{{ route('home') }}"
+                label="{{ __('Assegnatario') }}"
+                labelKey="full_name"
+                idKey="id"
+                modal-url="{{ route('home') }}"
+                modal-title="Nuovo Assegnatario"
+        />
 
         <div class="form-group mb-2">
             <label for="color" class="form-label">{{ __('Colore') }}</label>
@@ -124,13 +152,6 @@
                    value="{{ old('color', $car?->color) }}" id="color" placeholder="Colore">
             {!! $errors->first('color', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
-
-        {{--        <div class="form-group mb-2 mb20">--}}
-        {{--            <label for="cod_model" class="form-label">{{ __('Codice Modello') }}</label>--}}
-        {{--            <input type="text" name="cod_model" class="form-control @error('cod_model') is-invalid @enderror"--}}
-        {{--                   value="{{ old('cod_model', $car?->cod_model) }}" id="cod_model" placeholder="Codice modello">--}}
-        {{--            {!! $errors->first('cod_model', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-        {{--        </div>--}}
 
         <div class="form-group mb-2 mb20">
             <label for="car_typology" class="form-label">{{ __('Tipologia di Mezzo') }}</label>
@@ -141,10 +162,17 @@
             {!! $errors->first('car_typology', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
 
-
     </div>
 
     <div class="col-md-6">
+
+        <div class="form-group mb-2 mb20">
+            <label for="doc" class="form-label">{{ __('Data Documento') }}</label>
+            <input type="date" name="date_assignee" class="form-control @error('date_assignee') is-invalid @enderror"
+                   value="{{ $car?->carOffices[0]->pivot->date_from ?? date('Y-m-d') }}" id="doc">
+            {!! $errors->first('date_assignee', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+
         <div class="form-group mb-2 mb20">
             <label for="tank" class="form-label">{{ __('Serbatoio (L)') }}</label>
             <input type="number" name="tank" class="form-control @error('tank') is-invalid @enderror"
@@ -215,13 +243,6 @@
     </div>
 
     <div class="col-md-12">
-
-        <div class="form-group mb-2 mb20">
-            <label for="doc" class="form-label">{{ __('Data Documento') }}</label>
-            <input type="date" name="doc" class="form-control @error('doc') is-invalid @enderror"
-                   value="{{ old('doc', $car?->doc) }}" id="doc">
-            {!! $errors->first('doc', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-        </div>
 
         <div class="form-group mb-2 mb20">
             <label for="description" class="form-label">{{ __('Descrizione') }}</label>

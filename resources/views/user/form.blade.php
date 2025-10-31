@@ -10,16 +10,21 @@
             <input type="text" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user?->email) }}" id="email" placeholder="Email">
         </div>
         <div class="form-group mb-2 mb20">
-            <label for="password" class="form-label">{{ __('Email') }}</label>
+            <label for="password" class="form-label">{{ __('Password') }}</label>
             <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" value="{{ old('password', $user?->password) }}" id="password" placeholder="Password">
         </div>
         <div class="form-group mb-2 mb20">
-            <label for="password_confirmation" class="form-label">{{ __('Confirm Email') }}</label>
+            <label for="password_confirmation" class="form-label">{{ __('Confirm password') }}</label>
             <input type="password" name="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" id="password_confirmation" placeholder="Confirm Password">
         </div>
 
     </div>
-    <div class="col-md-12 mt20 mt-2">
-        <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+    <div class="col-md-12 mt-3">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> {{ __('Salva Ufficio') }}
+        </button>
+        <a href="{{ route('users.index') }}" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> {{ __('Annulla') }}
+        </a>
     </div>
 </div>

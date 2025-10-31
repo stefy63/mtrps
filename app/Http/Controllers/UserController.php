@@ -20,9 +20,7 @@ class UserController extends Controller
     {
         $users = User::paginate();
 
-        $title = 'Cancella Utente!';
-        $text = "Sei sicuro di voler cancellare questo utente?";
-        confirmDelete($title, $text);
+        confirmDelete('Cancella Utente!', "Sei sicuro di voler cancellare questo utente?");
 
         return view('user.index', compact('users'))
             ->with('i', ($request->input('page', 1) - 1) * $users->perPage());
@@ -46,7 +44,7 @@ class UserController extends Controller
         User::create($request->validated());
 
         return Redirect::route('users.index')
-            ->with('success', 'User created successfully.');
+            ->with('toast_success', 'User created successfully.');
     }
 
     /**
@@ -77,7 +75,7 @@ class UserController extends Controller
         $user->update($request->validated());
 
         return Redirect::route('users.index')
-            ->with('success', 'User updated successfully');
+            ->with('toast_success', 'User updated successfully');
     }
 
     public function destroy($id): RedirectResponse
@@ -85,6 +83,6 @@ class UserController extends Controller
         User::find($id)->delete();
 
         return Redirect::route('users.index')
-            ->with('success', 'User deleted successfully');
+            ->with('toast_success', 'User deleted successfully');
     }
 }

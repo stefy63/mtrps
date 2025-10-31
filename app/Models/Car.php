@@ -180,7 +180,7 @@ class Car extends Model
      */
     public function carPlates(): HasMany
     {
-        return $this->hasMany(CarPlate::class);
+        return $this->hasMany(CarPlate::class)->whereNull('date_to');
     }
 
     /**

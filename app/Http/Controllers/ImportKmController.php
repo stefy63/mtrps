@@ -4,27 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Http\Traits\Utils;
 use App\Services\ImportCarsService;
+use App\Services\ImportKmService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 
-class ImportController extends Controller
+class ImportKmController extends Controller
 {
     use Utils;
 
-    public function index(Request $request)
+    public function index()
     {
-        switch ($request->type) {
-            case 'cars':
-                return view('import.import-cars');
-            default:
-                return response()->json(['message' => 'Type not found'], 404);
-        }
+        return view('import.import-km')->with('csv_errors', null);
     }
 
-    public function export(string $template)
+
+    public function export()
     {
+        $template = 'km';
         $filePath = "templates/{$template}_template.csv";
         if (!Storage::exists($filePath)) {
             abort(404, 'Template non trovato.');
@@ -34,19 +32,19 @@ class ImportController extends Controller
         return Storage::download($filePath, $fileName, $headers);
     }
 
-    public function importCars(
-        ImportCarsService $importCarsService,
+
+    public function importKm(
+        ImportKmService $importKmService,
         Request $request
-    )
-    {
+    ) {
         try {
             $request->validate([
-                'cars_csv_file' => 'required|extensions:csv',
+                'km_csv_file' => 'required|extensions:csv',
             ]);
-            $fullPath = storage_path('app/private/'.$request->file('cars_csv_file')->store('csv_uploads'));
+            $fullPath = storage_path('app/private/'.$request->file('km_csv_file')->store('csv_uploads'));
             $stream = fopen($fullPath, 'r');
             if (!$stream) {
-                return back()->withErrors(['cars_csv_file' => 'Impossibile aprire il file CSV.']);
+                return back()->withErrors(['km_csv_file' => 'Impossibile aprire il file CSV.']);
             }
             $rowNumber = 0;
             $errors = [];
@@ -62,7 +60,9 @@ class ImportController extends Controller
                 $rowNumber++;
                 $row = array_combine($expectedHeaders, array_map(fn($val) => $this->cleanValue($val), $row));
                 // logica di importazione
-                $importCarsService->insert($row);
+                if (!$importKmService->insert($row)) {
+                    $errors[] = $row;
+                }
                 $inserted++;
             }
             fclose($stream);
@@ -71,19 +71,21 @@ class ImportController extends Controller
             }
 
             // Preparazione del messaggio di ritorno
-            $msg = "Import completato. Inserite righe: {$inserted}.";
+            $msg = "Import completato. Aggiornate {$inserted} vetture.";
+            $redirect = redirect('cars');
             if (!empty($errors)) {
-                $msg .= " Ci sono errori in alcune righe.";
+                $msg .= "Ci sono errori in alcune righe.";
+                $redirect = Redirect::back();
             }
             DB::commit();
-            return redirect('cars')
+            return $redirect
                 ->with('success', $msg)
                 ->with('csv_errors', $errors);
         } catch (\Throwable $e) {
             DB::rollBack();
             return Redirect::back()
                 ->withInput()
-                ->with('toast_error', 'Errore nell\'importazione del file: ' . $e->getMessage());
+                ->with('toast_error', 'Errore nell\'importazione del file: '.$e->getMessage());
 
         }
 

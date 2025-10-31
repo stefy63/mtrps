@@ -7,16 +7,20 @@ use App\Models\Car;
 use App\Models\CarBrand;
 use App\Models\CarEmploymentCode;
 use App\Models\CarOwner;
+use App\Models\CarPlate;
 use App\Models\CarPower;
 use App\Models\CarProfitAccount;
 use App\Models\CarType;
+use App\Models\Office;
 use App\Services\FilterCarService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use function PHPUnit\Framework\throwException;
 
 class CarController extends Controller
 {
@@ -31,7 +35,9 @@ class CarController extends Controller
             'carBrand',
             'carPower',
             'carProfitAccount',
-            'carPlates'
+            'carPlates',
+            'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
+            'carEquipment' => fn($q) => $q->wherePivotNull('date_to'),
         ]);
 
         // Filtri
@@ -43,10 +49,10 @@ class CarController extends Controller
             })->orWhereHas('carOwner', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
             })->orWhereHas('carEquipment', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
+                $q->where('car_equipment.note', 'like', "%{$search}%");
             })->orWhereHas('carPower', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
-            });
+            })->orWhere('chassis', 'like', "%{$search}%");
         }
 
         confirmDelete('Cancella Vettura!', "Sei sicuro di voler cancellare questa vettura?");
@@ -109,7 +115,7 @@ class CarController extends Controller
         Car::create($data);
 
         return Redirect::route('cars.index')
-            ->with('success', 'Car created successfully.');
+            ->with('toast_success', 'Vettura creata.');
     }
 
     /**
@@ -123,14 +129,15 @@ class CarController extends Controller
             'carBrand',
             'carPower',
             'carPlates',
-            'assignees' => fn($q) => $q->with('office')->whereNull('date_to'),
+            'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
+//            'assignees' => fn($q) => $q->with('office')->whereNull('date_to'),
             'carEquipment' => fn($q) => $q->wherePivotNull('date_to'),
-            'movements' => fn($q) => $q->with(['office'])->orderBy('date_to', 'asc')->limit(10),
+            'movements' => fn($q) => $q->with(['office'])->orderBy('date_to', 'asc')->limit(20),
             'maintenances' => fn($q) => $q->with(['maintenanceGarages', 'maintenanceTypes'])->orderBy('date_to',
                 'asc')->limit(10),
         ])
             ->find($id);
-//dd($car->toArray());
+
         return view('car.show', compact('car'));
     }
 
@@ -139,7 +146,10 @@ class CarController extends Controller
      */
     public function edit($id): View
     {
-        $car = Car::find($id);
+        $car = Car::with([
+            'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
+            'carPlates'
+        ])->find($id);
 
         // Recupera i dati per le select
         $carTypes = CarType::get(['id', 'name']);
@@ -148,11 +158,19 @@ class CarController extends Controller
         $carPowers = CarPower::get(['id', 'name']);
         $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
         $carEmployment = CarEmploymentCode::get(['id', 'extended']);
+        $offices = Office::get();
         $button = true;
+        $polPlates = CarPlate::whereNull('date_to')->whereType('POLIZIA')->get(['id', 'name']);
+        $civPlates = CarPlate::whereNull('date_to')->whereType('CIVILE')->get(['id', 'name']);
+        $origPlates = CarPlate::whereNull('date_to')->whereType('ORIGINALE')->get(['id', 'name']);
+        $car_police_plate_id = $car->carPlates->first(fn($c) => $c->type === 'POLIZIA');
+        $car_civil_plate_id = $car->carPlates->first(fn($c) => $c->type === 'CIVILE');
+        $car_origin_plate_id = $car->carPlates->first(fn($c) => $c->type === 'ORIGINALE');
 
         return view('car.edit',
-            compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment',
-                'button'));
+            compact('car', 'carTypes', 'carProfitAccounts', 'carOwners', 'carBrands', 'carPowers', 'offices',
+                'carEmployment', 'polPlates', 'civPlates', 'origPlates', 'car_police_plate_id', 'car_civil_plate_id',
+                'car_origin_plate_id', 'button'));
     }
 
     /**
@@ -160,13 +178,39 @@ class CarController extends Controller
      */
     public function update(CarRequest $request, Car $car): RedirectResponse
     {
-        $data = $request->validated();
-        $data['updated_by'] = Auth::id();
+        try {
+            DB::beginTransaction();
+            $data = $request->validated();
+            $data['updated_by'] = Auth::id();
+            $car->load(['carOffices', 'carPlates'])->update($data);
+            $oldOffice = $car->carOffices()->wherePivotNull('date_to')->first();
+            if ($data['assignee_id'] && (int) $data['assignee_id'] !== $oldOffice->id) {
+                $car->carOffices()->wherePivotNull('date_to')->updateExistingPivot($oldOffice->id, [
+                    'date_to' => $data['date_assignee']
+                ]);
+                $car->carOffices()->attach([$data['assignee_id']], [
+                    'date_from' => $data['date_assignee']
+                ]);
+            }
+            $polPlate = CarPlate::find($data['car_police_plate_id']);
+            $polPlate->date_to = now();
+            $polPlate->save();
+            $car->carPlates()->detach($polPlate);
+            $polPlate->id = null;
+            $polPlate->date_to = null;
+            $polPlate->date_from = now();
+            dd($polPlate->toArray());
+            $car->carPlates()->create($polPlate->toArray());
 
-        $car->update($data);
 
-        return Redirect::route('cars.index')
-            ->with('success', 'Car updated successfully');
+            DB::commit();
+            return Redirect::route('cars.index')
+                ->with('toast_success', 'Vettura aggiornata');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return Redirect::back()->withErrors('Errore: ' . $e->getMessage());
+        }
+
     }
 
     /**
@@ -177,6 +221,6 @@ class CarController extends Controller
         Car::find($id)->delete();
 
         return Redirect::route('cars.index')
-            ->with('success', 'Car deleted successfully');
+            ->with('toast_success', 'Vettura cancellata');
     }
 }

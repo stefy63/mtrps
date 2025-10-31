@@ -39,7 +39,8 @@
 
 
                         <div class="tab-content" id="nav-tabContent">
-                            <div class="tab-pane fade show active" id="nav-car" role="tabpanel" aria-labelledby="nav-car-tab">
+                            <div class="tab-pane fade show active" id="nav-car" role="tabpanel"
+                                 aria-labelledby="nav-car-tab">
                                 <div class="row">
                                     <div class="col-md-6">
 
@@ -134,11 +135,10 @@
                                             @endforeach
                                         </div>
 
-                                        @if($car->assignees)
+                                        @if($car->carOffices->count() > 0)
                                             <div class="form-group mb-2 mb20">
                                                 <strong>Assegnatario:</strong>
-                                                {{ $car->assignees[0]->office->ente }}
-                                                - {{$car->assignees[0]->office->name}}
+                                                {{ $car->carOffices[0]->full_name }}
                                             </div>
                                         @endif
 
@@ -166,7 +166,8 @@
                                 @if($car->note)
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <div class="form-group mb-2 mb20" x-data="{note: '{{str_replace(["\r\n", "\n", "\r"], '<br>', $car->note)}}'}">
+                                            <div class="form-group mb-2 mb20"
+                                                 x-data="{note: '{{str_replace(["\r\n", "\n", "\r"], '<br>', $car->note)}}'}">
                                                 <strong>Note:</strong>
                                                 <p x-html="note"></p>
                                             </div>
@@ -184,18 +185,19 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="nav-movement" role="tabpanel" aria-labelledby="nav-movement-tab">
-                                @if(count($car->movements))
-                                    <table class="table table-hover table-responsive">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Ufficio</th>
-                                            <th scope="col">Dal</th>
-                                            <th scope="col">Al</th>
-                                            <th scope="col">Note</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
+                            <div class="tab-pane fade" id="nav-movement" role="tabpanel"
+                                 aria-labelledby="nav-movement-tab">
+                                <table class="table table-hover table-responsive">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Ufficio</th>
+                                        <th scope="col">Dal</th>
+                                        <th scope="col">Al</th>
+                                        <th scope="col">Note</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @if(count($car->movements))
                                         @foreach($car->movements as $m)
                                             <tr>
                                                 <td class="col-3">{{$m->office->full_name}}</td>
@@ -204,23 +206,25 @@
                                                 <td class="col-3">{{$m->note}}</td>
                                             </tr>
                                         @endforeach
-                                        </tbody>
-                                    </table>
-                                @endif
+                                    @endif
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="tab-pane fade" id="nav-maintenance" role="tabpanel" aria-labelledby="nav-maintenance-tab">
-                                @if($car->maintenances)
-                                    <table class="table table-hover table-responsive">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Officina</th>
-                                            <th scope="col">Tipo intervento</th>
-                                            <th scope="col">Dal</th>
-                                            <th scope="col">Al</th>
-                                            <th scope="col">Note</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
+                            <div class="tab-pane fade" id="nav-maintenance" role="tabpanel"
+                                 aria-labelledby="nav-maintenance-tab">
+
+                                <table class="table table-hover table-responsive">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Officina</th>
+                                        <th scope="col">Tipo intervento</th>
+                                        <th scope="col">Dal</th>
+                                        <th scope="col">Al</th>
+                                        <th scope="col">Note</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @if($car->maintenances->count())
                                         @foreach($car->maintenances as $m)
                                             <tr>
                                                 <td class="col-3">{{$m->maintenanceGarages->name ?? ''}}</td>
@@ -230,9 +234,9 @@
                                                 <td class="col-3">{{$m->note}}</td>
                                             </tr>
                                         @endforeach
-                                        </tbody>
-                                    </table>
-                                @endif
+                                    @endif
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

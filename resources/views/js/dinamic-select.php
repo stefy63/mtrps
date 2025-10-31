@@ -55,7 +55,6 @@
                         },
                         body: JSON.stringify(formData)
                     }).then(response => {
-                        debugger
                         if (!response.ok) {
                             console.log(response);
                             return false;
@@ -92,10 +91,14 @@
         });
 
         Alpine.data('dynamicSelect', (config) => {
+            let oldSearch;
+            let oldId;
+            let originId;
             if (config.value) {
                 const old = config.options.find(o => o[config.idKey] === +config.value);
-                config.option_id = old[config.idKey] || '';
-                config.search = old[config.labelKey] || '';
+                oldId = config.option_id = old[config.idKey] || '';
+                oldSearch = config.search = old[config.labelKey] || '';
+
             }
             return {
                 required: config.required || false,
@@ -115,6 +118,23 @@
                 modalClass: config.modalClass || '',
                 class: config.class || '',
 
+                getClass() {
+                    return "form-group mb-2 " + this.class
+                },
+
+                oldSearch() {
+                    if (!this.search && !this.option_id) {
+                        this.search = oldSearch || ''
+                        this.option_id = oldId || null
+                        this.open = false
+                    } else {
+                        oldSearch = this.search
+                        oldId = this.option_id
+                    }
+                    if (this.option_id === originId) {
+
+                    }
+                },
 
                 get filteredOptions() {
                     if (this.search === '') return this.options;

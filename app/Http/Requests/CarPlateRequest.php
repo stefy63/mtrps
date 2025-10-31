@@ -23,7 +23,7 @@ class CarPlateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'car_id' => 'required|exists:cars,id',
+            'car_id' => 'nullable|exists:cars,id',
             'name' => [
                 'required', 
                 'string', 

@@ -17,7 +17,7 @@
 
 
     <!-- Campo di selezione dinamica con ricerca -->
-    <div class="form-group mb-2" :class="class ? class : ''" >
+    <div :class="getClass()">
         <label class="form-label @error($name) is-invalid @enderror" for="select_id" x-text="label"></label>
         <div class="position-relative">
             <div class="input-group">
@@ -31,7 +31,7 @@
                        placeholder="Seleziona..."
                        x-model="search"
                        @focus="open = true, search = '', option_id = null"
-                       @click.away="open = false">
+                       @click.away="oldSearch">
                 <button class="btn btn-outline-secondary"
                         @click="openParentModal"
                         type="button"

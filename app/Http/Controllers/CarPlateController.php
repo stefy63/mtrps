@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CarPlate;
 use App\Models\Car;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\CarPlateRequest;
@@ -25,6 +26,21 @@ class CarPlateController extends Controller
             ->with('i', ($request->input('page', 1) - 1) * $carPlates->perPage());
     }
 
+    public function getForm(): View
+    {
+        $carPlate = new CarPlate();
+        // Recupera i veicoli per la select
+        $cars = Car::get();
+        $button = false;
+        return view('car-plate.form',
+            compact('carPlate', 'cars', 'button'));
+    }
+
+    public function storeForm(CarPlateRequest $request): JsonResponse
+    {
+        $carBrand = CarPlate::create($request->validated());
+        return $this->sendResponse($carBrand, 'Targa creata con successo.');
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -46,7 +62,7 @@ class CarPlateController extends Controller
         CarPlate::create($request->validated());
 
         return Redirect::route('car-plates.index')
-            ->with('success', 'Car Plate created successfully.');
+            ->with('toast_success', 'Targa creata.');
     }
 
     /**
@@ -54,7 +70,12 @@ class CarPlateController extends Controller
      */
     public function show($id): View
     {
-        $carPlate = CarPlate::with('car', 'car.carBrand', 'car.carType', 'car.carOwner')->find($id);
+        $carPlate = CarPlate::with(
+            'car',
+            'car.carBrand',
+            'car.carType',
+            'car.carOwner',
+        )->find($id);
 
         confirmDelete('Cancella Targa!', 'Sei sicuro di voler cancellare questa Targa?');
 
@@ -82,7 +103,7 @@ class CarPlateController extends Controller
         $carPlate->update($request->validated());
 
         return Redirect::route('car-plates.index')
-            ->with('success', 'Targa aggiornata con successo');
+            ->with('toast_success', 'Targa aggiornata con successo');
     }
 
     /**
@@ -93,7 +114,7 @@ class CarPlateController extends Controller
         CarPlate::find($id)->delete();
 
         return Redirect::route('car-plates.index')
-            ->with('success', 'Car Plate deleted successfully');
+            ->with('toast_success', 'Car Plate deleted successfully');
     }
 
     /**
@@ -102,6 +123,15 @@ class CarPlateController extends Controller
     public function getByVehicle($carId)
     {
         $plates = CarPlate::where('car_id', $carId)->get();
+        return response()->json($plates);
+    }
+
+    /**
+     * Get plates by car for AJAX requests
+     */
+    public function getPlateFree($plateId)
+    {
+        $plates = CarPlate::whereId($plateId)->get();
         return response()->json($plates);
     }
 }

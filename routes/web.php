@@ -12,11 +12,8 @@ use App\Http\Controllers\CarPowerController;
 use App\Http\Controllers\CarProfitAccountController;
 use App\Http\Controllers\CarSetupController;
 use App\Http\Controllers\CarTypeController;
-use App\Http\Controllers\CigController;
-use App\Http\Controllers\MaintenanceController;
-use App\Http\Controllers\MaintenanceGarageController;
-use App\Http\Controllers\MaintenanceTypeController;
 use App\Http\Controllers\MovementController;
+use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -26,10 +23,6 @@ Route::get('/', function () {
     return redirect()->route('home');
 });
 
-//Route::get('/dashboard', function () {
-//    return view('dashboard');
-//})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -38,7 +31,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 //    Rotte per le modali dinamiche
     Route::get('car/get-form', [CarController::class, 'getForm'])->name('car.getForm');
     Route::post('car/store-form', [CarController::class, 'storeForm'])->name('car.storeForm');
-
     Route::get('car-types/get-form', [CarTypeController::class, 'getForm'])->name('car-types.getForm');
     Route::post('car-types/store-form', [CarTypeController::class, 'storeForm'])->name('car-types.storeForm');
     Route::get('car-owners/get-form', [CarOwnerController::class, 'getForm'])->name('car-owners.getForm');
@@ -49,6 +41,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('car-powers/store-form', [CarPowerController::class, 'storeForm'])->name('car-powers.storeForm');
     Route::get('car-profit-accounts/get-form', [CarProfitAccountController::class, 'getForm'])->name('car-profit-accounts.getForm');
     Route::post('car-profit-accounts/store-form', [CarProfitAccountController::class, 'storeForm'])->name('car-profit-accounts.storeForm');
+    Route::get('car-plates/get-form', [CarPlateController::class, 'getForm'])->name('car-plates.getForm');
+    Route::post('car-plates/store-form', [CarPlateController::class, 'storeForm'])->name('car-plates.storeForm');
+
 
     Route::get('/home', [MovementController::class, 'index'])->name('home');
     Route::resource('users', UserController::class);
@@ -106,9 +101,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('cigs/statistics', [App\Http\Controllers\CigController::class, 'statistics'])->name('cigs.statistics');
     Route::get('cigs/export', [App\Http\Controllers\CigController::class, 'export'])->name('cigs.export');
     Route::resource('cigs', App\Http\Controllers\CigController::class);
+    Route::resource('offices', OfficeController::class);
+
+
 
 //    Rotte di import
-    Route::get('imports/{type}', [App\Http\Controllers\ImportController::class, 'index'])->name('imports.index');
+    Route::get('importsCar', [App\Http\Controllers\ImportCarsController::class, 'index'])->name('car-imports.index');
+    Route::get('export/templateCar', [App\Http\Controllers\ImportCarsController::class, 'export'])->name('export.template-car');
+    Route::post('imports/cars', [App\Http\Controllers\ImportCarsController::class, 'importCars'])->name('imports.cars');
+
+    Route::get('importsKm', [App\Http\Controllers\ImportKmController::class, 'index'])->name('km-imports.index');
+    Route::get('export/templateKm', [App\Http\Controllers\ImportKmController::class, 'export'])->name('export.template-km');
+    Route::post('imports/km', [App\Http\Controllers\ImportKmController::class, 'importKm'])->name('imports.km');
 //    Route::post('imports/owners', [App\Http\Controllers\ImportController::class, 'importOwners'])->name('imports.owners');
 //    Route::post('imports/types', [App\Http\Controllers\ImportController::class, 'importTypes'])->name('imports.types');
 //    Route::post('imports/brands', [App\Http\Controllers\ImportController::class, 'importBrands'])->name('imports.brands');
@@ -118,8 +122,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 //    Route::post('imports/plates', [App\Http\Controllers\ImportController::class, 'importPlates'])->name('imports.plates');
 //    Route::post('imports/offices', [App\Http\Controllers\ImportController::class, 'importOffices'])->name('imports.offices');
 //    Route::post('imports/equipments', [App\Http\Controllers\ImportController::class, 'importEquipments'])->name('imports.equipments');
-    Route::get('export/template/{template}', [App\Http\Controllers\ImportController::class, 'export'])->name('export.template');
-    Route::post('imports/cars', [App\Http\Controllers\ImportController::class, 'importCars'])->name('imports.cars');
 //    Route::post('imports/car-assignees', [App\Http\Controllers\ImportController::class, 'importCarAssignees'])->name('imports.car-assignees');
 //    Route::post('imports/maintenance-garages', [App\Http\Controllers\ImportController::class, 'importMaintenanceGarages'])->name('imports.maintenance-garages');
 //    Route::post('imports/maintenance-types', [App\Http\Controllers\ImportController::class, 'importMaintenanceTypes'])->name('imports.maintenance-types');
