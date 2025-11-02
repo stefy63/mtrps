@@ -1,3 +1,4 @@
+@php($button = $button ?? true)
 <div class="row padding-1 p-1">
     <div class="col-md-12">
 

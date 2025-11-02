@@ -50,7 +50,7 @@ class CarPlateController extends Controller
         
         // Recupera i veicoli per la select
         $cars = Car::get();
-        
+
         return view('car-plate.create', compact('carPlate', 'cars'));
     }
 
@@ -91,6 +91,7 @@ class CarPlateController extends Controller
         
         // Recupera i veicoli per la select
         $cars = Car::get();
+        $button = true;
 
         return view('car-plate.edit', compact('carPlate', 'cars'));
     }

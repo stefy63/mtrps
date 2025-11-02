@@ -27,3 +27,20 @@
         </div>
     </section>
 @endsection
+
+@push('scripts')
+    <script>
+        document.querySelectorAll('.select-check')
+            .forEach((container) => {
+                const select = container.querySelector('input[name$="_plate_id"]');
+                const checkbox = container.querySelector('input[type="checkbox"]')
+                // checkbox.disabled = true;
+                select.addEventListener('change', function() {
+                    setTimeout(() => {
+                        checkbox.disabled = !this.value;
+                    });
+                });
+
+            })
+    </script>
+@endpush

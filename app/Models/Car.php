@@ -46,7 +46,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property User $createdBy
  * @property User $updatedBy
  * @property CarAssignee[] $carAssignees
- * @property CarEquipment[] $carEquipments
+ * @property CarEquipment[] $carEquipment
  * @property CarFuel[] $carFuels
  * @property CarPlate[] $carPlates
  * @property CarSetup[] $carSetups

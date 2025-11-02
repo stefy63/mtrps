@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\CarsService;
 use App\Http\Requests\CarRequest;
 use App\Models\Car;
 use App\Models\CarBrand;
 use App\Models\CarEmploymentCode;
+use App\Models\CarEquipment;
 use App\Models\CarOwner;
 use App\Models\CarPlate;
 use App\Models\CarPower;
 use App\Models\CarProfitAccount;
 use App\Models\CarType;
+use App\Models\Equipment;
 use App\Models\Office;
 use App\Services\FilterCarService;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +23,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use function PHPUnit\Framework\throwException;
 
 class CarController extends Controller
 {
@@ -98,10 +100,20 @@ class CarController extends Controller
         $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
         $carEmployment = CarEmploymentCode::get(['id', 'extended']);
         $button = true;
+        $polPlates = CarPlate::whereNull('date_to')->whereType('POLIZIA')->get(['id', 'name']);
+        $civPlates = CarPlate::whereNull('date_to')->whereType('CIVILE')->get(['id', 'name']);
+        $origPlates = CarPlate::whereNull('date_to')->whereType('ORIGINALE')->get(['id', 'name']);
+        $car_police_plate_id = null;
+        $car_civil_plate_id = null;
+        $car_origin_plate_id = null;
+        $assignee_id = 1;
+        $offices = Office::get();
+
 
         return view('car.create',
             compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment',
-                'button'));
+                'button', 'car_police_plate_id', 'car_civil_plate_id', 'car_origin_plate_id', 'polPlates', 'civPlates',
+                'origPlates', 'offices', 'assignee_id'));
     }
 
     /**
@@ -112,7 +124,10 @@ class CarController extends Controller
         $data = $request->validated();
         $data['created_by'] = Auth::id();
 
-        Car::create($data);
+        $car = Car::create($data);
+        $car = CarsService::setAssignee($car, $data['assignee_id']);
+        dd($car);
+        $car->carOffices()->attach($data['assignee_id'], ['date_from' => now()]);
 
         return Redirect::route('cars.index')
             ->with('toast_success', 'Vettura creata.');
@@ -148,9 +163,11 @@ class CarController extends Controller
     {
         $car = Car::with([
             'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
-            'carPlates'
+            'carPlates',
+            'carEquipment'
         ])->find($id);
-
+        $carEquipmentById = $car->carEquipment->keyBy('id');
+//        dd($car->toArray(), $carEquipmentById->toArray());
         // Recupera i dati per le select
         $carTypes = CarType::get(['id', 'name']);
         $carOwners = CarOwner::get(['id', 'name']);
@@ -159,18 +176,18 @@ class CarController extends Controller
         $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
         $carEmployment = CarEmploymentCode::get(['id', 'extended']);
         $offices = Office::get();
-        $button = true;
         $polPlates = CarPlate::whereNull('date_to')->whereType('POLIZIA')->get(['id', 'name']);
         $civPlates = CarPlate::whereNull('date_to')->whereType('CIVILE')->get(['id', 'name']);
         $origPlates = CarPlate::whereNull('date_to')->whereType('ORIGINALE')->get(['id', 'name']);
-        $car_police_plate_id = $car->carPlates->first(fn($c) => $c->type === 'POLIZIA');
-        $car_civil_plate_id = $car->carPlates->first(fn($c) => $c->type === 'CIVILE');
-        $car_origin_plate_id = $car->carPlates->first(fn($c) => $c->type === 'ORIGINALE');
+        $equipments = Equipment::get();
+        $car_police_plate_id = $car->carPlates->whereNull('date_to')->first(fn($c) => $c->type === 'POLIZIA');
+        $car_civil_plate_id = $car->carPlates->whereNull('date_to')->first(fn($c) => $c->type === 'CIVILE');
+        $car_origin_plate_id = $car->carPlates->whereNull('date_to')->first(fn($c) => $c->type === 'ORIGINALE');
 
         return view('car.edit',
             compact('car', 'carTypes', 'carProfitAccounts', 'carOwners', 'carBrands', 'carPowers', 'offices',
                 'carEmployment', 'polPlates', 'civPlates', 'origPlates', 'car_police_plate_id', 'car_civil_plate_id',
-                'car_origin_plate_id', 'button'));
+                'car_origin_plate_id', 'equipments', 'carEquipmentById'));
     }
 
     /**
@@ -183,32 +200,22 @@ class CarController extends Controller
             $data = $request->validated();
             $data['updated_by'] = Auth::id();
             $car->load(['carOffices', 'carPlates'])->update($data);
-            $oldOffice = $car->carOffices()->wherePivotNull('date_to')->first();
-            if ($data['assignee_id'] && (int) $data['assignee_id'] !== $oldOffice->id) {
-                $car->carOffices()->wherePivotNull('date_to')->updateExistingPivot($oldOffice->id, [
-                    'date_to' => $data['date_assignee']
-                ]);
-                $car->carOffices()->attach([$data['assignee_id']], [
-                    'date_from' => $data['date_assignee']
-                ]);
-            }
-            $polPlate = CarPlate::find($data['car_police_plate_id']);
-            $polPlate->date_to = now();
-            $polPlate->save();
-            $car->carPlates()->detach($polPlate);
-            $polPlate->id = null;
-            $polPlate->date_to = null;
-            $polPlate->date_from = now();
-            dd($polPlate->toArray());
-            $car->carPlates()->create($polPlate->toArray());
-
-
+            $car = CarsService::setOfficeAssignee($car, $data['assignee_id'], $data['date_assignee']);
+            $car = CarsService::setCarPLate($car, $data['car_police_plate_id'],
+                isset($data['car_police_plate_force']));
+            $car = CarsService::setCarPLate($car, $data['car_civil_plate_id'],
+                isset($data['car_civil_plate_force']));
+            $car = CarsService::setCarPLate($car, $data['car_origin_plate_id'],
+                isset($data['car_origin_plate_force']));
+            $car = CarsService::setCarEquipments($car, $data['equipments'] ?? []);
             DB::commit();
             return Redirect::route('cars.index')
                 ->with('toast_success', 'Vettura aggiornata');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return Redirect::back()->withErrors('Errore: ' . $e->getMessage());
+            return Redirect::back()
+                ->withInput()
+                ->withErrors('Errore: '.$e->getMessage());
         }
 
     }

@@ -77,7 +77,6 @@ class ImportCarsController extends Controller
         } catch (\Throwable $e) {
             DB::rollBack();
             return Redirect::back()
-                ->withInput()
                 ->with('toast_error', 'Errore nell\'importazione del file: '.$e->getMessage());
 
         }

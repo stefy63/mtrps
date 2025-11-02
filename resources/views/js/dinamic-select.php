@@ -121,6 +121,12 @@
                 getClass() {
                     return "form-group mb-2 " + this.class
                 },
+                clearSearch() {
+                    this.search = null;
+                    this.option_id = null;
+                    oldSearch = null;
+                    oldId = null;
+                },
 
                 oldSearch() {
                     if (!this.search && !this.option_id) {
@@ -131,13 +137,10 @@
                         oldSearch = this.search
                         oldId = this.option_id
                     }
-                    if (this.option_id === originId) {
-
-                    }
                 },
 
                 get filteredOptions() {
-                    if (this.search === '') return this.options;
+                    if (!this.search || this.search === '') return this.options;
                     return this.options.filter(o =>
                         o[this.labelKey].toLowerCase().includes(this.search.toLowerCase())
                     );

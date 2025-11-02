@@ -39,13 +39,9 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                 <tr>
-                                    <th>No</th>
                                     <th>Targa</th>
-                                    <th>Tipo</th>
-                                    <th>Proprietario</th>
-                                    <th>Marca</th>
-                                    <th>Nome</th>
                                     <th>Modello</th>
+                                    <th>Proprietario</th>
                                     <th>Colore</th>
                                     <th>Km</th>
                                     <th>Alimentazione</th>
@@ -55,13 +51,9 @@
                                 <tbody>
                                 @foreach ($cars as $car)
                                     <tr>
-                                        <td>{{ ++$i }}</td>
                                         <td>{{ $car->carPlates->first()?->name ?? 'N/A' }}</td>
-                                        <td>{{ $car->carType?->name ?? 'N/A' }}</td>
+                                        <td>{{ $car->full_name ?? 'N/A' }}</td>
                                         <td>{{ $car->carOwner?->name ?? 'N/A' }}</td>
-                                        <td>{{ $car->carBrand?->name ?? 'N/A' }}</td>
-                                        <td>{{ $car->name }}</td>
-                                        <td>{{ $car->model ?? 'N/A' }}</td>
                                         <td>{{ $car->color ?? 'N/A' }}</td>
                                         <td>{{ number_format($car->km ?? 0) }} km</td>
                                         <td>{{ $car->carPower?->name ?? 'N/A' }}</td>

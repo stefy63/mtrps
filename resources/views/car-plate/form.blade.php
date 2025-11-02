@@ -1,5 +1,5 @@
+@php($button = $button ?? true)
 <div class="row padding-1 p-1">
-
     <!-- Anteprima Targa -->
     <div class="col-md-12 mb-4">
         <div class="card">

@@ -18,12 +18,12 @@
 
     <!-- Campo di selezione dinamica con ricerca -->
     <div :class="getClass()">
-        <label class="form-label @error($name) is-invalid @enderror" for="select_id" x-text="label"></label>
+        <label class="form-label @error($name) is-invalid @enderror" for="{{ $name }}" x-text="label"></label>
         <div class="position-relative">
             <div class="input-group">
                 <!-- Input ricerca -->
                 <input type="text"
-                       id="select_id"
+                       id="{{ $name }}"
                        :required="required"
                        aria-describedby="button-add-type"
                        :class="{'is-invalid': isInvalid}"
@@ -46,15 +46,19 @@
             <ul class="list-group position-absolute w-100 mt-1 z-10"
                 x-show="open"
                 style="max-height: 200px; overflow-y: auto; z-index: 10">
+                <li class="list-group-item list-group-item-action"
+                    @click="clearSearch(); $refs.hidden.dispatchEvent(new Event('change'));">
+                    Nessuna
+                </li>
                 <template x-for="option in filteredOptions" :key="option[idKey]">
                     <li class="list-group-item list-group-item-action"
-                        @click="option_id = option.id; search = option[labelKey]; open = false"
+                        @click="option_id = option.id; search = option[labelKey]; open = false; $refs.hidden.dispatchEvent(new Event('change'));"
                         x-text="option[labelKey]">
                     </li>
                 </template>
             </ul>
         </div>
-        <input type="hidden" name="{{ $name }}" :value="option_id">
+        <input x-ref="hidden" type="hidden" name="{{ $name }}" :value="option_id" >
     </div>
 
 
