@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Office;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use App\Http\Requests\OfficeRequest;
 use App\Http\Requests\StoreOfficeRequest;
 use App\Http\Requests\UpdateOfficeRequest;
+use App\Models\Office;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -16,7 +17,7 @@ class OfficeController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return View
      */
     public function index(Request $request): View
@@ -30,9 +31,31 @@ class OfficeController extends Controller
                 ->orWhere('address', 'LIKE', "%{$search}%");
         })->paginate();
 
-        confirmDelete('Conferma cancellazione','Sei sicuro di voler cancellare?');
+        confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare?');
         return view('office.index', compact('offices', 'search'))
             ->with('i', ($request->input('page', 1) - 1) * $offices->perPage());
+    }
+
+
+    public function getForm(): View
+    {
+        $office = new Office();
+        $button = false;
+        return view('office.form',
+            compact('office', 'button'));
+    }
+
+    public function storeForm(StoreOfficeRequest $request): JsonResponse
+    {
+        try {
+            if ($data = $request->validated()) {
+                $office = Office::create($data);
+            }
+            return $this->sendResponse($office, 'Ufficio creato con successo.');
+        } catch (\Throwable $e) {
+            return $this->sendError($e->getMessage());
+        }
+
     }
 
     /**
@@ -50,29 +73,26 @@ class OfficeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param StoreOfficeRequest $request
+     * @param  StoreOfficeRequest  $request
      * @return RedirectResponse
      */
     public function store(StoreOfficeRequest $request): RedirectResponse
     {
         try {
-            if ($request->validated()) {
-                Office::create($request->validated());
-            } else {
-                Redirect::back()->withErrors();
+            if ($data = $request->validated()) {
+                Office::create($data);
             }
-
             return Redirect::route('offices.index')
                 ->with('toast_success', 'Ufficio creato.');
         } catch (\Throwable $e) {
-            return Redirect::back()->with('toast_error', 'Office Not created');
+            return Redirect::back()->with('toast_error', 'Ufficio non salvato!');
         }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param Office $office
+     * @param  Office  $office
      * @return View
      */
     public function show(Office $office): View
@@ -83,7 +103,7 @@ class OfficeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param Office $office
+     * @param  Office  $office
      * @return View
      */
     public function edit(Office $office): View
@@ -94,8 +114,8 @@ class OfficeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param UpdateOfficeRequest $request
-     * @param Office $office
+     * @param  UpdateOfficeRequest  $request
+     * @param  Office  $office
      * @return RedirectResponse
      */
     public function update(UpdateOfficeRequest $request, Office $office): RedirectResponse
@@ -116,7 +136,7 @@ class OfficeController extends Controller
     /**
      * Delete the specified resource in storage.
      *
-     * @param Office $office
+     * @param  Office  $office
      * @return RedirectResponse
      */
     public function destroy(Office $office): RedirectResponse

@@ -28,7 +28,7 @@ class OfficesService
      * @param  int  $id
      * @return Office|null
      */
-    public function getOfficeById(int $id): Office|null
+    public function getOfficeById(int $id = 0): Office|null
     {
         return Office::with('cars')->whereId($id)->first();
     }

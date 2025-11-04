@@ -16,7 +16,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->text('note')->nullable();
             $table->timestamps();
         });
         $carEquipment = new EquipmentSeeder();

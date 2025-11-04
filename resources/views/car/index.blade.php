@@ -51,7 +51,28 @@
                                 <tbody>
                                 @foreach ($cars as $car)
                                     <tr>
-                                        <td>{{ $car->carPlates->first()?->name ?? 'N/A' }}</td>
+                                        {{--                                        <td>{{ $car->carPlates->first()?->name ?? 'N/A' }}</td>--}}
+                                        <td>
+                                            <ul class="list-unstyled">
+                                                @foreach($car->carPlates as $plate)
+                                                    <li class="
+                                                    @switch($plate->type)
+                                                        @case('POLIZIA')
+                                                            text-primary
+                                                            @break
+                                                        @case('CIVILE')
+                                                            text-info
+                                                            @break
+                                                        @case('ORIGINALE')
+                                                            text-danger
+                                                            @break
+                                                        @default
+                                                            text-muted
+                                                    @endswitch
+                                                    " style="font-size: 10px">{{$plate->name}}</li>
+                                                @endforeach
+                                            </ul>
+                                        </td>
                                         <td>{{ $car->full_name ?? 'N/A' }}</td>
                                         <td>{{ $car->carOwner?->name ?? 'N/A' }}</td>
                                         <td>{{ $car->color ?? 'N/A' }}</td>
@@ -59,7 +80,7 @@
                                         <td>{{ $car->carPower?->name ?? 'N/A' }}</td>
 
                                         <td class="text-end">
-                                            <x-action-table-button :item="$car" :label="'Vettura'" />
+                                            <x-action-table-button :item="$car" :label="'Vettura'"/>
                                         </td>
                                     </tr>
                                 @endforeach

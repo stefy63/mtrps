@@ -99,7 +99,7 @@
                                             In Corso ({{ now()->format('F') }})
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            {{ number_format($stats['in_progress_month']) }} km
+                                            {{ number_format($stats['in_progress_month']) }}
                                         </div>
                                     </div>
                                     <div class="col-auto">
@@ -136,106 +136,116 @@
                         {{-- Filtri --}}
                         <div class="row mb-3">
                             <div class="col-12">
-                                <form method="GET" action="{{ route('movements.index') }}" class="row g-3">
-                                    <div class="col-md-3">
-                                        <div class="form-floating">
-                                            <input type="text"
-                                                   name="search"
-                                                   class="form-control"
-                                                   id="search"
-                                                   placeholder="Cerca..."
-                                                   value="{{ request('search') }}">
-                                            <label for="search">Cerca (codice, targa, destinazione)</label>
-                                        </div>
+
+                                {{-- Filtri --}}
+                                <div class="row mb-3">
+                                    <div class="col-12">
+                                        <x-input-search-button
+                                                action="{{ route('movements.index') }}"
+                                                search="{{old('search', $search)}}"
+                                        />
                                     </div>
+                                </div>
+{{--                                <form method="GET" action="{{ route('movements.index') }}" class="row g-3">--}}
+{{--                                    <div class="col-md-3">--}}
+{{--                                        <div class="form-floating">--}}
+{{--                                            <input type="text"--}}
+{{--                                                   name="search"--}}
+{{--                                                   class="form-control"--}}
+{{--                                                   id="search"--}}
+{{--                                                   placeholder="Cerca..."--}}
+{{--                                                   value="{{ request('search') }}">--}}
+{{--                                            <label for="search">Cerca (codice, targa, destinazione)</label>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
 
-                                    {{--                                    <div class="col-md-2">--}}
-                                    {{--                                        <div class="form-floating">--}}
-                                    {{--                                            <select name="car_id" class="form-select" id="car_id">--}}
-                                    {{--                                                <option value="">Tutti i veicoli</option>--}}
-                                    {{--                                                @foreach($cars as $car)--}}
-                                    {{--                                                    <option value="{{ $car->id }}" {{ request('car_id') == $car->id ? 'selected' : '' }}>--}}
-                                    {{--                                                        {{ $car->name }}--}}
-                                    {{--                                                        @if($car->carPlates->first())--}}
-                                    {{--                                                            ({{ $car->carPlates->first()->name }})--}}
-                                    {{--                                                        @endif--}}
-                                    {{--                                                    </option>--}}
-                                    {{--                                                @endforeach--}}
-                                    {{--                                            </select>--}}
-                                    {{--                                            <label for="car_id">Veicolo</label>--}}
-                                    {{--                                        </div>--}}
-                                    {{--                                    </div>--}}
+{{--                                    --}}{{--                                    <div class="col-md-2">--}}
+{{--                                    --}}{{--                                        <div class="form-floating">--}}
+{{--                                    --}}{{--                                            <select name="car_id" class="form-select" id="car_id">--}}
+{{--                                    --}}{{--                                                <option value="">Tutti i veicoli</option>--}}
+{{--                                    --}}{{--                                                @foreach($cars as $car)--}}
+{{--                                    --}}{{--                                                    <option value="{{ $car->id }}" {{ request('car_id') == $car->id ? 'selected' : '' }}>--}}
+{{--                                    --}}{{--                                                        {{ $car->name }}--}}
+{{--                                    --}}{{--                                                        @if($car->carPlates->first())--}}
+{{--                                    --}}{{--                                                            ({{ $car->carPlates->first()->name }})--}}
+{{--                                    --}}{{--                                                        @endif--}}
+{{--                                    --}}{{--                                                    </option>--}}
+{{--                                    --}}{{--                                                @endforeach--}}
+{{--                                    --}}{{--                                            </select>--}}
+{{--                                    --}}{{--                                            <label for="car_id">Veicolo</label>--}}
+{{--                                    --}}{{--                                        </div>--}}
+{{--                                    --}}{{--                                    </div>--}}
 
-                                    {{--                                    <div class="col-md-2">--}}
-                                    {{--                                        <div class="form-floating">--}}
-                                    {{--                                            <select name="driver_id" class="form-select" id="driver_id">--}}
-                                    {{--                                                <option value="">Tutti i conducenti</option>--}}
-                                    {{--                                                @foreach($drivers as $driver)--}}
-                                    {{--                                                    <option value="{{ $driver->id }}" {{ request('driver_id') == $driver->id ? 'selected' : '' }}>--}}
-                                    {{--                                                        {{ $driver->name }}--}}
-                                    {{--                                                    </option>--}}
-                                    {{--                                                @endforeach--}}
-                                    {{--                                            </select>--}}
-                                    {{--                                            <label for="driver_id">Conducente</label>--}}
-                                    {{--                                        </div>--}}
-                                    {{--                                    </div>--}}
+{{--                                    --}}{{--                                    <div class="col-md-2">--}}
+{{--                                    --}}{{--                                        <div class="form-floating">--}}
+{{--                                    --}}{{--                                            <select name="driver_id" class="form-select" id="driver_id">--}}
+{{--                                    --}}{{--                                                <option value="">Tutti i conducenti</option>--}}
+{{--                                    --}}{{--                                                @foreach($drivers as $driver)--}}
+{{--                                    --}}{{--                                                    <option value="{{ $driver->id }}" {{ request('driver_id') == $driver->id ? 'selected' : '' }}>--}}
+{{--                                    --}}{{--                                                        {{ $driver->name }}--}}
+{{--                                    --}}{{--                                                    </option>--}}
+{{--                                    --}}{{--                                                @endforeach--}}
+{{--                                    --}}{{--                                            </select>--}}
+{{--                                    --}}{{--                                            <label for="driver_id">Conducente</label>--}}
+{{--                                    --}}{{--                                        </div>--}}
+{{--                                    --}}{{--                                    </div>--}}
 
-                                    {{--                                    <div class="col-md-1">--}}
-                                    {{--                                        <div class="form-floating">--}}
-                                    {{--                                            <select name="status" class="form-select" id="status">--}}
-                                    {{--                                                <option value="">Tutti</option>--}}
-                                    {{--                                                @foreach($statuses as $key => $label)--}}
-                                    {{--                                                    <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>--}}
-                                    {{--                                                        {{ $label }}--}}
-                                    {{--                                                    </option>--}}
-                                    {{--                                                @endforeach--}}
-                                    {{--                                            </select>--}}
-                                    {{--                                            <label for="status">Stato</label>--}}
-                                    {{--                                        </div>--}}
-                                    {{--                                    </div>--}}
+{{--                                    --}}{{--                                    <div class="col-md-1">--}}
+{{--                                    --}}{{--                                        <div class="form-floating">--}}
+{{--                                    --}}{{--                                            <select name="status" class="form-select" id="status">--}}
+{{--                                    --}}{{--                                                <option value="">Tutti</option>--}}
+{{--                                    --}}{{--                                                @foreach($statuses as $key => $label)--}}
+{{--                                    --}}{{--                                                    <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>--}}
+{{--                                    --}}{{--                                                        {{ $label }}--}}
+{{--                                    --}}{{--                                                    </option>--}}
+{{--                                    --}}{{--                                                @endforeach--}}
+{{--                                    --}}{{--                                            </select>--}}
+{{--                                    --}}{{--                                            <label for="status">Stato</label>--}}
+{{--                                    --}}{{--                                        </div>--}}
+{{--                                    --}}{{--                                    </div>--}}
 
-                                    {{--                                    <div class="col-md-1">--}}
-                                    {{--                                        <div class="form-floating">--}}
-                                    {{--                                            <select name="type" class="form-select" id="type">--}}
-                                    {{--                                                <option value="">Tutti</option>--}}
-                                    {{--                                                @foreach($types as $key => $label)--}}
-                                    {{--                                                    <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>--}}
-                                    {{--                                                        {{ $label }}--}}
-                                    {{--                                                    </option>--}}
-                                    {{--                                                @endforeach--}}
-                                    {{--                                            </select>--}}
-                                    {{--                                            <label for="type">Tipo</label>--}}
-                                    {{--                                        </div>--}}
-                                    {{--                                    </div>--}}
+{{--                                    --}}{{--                                    <div class="col-md-1">--}}
+{{--                                    --}}{{--                                        <div class="form-floating">--}}
+{{--                                    --}}{{--                                            <select name="type" class="form-select" id="type">--}}
+{{--                                    --}}{{--                                                <option value="">Tutti</option>--}}
+{{--                                    --}}{{--                                                @foreach($types as $key => $label)--}}
+{{--                                    --}}{{--                                                    <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>--}}
+{{--                                    --}}{{--                                                        {{ $label }}--}}
+{{--                                    --}}{{--                                                    </option>--}}
+{{--                                    --}}{{--                                                @endforeach--}}
+{{--                                    --}}{{--                                            </select>--}}
+{{--                                    --}}{{--                                            <label for="type">Tipo</label>--}}
+{{--                                    --}}{{--                                        </div>--}}
+{{--                                    --}}{{--                                    </div>--}}
 
-                                    <div class="col-md-2">
-                                        <div class="form-floating">
-                                            <input type="date"
-                                                   name="date_from"
-                                                   class="form-control"
-                                                   id="date_from"
-                                                   value="{{ request('date_from') }}">
-                                            <label for="date_from">Dal</label>
-                                        </div>
-                                    </div>
+{{--                                    <div class="col-md-2">--}}
+{{--                                        <div class="form-floating">--}}
+{{--                                            <input type="date"--}}
+{{--                                                   name="date_from"--}}
+{{--                                                   class="form-control"--}}
+{{--                                                   id="date_from"--}}
+{{--                                                   value="{{ request('date_from') }}">--}}
+{{--                                            <label for="date_from">Dal</label>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
 
-                                    <div class="col-md-2">
-                                        <div class="form-floating">
-                                            <input type="date"
-                                                   name="date_to"
-                                                   class="form-control"
-                                                   id="date_to"
-                                                   value="{{ request('date_to') }}">
-                                            <label for="date_to">Al</label>
-                                        </div>
-                                    </div>
+{{--                                    <div class="col-md-2">--}}
+{{--                                        <div class="form-floating">--}}
+{{--                                            <input type="date"--}}
+{{--                                                   name="date_to"--}}
+{{--                                                   class="form-control"--}}
+{{--                                                   id="date_to"--}}
+{{--                                                   value="{{ request('date_to') }}">--}}
+{{--                                            <label for="date_to">Al</label>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
 
-                                    <div class="col-md-5 d-flex align-items-center gap-2 justify-content-end">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="bi bi-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
+{{--                                    <div class="col-md-5 d-flex align-items-center gap-2 justify-content-end">--}}
+{{--                                        <button type="submit" class="btn btn-primary">--}}
+{{--                                            <i class="bi bi-search"></i>--}}
+{{--                                        </button>--}}
+{{--                                    </div>--}}
+{{--                                </form>--}}
                             </div>
                         </div>
 

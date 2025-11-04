@@ -4,30 +4,31 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Office extends Model
 {
     protected $fillable = [
-        '*'
+        'ente',
+        'name',
+        'phone',
+        'mail',
+        'address',
+        'description',
+        'note',
     ];
     protected $appends = ['full_name'];
-
-
-    public function assignees()
-    {
-        return $this->hasMany(CarAssignee::class);
-    }
-
     public function movement()
     {
         return $this->hasMany(Movement::class);
     }
 
-    public function cars()
+    public function cars(): BelongsToMany
     {
-        return $this->belongsToMany(Car::class, 'car_assignees')
-            ->withPivot('date_from', 'date_to', 'note')
-            ->withTimestamps();
+            return $this->belongsToMany(Car::class)
+                ->using(CarAssignee::class)
+                ->withPivot('date_from', 'date_to', 'note')
+                ->withTimestamps();
     }
 
     /**

@@ -1,5 +1,33 @@
 <script>
     document.addEventListener('alpine:init', () => {
+
+        Alpine.data('buttonModalHandler', (config) => {
+            return {
+                endpoint: config.endpoint || '',
+                label: config.label || '',
+                url: config.url || '',
+                modalTitle: config.modalTitle || '',
+                modalClass: config.modalClass || '',
+                class: config.class || '',
+                icon: config.icon || '',
+
+                openModal() {
+                    Alpine.store('modal').open({
+                        url: this.url,
+                        title: this.modalTitle,
+                        endpoint: this.endpoint,
+                        modalClass: this.modalClass,
+                        onSelect: (newItem) => {
+                            console.log(newItem)
+                            // this.options.push(newItem);
+                            // this.option_id = newItem[this.idKey];
+                            // this.search = newItem[this.labelKey];
+                        },
+                    });
+                },
+            }
+        });
+
         Alpine.data('modalHandler', () => {
             return {
                 modalTitle: 'Nuovo Inserimento',
@@ -93,12 +121,10 @@
         Alpine.data('dynamicSelect', (config) => {
             let oldSearch;
             let oldId;
-            let originId;
             if (config.value) {
                 const old = config.options.find(o => o[config.idKey] === +config.value);
                 oldId = config.option_id = old[config.idKey] || '';
                 oldSearch = config.search = old[config.labelKey] || '';
-
             }
             return {
                 required: config.required || false,
@@ -140,7 +166,7 @@
                 },
 
                 get filteredOptions() {
-                    if (!this.search || this.search === '') return this.options;
+                    if (this.search === '') return this.options;
                     return this.options.filter(o =>
                         o[this.labelKey].toLowerCase().includes(this.search.toLowerCase())
                     );

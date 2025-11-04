@@ -187,6 +187,18 @@
                             </div>
                             <div class="tab-pane fade" id="nav-movement" role="tabpanel"
                                  aria-labelledby="nav-movement-tab">
+                                <div class="text-end m-2">
+
+                                    <x-button-modal-form
+                                            endpoint="{{ route('movement.storeForm') }}"
+                                            label="{{ __('Movimento') }}"
+                                            url="{{ route('movement.getForm', ['car_id' => $car->id]) }}"
+                                            modalTitle="Nuovo Movimento"
+                                            modalClass="modal-xl"
+                                            class="btn-primary"
+                                            icon="bi-database-fill-add"
+                                    />
+                                </div>
                                 <table class="table table-hover table-responsive">
                                     <thead>
                                     <tr>

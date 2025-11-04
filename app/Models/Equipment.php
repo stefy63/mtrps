@@ -20,9 +20,10 @@ class Equipment extends Model
      */
     public function cars()
     {
-        return $this->belongsToMany(Car::class, 'car_equipment')
-                    ->withPivot('date_from', 'date_to', 'note')
-                    ->withTimestamps();
+        return $this->belongsToMany(Car::class)
+            ->using(CarEquipment::class)
+            ->withPivot('date_from', 'date_to', 'note')
+            ->withTimestamps();
     }
 
 }

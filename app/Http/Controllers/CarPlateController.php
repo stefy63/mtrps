@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CarPlate;
+use App\Facades\PlateService;
+use App\Http\Requests\CarPlateRequest;
 use App\Models\Car;
+use App\Models\Plate;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\CarPlateRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -18,39 +21,62 @@ class CarPlateController extends Controller
      */
     public function index(Request $request): View
     {
-        $carPlates = CarPlate::with('car.carBrand', 'car.carType')->paginate();
+        $query = Plate::with([
+            'cars' => fn($q) => $q->wherePivotNull('date_to')->first(),
+        ]);
+        // Filtri
+        if ($search = $request->search) {
+            $query = $query->where('name', 'LIKE', "%{$search}%")
+                ->orWhere('type', 'LIKE', "%{$search}%")
+                ->orWhereHas('cars', function ($q) use ($search) {
+                    $q->where('chassis', 'like', "%{$search}%")
+                        ->orWhereHas('carType', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('carBrand', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        });
+                });
+        }
 
+        $carPlates = $query->paginate();
         confirmDelete('Cancella Targa!', 'Sei sicuro di voler cancellare questa Targa?');
 
-        return view('car-plate.index', compact('carPlates'))
+        return view('car-plate.index', compact('carPlates', 'search'))
             ->with('i', ($request->input('page', 1) - 1) * $carPlates->perPage());
     }
 
-    public function getForm(): View
+    public function getForm(Request $request): View
     {
-        $carPlate = new CarPlate();
-        // Recupera i veicoli per la select
-        $cars = Car::get();
+        $carPlate = new Plate();
+        $carPlate->type = $request->type;
         $button = false;
+
         return view('car-plate.form',
-            compact('carPlate', 'cars', 'button'));
+            compact('carPlate', 'button'));
     }
 
     public function storeForm(CarPlateRequest $request): JsonResponse
     {
-        $carBrand = CarPlate::create($request->validated());
-        return $this->sendResponse($carBrand, 'Targa creata con successo.');
+        DB::beginTransaction();
+        $plate = Plate::create($request->validated());
+        throw_if(
+            !$car = Car::find($request->car_id),
+            Exception::class,
+            'Vettura non trovata'
+        );
+        PlateService::associateCar($car, $plate);
+        DB::commit();
+        return $this->sendResponse($plate, 'Targa creata con successo.');
     }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create(): View
     {
-        $carPlate = new CarPlate();
-        
-        // Recupera i veicoli per la select
+        $carPlate = new Plate();
         $cars = Car::get();
-
         return view('car-plate.create', compact('carPlate', 'cars'));
     }
 
@@ -59,10 +85,25 @@ class CarPlateController extends Controller
      */
     public function store(CarPlateRequest $request): RedirectResponse
     {
-        CarPlate::create($request->validated());
+        try {
+            DB::beginTransaction();
+            $plate = Plate::create($request->validated());
+            throw_if(
+                !$car = Car::find($request->car_id),
+                Exception::class,
+                'Vettura non trovata'
+            );
+            PlateService::associateCar($car, $plate);
+            DB::commit();
+            return Redirect::route('car-plates.index')
+                ->with('toast_success', 'Targa creata.');
 
-        return Redirect::route('car-plates.index')
-            ->with('toast_success', 'Targa creata.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return Redirect::back()
+                ->withInput()
+                ->withErrors('Errore: '.$e->getMessage());
+        }
     }
 
     /**
@@ -70,15 +111,14 @@ class CarPlateController extends Controller
      */
     public function show($id): View
     {
-        $carPlate = CarPlate::with(
-            'car',
-            'car.carBrand',
-            'car.carType',
-            'car.carOwner',
-        )->find($id);
+        $carPlate = Plate::with([
+            'cars' => fn($q) => $q->wherePivotNull('date_to'),
+            'cars.carOwner',
+            'cars.carOffices',
+            'cars.carPlates' => fn($q) => $q->where('plates.id', '<>', $id)->wherePivotNull('date_to'),
+        ])->find($id);
 
         confirmDelete('Cancella Targa!', 'Sei sicuro di voler cancellare questa Targa?');
-
         return view('car-plate.show', compact('carPlate'));
     }
 
@@ -87,11 +127,10 @@ class CarPlateController extends Controller
      */
     public function edit($id): View
     {
-        $carPlate = CarPlate::find($id);
-        
-        // Recupera i veicoli per la select
+        $carPlate = Plate::with([
+            'cars' => fn($q) => $q->wherePivotNull('date_to'),
+        ])->find($id);
         $cars = Car::get();
-        $button = true;
 
         return view('car-plate.edit', compact('carPlate', 'cars'));
     }
@@ -99,12 +138,32 @@ class CarPlateController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CarPlateRequest $request, CarPlate $carPlate): RedirectResponse
+    public function update(CarPlateRequest $request, Plate $carPlate): RedirectResponse
     {
-        $carPlate->update($request->validated());
+        try {
+            DB::beginTransaction();
+            $carPlate->load(['cars' => fn($q) => $q->wherePivotNull('date_to')->first()]);
+            if ($carPlate->cars()->first()->id !== (int)$request->car_id) {
+                throw_if(
+                    !$car = Car::find($request->car_id),
+                    Exception::class,
+                    'Vettura non trovata'
+                );
+                PlateService::dissociateCar($carPlate->cars()->first(), $carPlate);
+                PlateService::associateCar($car, $carPlate);
+            }
+            $carPlate->update($request->validated());
 
-        return Redirect::route('car-plates.index')
-            ->with('toast_success', 'Targa aggiornata con successo');
+            DB::commit();
+            return Redirect::route('car-plates.index')
+                ->with('toast_success', 'Targa aggiornata con successo.');
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return Redirect::back()
+                ->withInput()
+                ->withErrors('Errore: '.$e->getMessage());
+        }
     }
 
     /**
@@ -112,7 +171,7 @@ class CarPlateController extends Controller
      */
     public function destroy($id): RedirectResponse
     {
-        CarPlate::find($id)->delete();
+        Plate::find($id)->delete();
 
         return Redirect::route('car-plates.index')
             ->with('toast_success', 'Car Plate deleted successfully');
@@ -123,7 +182,7 @@ class CarPlateController extends Controller
      */
     public function getByVehicle($carId)
     {
-        $plates = CarPlate::where('car_id', $carId)->get();
+        $plates = Plate::where('car_id', $carId)->get();
         return response()->json($plates);
     }
 
@@ -132,7 +191,7 @@ class CarPlateController extends Controller
      */
     public function getPlateFree($plateId)
     {
-        $plates = CarPlate::whereId($plateId)->get();
+        $plates = Plate::whereId($plateId)->get();
         return response()->json($plates);
     }
 }

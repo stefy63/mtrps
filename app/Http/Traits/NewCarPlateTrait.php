@@ -3,7 +3,7 @@
 namespace App\Http\Traits;
 
 use App\Models\Car;
-use App\Models\CarPlate;
+use App\Models\Plate;
 
 trait NewCarPlateTrait
 {
@@ -20,11 +20,10 @@ trait NewCarPlateTrait
         foreach( $this->carPlatesField as $k => $plate) {
             if (!empty($data[$k])) {
                 $data[$k] = str_replace('*', ' ', $data[$k]);
-                $tg = $this->firstOrCreate(new CarPlate(), $plate[0], $data[$k], [
-                    'type' => $plate[1],
-                    'date_from' => now()
+                $tg = $this->firstOrCreate(new Plate(), $plate[0], $data[$k], [
+                    'type' => $plate[1]
                 ]);
-                $car->carPlates()->save($tg);
+                $car->carPlates()->attach($tg->id, ['date_from' => now()]);
             }
         }
 

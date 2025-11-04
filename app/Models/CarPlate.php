@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * Class CarPlate
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @package App
  * @mixin Builder
  */
-class CarPlate extends Model
+class CarPlate extends Pivot
 {
 
     protected $perPage = 20;
@@ -33,23 +34,38 @@ class CarPlate extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['car_id', 'name', 'type', 'date_from', 'date_to', 'note'];
-
+    protected $fillable = [
+        'car_id',
+        'plate_id',
+        'date_from',
+        'date_to',
+        'note'
+    ];
     /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        'date_from' => 'datetime:Y-m-d',
+        'date_from' => 'date:Y-m-d',
+        'date_to' => 'date:Y-m-d',
     ];
-
     /**
-     * @return BelongsTo
-     */
-    public function car(): BelongsTo
-    {
-        return $this->belongsTo(Car::class);
-    }
+    //     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    //     */
+//    public function cars()
+//    {
+//        return $this->belongsToMany(Car::class)
+//            ->withPivot('date_from', 'date_to', 'note')
+//            ->withTimestamps();
+//    }
+//
+//    public function equipments()
+//    {
+//        return $this->belongsTo(Equipment::class)
+//            ->withPivot('date_from', 'date_to', 'note')
+//            ->withTimestamps();;
+//    }
+//
 
 }

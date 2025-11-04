@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -94,24 +95,20 @@ class Car extends Model
     ];
     protected $appends = ['full_name'];
 
-    public function assignees()
-    {
-        return $this->hasMany(CarAssignee::class);
-    }
-
     public function carOffices()
     {
-        return $this->belongsToMany(Office::class, 'car_assignees')
-            ->withPivot('date_from', 'date_to', 'note')
-            ->withTimestamps();
+        return $this->belongsToMany(Office::class)
+            ->using(CarAssignee::class)
+            ->withPivot('date_from', 'date_to', 'note');
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function carEquipment()
+    public function carEquipment(): BelongsToMany
     {
-        return $this->belongsToMany(Equipment::class, 'car_equipment')
+        return $this->belongsToMany(Equipment::class)
+            ->using(CarEquipment::class)
             ->withPivot('date_from', 'date_to', 'note')
             ->withTimestamps();
     }
@@ -176,11 +173,14 @@ class Car extends Model
     }
 
     /**
-     * @return HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function carPlates(): HasMany
+    public function carPlates(): BelongsToMany
     {
-        return $this->hasMany(CarPlate::class)->whereNull('date_to');
+        return $this->belongsToMany(Plate::class)
+            ->using(CarPlate::class)
+            ->withPivot('date_from', 'date_to', 'note')
+            ->withTimestamps();
     }
 
     /**

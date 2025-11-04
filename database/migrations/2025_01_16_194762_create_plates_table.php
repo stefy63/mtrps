@@ -1,5 +1,6 @@
 <?php
 
+use App\Enum\PlateTypeEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,16 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('car_plates', function (Blueprint $table) {
+        Schema::create('plates', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('car_id')->nullable();
             $table->string('name');
-            $table->enum('type', ['POLIZIA', 'CIVILE', 'ORIGINALE'])->default('POLIZIA');
-            $table->date('date_from')->useCurrent();
-            $table->date('date_to')->nullable();
+            $table->enum('type', array_map(fn($c) => $c->value ,PlateTypeEnum::cases()))->default('POLIZIA');
             $table->text('note')->nullable();
             $table->timestamps();
-            $table->foreign('car_id')->references('id')->on('cars')->onDelete('set null');
         });
     }
 
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('car_plates');
+        Schema::dropIfExists('plates');
     }
 };

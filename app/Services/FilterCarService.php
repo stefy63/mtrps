@@ -25,15 +25,21 @@ class FilterCarService
 
     public static function getRelationWithFilter(Builder $query, string $search): Builder
     {
-        return $query->orWhereHas('carBrand', function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%");
-        })
-            ->orWhereHas('carType', function ($q) use ($search) {
+        return $query->where('chassis', 'LIKE', "%{$search}%")
+            ->orWhereHas('carBrand', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
-            })
-            ->orWhereHas('carPlates', function ($q) use ($search) {
+            })->orWhereHas('carType', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })->orWhereHas('carPlates', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('type', 'like', "%{$search}%");
+            })->orWhereHas('carOffices', function ($q) use ($search) {
+                $q->where('ente', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%");
+            })->orWhereHas('carOwner', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })->orWhereHas('carEquipment', function ($q) use ($search) {
+                $q->where('car_equipment.note', 'like', "%{$search}%");
             });
     }
 }

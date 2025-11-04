@@ -26,6 +26,15 @@
                     </div>
 
                     <div class="card-body bg-white">
+                        {{-- Filtri --}}
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <x-input-search-button
+                                        action="{{ route('car-plates.index') }}"
+                                        search="{{old('search', $search)}}"
+                                />
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
@@ -81,21 +90,21 @@
                                             @endswitch
                                         </td>
                                         <td>
-                                            @if($carPlate->car)
-                                                <strong>{{ $carPlate->car->full_name ?? 'N/A' }}</strong>
+                                            @if(count($carPlate->cars) > 0)
+                                                <strong>{{ $carPlate->cars[0]?->full_name ?? 'N/A' }}</strong>
                                             @else
                                                 <span class="text-muted">Da assegnare</span>
                                             @endif
                                         </td>
                                         <td>
                                             <small>
-                                                {{ \Carbon\Carbon::parse($carPlate->date_from)->format('d/m/Y') }}
+                                                {{ \Carbon\Carbon::parse($carPlate->cars[0]?->pivot->date_from)->format('d/m/Y') }}
                                             </small>
                                         </td>
                                         <td>
                                             <small>
                                                 @if($carPlate->date_to)
-                                                    {{ \Carbon\Carbon::parse($carPlate->date_to)->format('d/m/Y') }}
+                                                    {{ \Carbon\Carbon::parse($carPlate->cars[0]->pivot->date_to)->format('d/m/Y') }}
                                                 @else
                                                     <em>In corso</em>
                                                 @endif
@@ -133,12 +142,12 @@
 
         .plate-civil {
             background-color: #ffffff;
-            color: #000000;
-            border-color: #000000;
+            color: #198754;
+            border-color: #198754;
         }
 
         .plate-police {
-            background-color: #1e3a8a;
+            background-color: #0d6efd;
             color: #ffffff;
             border-color: #ffffff;
         }

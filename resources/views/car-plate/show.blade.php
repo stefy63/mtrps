@@ -49,7 +49,7 @@
 
                     <div class="card-body bg-white">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
 
                                 <div class="form-group mb-3">
                                     <strong>Numero Targa:</strong>
@@ -83,38 +83,47 @@
                                     @endswitch
                                 </div>
 
-                                @if($carPlate->car)
+                                @if(count($carPlate->cars) > 0)
                                     <div class="form-group mb-3">
                                         <strong>Veicolo Assegnato:</strong>
                                         <div class="card mt-2">
                                             <div class="card-body">
                                                 <h5 class="card-title">
-                                                    <a href="{{ route('cars.show', $carPlate->car->id) }}"
+                                                    <a href="{{ route('cars.show', $carPlate->cars[0]?->id) }}"
                                                        class="text-decoration-none">
-                                                        {{ $carPlate->car?->carBrand?->name }}
-                                                        - {{ $carPlate->car?->carType?->name }}
+                                                        {{ $carPlate->cars[0]?->full_name }}
                                                     </a>
                                                 </h5>
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <p class="card-text">
-                                                            <strong>Marca:</strong> {{ $carPlate->car->carBrand?->name ?? 'N/A' }}
+                                                            <strong>Vettura:</strong> {{ $carPlate->cars[0]?->full_name ?? 'N/A' }}
                                                             <br>
-                                                            <strong>Modello:</strong> {{ $carPlate->car->model ?? 'N/A' }}
-                                                            <br>
-                                                            @if($carPlate->car->carOwner)
-                                                                <strong>Proprietario:</strong> {{ $carPlate->car->carOwner->name }}
+                                                            @if($carPlate->cars[0]->carOwner)
+                                                                <strong>Proprietario:</strong> {{ $carPlate->cars[0]?->carOwner->name }}
+                                                            @endif
+                                                            @if($carPlate->cars[0]?->carOffices)
+                                                                <br>
+                                                                <strong>Assegnato
+                                                                    a:</strong> {{ $carPlate->cars[0]?->carOffices()->first()->full_name }}
                                                             @endif
                                                         </p>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <p class="card-text">
-                                                            <strong>Tipo:</strong> {{ $carPlate->car->carType?->name ?? 'N/A' }}
+                                                            <strong>Alimentazione:</strong> {{ $carPlate->cars[0]?->carPower?->name ?? 'N/A' }}
                                                             <br>
-                                                            <strong>Alimentazione:</strong> {{ $carPlate->car->carPower?->name ?? 'N/A' }}
-                                                            <br>
-                                                            <strong>Colore:</strong> {{ $carPlate->car->color ?? 'N/A' }}
-                                                            <br>
+                                                            <strong>Colore:</strong> {{ $carPlate->cars[0]?->color ?? 'N/A' }}
+                                                            @if(count($carPlate->cars[0]?->carPlates) > 1 )
+                                                                <br>
+                                                                <strong>Altre Targhe:</strong>
+                                                                @foreach($carPlate->cars[0]?->carPlates as $pl)
+                                                                    @if($pl->id !== $carPlate->id)
+                                                                        [{{ $pl->type ?? '' }} -
+                                                                        {{ $pl->name ?? '' }}]
+                                                                    @endif
+                                                                @endforeach
+                                                            @endif
                                                         </p>
                                                     </div>
                                                 </div>
@@ -127,23 +136,22 @@
                                     <strong>Periodo di Validità:</strong>
                                     <div class="row mt-2">
                                         <div class="col-md-6">
-                                            <div class="card">
-                                                <div class="card-body text-center">
+                                            <div class="card" style="height: -webkit-fill-available;">
+                                                <div class="card-body text-center h-100">
                                                     <i class="fas fa-play-circle text-success fa-2x"></i>
                                                     <h6 class="mt-2">Data Inizio</h6>
-                                                    <p class="h5">{{ $carPlate->date_from?->format('d/m/Y') }}</p>
-                                                    <small class="text-muted">{{ \Carbon\Carbon::parse($carPlate->date_from)->diffForHumans() }}</small>
+                                                    <p class="h5">{{ $carPlate->cars[0]?->pivot->date_from?->format('d/m/Y') }}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div class="card">
+                                            <div class="card" style="height: -webkit-fill-available;">
                                                 <div class="card-body text-center">
-                                                    @if($carPlate->date_to)
+                                                    @if($carPlate->cars[0]?->pivot->date_to)
                                                         <i class="fas fa-stop-circle text-danger fa-2x"></i>
                                                         <h6 class="mt-2">Data Fine</h6>
-                                                        <p class="h5">{{ $carPlate->date_to?->format('d/m/Y') }}</p>
-                                                        <small class="text-muted">{{ \Carbon\Carbon::parse($carPlate->date_to)->diffForHumans() }}</small>
+                                                        <p class="h5">{{ $carPlate->cars[0]?->pivot->date_to?->format('d/m/Y') }}</p>
+                                                        <small class="text-muted">{{ \Carbon\Carbon::parse($carPlate->cars[0]?->pivot->date_to)->diffForHumans() }}</small>
                                                     @else
                                                         <i class="fas fa-infinity text-primary fa-2x"></i>
                                                         <h6 class="mt-2">Data Fine</h6>
@@ -164,103 +172,6 @@
                                         </div>
                                     </div>
                                 @endif
-                            </div>
-
-                            <div class="col-md-4">
-                                <!-- Stato targa -->
-                                @php
-                                    $now = now();
-                                    $dateFrom = \Carbon\Carbon::parse($carPlate->date_from);
-                                    $dateTo = $carPlate->date_to ? \Carbon\Carbon::parse($carPlate->date_to) : null;
-                                    
-                                    if ($now < $dateFrom) {
-                                        $status = 'future';
-                                        $statusText = 'Futura';
-                                        $statusClass = 'warning';
-                                        $statusIcon = 'clock';
-                                        $statusDescription = 'La targa entrerà in vigore il ' . $dateFrom->format('d/m/Y');
-                                    } elseif ($dateTo && $now > $dateTo) {
-                                        $status = 'expired';
-                                        $statusText = 'Scaduta';
-                                        $statusClass = 'danger';
-                                        $statusIcon = 'times-circle';
-                                        $statusDescription = 'La targa è scaduta il ' . $dateTo->format('d/m/Y');
-                                    } else {
-                                        $status = 'active';
-                                        $statusText = 'Attiva';
-                                        $statusClass = 'success';
-                                        $statusIcon = 'check-circle';
-                                        $statusDescription = 'La targa è attualmente valida e attiva';
-                                    }
-                                @endphp
-
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h6 class="mb-0">Stato Targa</h6>
-                                    </div>
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-{{ $statusIcon }} text-{{ $statusClass }} fa-3x"></i>
-                                        <h4 class="mt-2 text-{{ $statusClass }}">{{ $statusText }}</h4>
-                                        <p class="text-muted">{{ $statusDescription }}</p>
-                                    </div>
-                                </div>
-
-                                <div class="card mt-3">
-                                    <div class="card-header">
-                                        <h6 class="mb-0">Informazioni Sistema</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-group mb-2">
-                                            <strong>ID:</strong>
-                                            <span class="badge badge-secondary">#{{ $carPlate->id }}</span>
-                                        </div>
-
-                                        <div class="form-group mb-2">
-                                            <strong>Creato:</strong>
-                                            <br><small>{{ $carPlate->created_at->format('d/m/Y H:i') }}</small>
-                                        </div>
-
-                                        <div class="form-group mb-2">
-                                            <strong>Aggiornato:</strong>
-                                            <br><small>{{ $carPlate->updated_at->format('d/m/Y H:i') }}</small>
-                                        </div>
-
-                                        @if($carPlate->date_to)
-                                            @php
-                                                $duration = $dateFrom->diffInDays($dateTo);
-                                            @endphp
-                                            <div class="form-group mb-2">
-                                                <strong>Durata:</strong>
-                                                <br><span class="text-info">{{ $duration }} giorni</span>
-                                            </div>
-                                        @else
-                                            @php
-                                                $activeDays = $dateFrom->diffInDays($now);
-                                            @endphp
-                                            <div class="form-group mb-2">
-                                                <strong>Attiva da:</strong>
-                                                <br><span class="text-info">{{ $activeDays }} giorni</span>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                <div class="mt-3">
-                                    <a href="{{ route('car-plates.edit', $carPlate->id) }}"
-                                       class="btn btn-success btn-sm">
-                                        <i class="fa fa-edit"></i> Modifica
-                                    </a>
-
-                                    @if($carPlate->car)
-                                        <a href="{{ route('cars.show', $carPlate->car->id) }}"
-                                           class="btn btn-info btn-sm">
-                                            <i class="fa fa-car"></i> Vedi Veicolo
-                                        </a>
-                                    @endif
-
-                                    <a class="btn btn-danger btn-sm" data-confirm-delete="true"
-                                       href="{{ route('car-plates.destroy', $carPlate->id) }}">Elimina</a>
-                                </div>
                             </div>
                         </div>
 

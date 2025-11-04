@@ -51,34 +51,10 @@
                                 modal-url="{{ route('car.getForm') }}"
                                 modal-title="Nuova Vettura"
                         />
-{{--                        <div class="form-floating mb-3">--}}
-{{--                            <select name="car_id"--}}
-{{--                                    class="form-select @error('car_id') is-invalid @enderror"--}}
-{{--                                    id="car_id"--}}
-{{--                                    required>--}}
-{{--                                <option value="">Seleziona veicolo...</option>--}}
-{{--                                @foreach($cars as $car)--}}
-{{--                                    <option value="{{ $car->id }}"--}}
-{{--                                            {{ old('car_id', $movement?->car_id) == $car->id ? 'selected' : '' }}--}}
-{{--                                            data-brand="{{ $car->carBrand?->name }}"--}}
-{{--                                            data-type="{{ $car->carType?->name }}"--}}
-{{--                                            data-power="{{ $car->carPower?->name }}">--}}
-{{--                                        {{ $car->name }}--}}
-{{--                                        @if($car->carPlates->first())--}}
-{{--                                            {{ $car->carBrand?->name }} - {{ $car->carPlates->first()->name }}--}}
-{{--                                        @endif--}}
-{{--                                    </option>--}}
-{{--                                @endforeach--}}
-{{--                            </select>--}}
-{{--                            <label for="car_id">{{ __('Veicolo') }} *</label>--}}
-{{--                            {!! $errors->first('car_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-{{--                            <div id="car-info" class="mt-2 text-muted small"></div>--}}
-{{--                        </div>--}}
                     </div>
 
 
-
-                    <div class="col-md-5">
+                    <div class="col-md-6">
 
                         <x-dynamic-select
                                 name="office_id"
@@ -86,38 +62,13 @@
                                 :value="old('office_id', $movement?->office_id)"
                                 :options="$offices"
                                 :errors="$errors"
-                                endpoint="{{ route('car.storeForm') }}"
+                                endpoint="{{ route('offices.storeForm') }}"
                                 label="{{ __('Ufficio Destinatario') }}"
                                 labelKey="full_name"
                                 idKey="id"
-                                modal-url="{{ route('car.getForm') }}"
-                                modal-title="Nuova Vettura"
+                                modal-url="{{ route('offices.getForm') }}"
+                                modal-title="Nuovo Ufficio"
                         />
-
-
-{{--                        <div class="form-floating mb-3">--}}
-{{--                            <select name="car_id"--}}
-{{--                                    class="form-select @error('car_id') is-invalid @enderror"--}}
-{{--                                    id="car_id"--}}
-{{--                                    required>--}}
-{{--                                <option value="">Seleziona veicolo...</option>--}}
-{{--                                @foreach($cars as $car)--}}
-{{--                                    <option value="{{ $car->id }}"--}}
-{{--                                            {{ old('car_id', $movement?->car_id) == $car->id ? 'selected' : '' }}--}}
-{{--                                            data-brand="{{ $car->carBrand?->name }}"--}}
-{{--                                            data-type="{{ $car->carType?->name }}"--}}
-{{--                                            data-power="{{ $car->carPower?->name }}">--}}
-{{--                                        {{ $car->name }}--}}
-{{--                                        @if($car->carPlates->first())--}}
-{{--                                            {{ $car->carBrand?->name }} - {{ $car->carPlates->first()->name }}--}}
-{{--                                        @endif--}}
-{{--                                    </option>--}}
-{{--                                @endforeach--}}
-{{--                            </select>--}}
-{{--                            <label for="car_id">{{ __('Veicolo') }} *</label>--}}
-{{--                            {!! $errors->first('car_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}--}}
-{{--                            <div id="car-info" class="mt-2 text-muted small"></div>--}}
-{{--                        </div>--}}
                     </div>
 
                 </div>
@@ -170,12 +121,14 @@
         </div>
 
     </div>
-    <div class="col-md-12 mt-3">
-        <button type="submit" class="btn btn-primary">
-            <i class="bi bi-save"></i> {{ __('Salva Movimento') }}
-        </button>
-        <a href="{{ route('movements.index') }}" class="btn btn-secondary">
-            <i class="bi bi-x-circle"></i> {{ __('Annulla') }}
-        </a>
-    </div>
+    @if($button)
+        <div class="col-md-12 mt-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> {{ __('Salva Movimento') }}
+            </button>
+            <a href="{{ route('movements.index') }}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> {{ __('Annulla') }}
+            </a>
+        </div>
+    @endif
 </div>

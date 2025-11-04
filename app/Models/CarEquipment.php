@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * Class CarEquipment
@@ -23,11 +24,9 @@ use Carbon\Carbon;
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class CarEquipment extends Model
+class CarEquipment extends Pivot
 {
     protected $table = 'car_equipment';
-
-    protected $perPage = 20;
 
     /**
      * The attributes that are mass assignable.
@@ -47,33 +46,24 @@ class CarEquipment extends Model
 
     protected $fillable = [
         'car_id',
-        'name',
-        'description',
+        'equipment_id',
         'date_from',
         'date_to',
         'note'
     ];
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function car()
-    {
-        return $this->belongsTo(Car::class);
-    }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function cars()
-    {
-        return $this->belongsToMany(Car::class, 'car_equipment', 'equipment_id', 'car_id')
-            ->withPivot('date_from', 'date_to', 'note')
-            ->withTimestamps();
-    }
-
-    public function equipments()
-    {
-        return $this->belongsTo(Equipment::class);
-    }
+//
+//    /**
+//     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+//     */
+//    public function cars(): Bel
+//    {
+//        return $this->belongsToMany(Car::class);
+//    }
+//
+//    public function equipments()
+//    {
+//        return $this->belongsTo(Equipment::class);;
+//    }
 
 }

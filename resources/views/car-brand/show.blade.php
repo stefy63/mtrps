@@ -24,7 +24,7 @@
 
                     <div class="card-body bg-white">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 
                                 <div class="form-group mb-3">
                                     <strong>Nome Marca:</strong>
@@ -46,54 +46,6 @@
                                     </div>
                                 </div>
                                 @endif
-                            </div>
-                            
-                            <div class="col-md-4">
-                                
-                                <!-- Statistiche aggiuntive -->
-                                @if($carBrand->cars->count() > 0)
-                                <div class="card mt-3">
-                                    <div class="card-header">
-                                        <h6 class="mb-0">Statistiche Flotta</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        @php
-                                            $totalKm = $carBrand->cars->sum('km');
-                                            $avgKm = $carBrand->cars->avg('km');
-                                            $typesCount = $carBrand->cars->groupBy('car_type_id')->count();
-                                        @endphp
-                                        
-                                        <div class="form-group mb-2">
-                                            <strong>Km totali:</strong>
-                                            <br><span class="text-info">{{ number_format($totalKm) }} km</span>
-                                        </div>
-                                        
-                                        <div class="form-group mb-2">
-                                            <strong>Km medi:</strong>
-                                            <br><span class="text-info">{{ number_format($avgKm) }} km</span>
-                                        </div>
-                                        
-                                        <div class="form-group mb-2">
-                                            <strong>Tipologie diverse:</strong>
-                                            <br><span class="text-info">{{ $typesCount }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endif
-                                
-                                <div class="mt-3">
-                                    <a href="{{ route('car-brands.edit', $carBrand->id) }}" class="btn btn-success btn-sm">
-                                        <i class="fa fa-edit"></i> Modifica
-                                    </a>
-                                    
-                                    <form action="{{ route('car-brands.destroy', $carBrand->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Sei sicuro di voler eliminare questa marca? Tutti i veicoli associati perderanno il riferimento alla marca.')">
-                                            <i class="fa fa-trash"></i> Elimina
-                                        </button>
-                                    </form>
-                                </div>
                             </div>
                         </div>
                         

@@ -27,7 +27,7 @@
                 <select name="car_id" class="form-control @error('car_id') is-invalid @enderror" id="car_id">
                     <option value="">Seleziona veicolo</option>
                     @foreach($cars as $c)
-                        <option value="{{ $c->id }}" {{ old('car_id', $carPlate?->car_id) == $c->id ? 'selected' : '' }}>
+                        <option value="{{ $c->id }}" {{ old('car_id', $carPlate->cars[0]?->id ?? null) == $c->id ? 'selected' : '' }}>
                             {{ $c->full_name }}
                         </option>
                     @endforeach
@@ -56,7 +56,7 @@
                 <option value="POLIZIA" {{ old('type', $carPlate?->type) == 'POLIZIA' ? 'selected' : '' }}>
                     POLIZIA - Polizia (Forze dell'Ordine)
                 </option>
-                <option value="ALTRO" {{ old('type', $carPlate?->type) == 'ALTRO' ? 'selected' : '' }}>
+                <option value="ORIGINALE" {{ old('type', $carPlate?->type) == 'ORIGINALE' ? 'selected' : '' }}>
                     ALTRO - Altro tipo
                 </option>
             </select>
@@ -65,13 +65,14 @@
         </div>
 
     </div>
-
+    
     <div class="col-md-6">
 
         <div class="form-group mb-2 mb20">
             <label for="date_from" class="form-label">{{ __('Data Inizio') }} <span class="text-danger">*</span></label>
+
             <input type="date" name="date_from" class="form-control @error('date_from') is-invalid @enderror"
-                   value="{{ old('date_from', $carPlate?->date_from?->format('Y-m-d')) }}" id="date_from">
+                   value="{{ old('date_from', data_get($carPlate, 'cars.0.pivot.date_from', null)) }}" id="date_from">
             {!! $errors->first('date_from', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
             <small class="form-text text-muted">Data di assegnazione della targa al veicolo</small>
         </div>
@@ -79,7 +80,7 @@
         <div class="form-group mb-2 mb20">
             <label for="date_to" class="form-label">{{ __('Data Fine') }}</label>
             <input type="date" name="date_to" class="form-control @error('date_to') is-invalid @enderror"
-                   value="{{ old('date_to', $carPlate?->date_to?->format('Y-m-d')) }}" id="date_to">
+                   value="{{ old('date_to',  data_get($carPlate, 'cars.0.pivot.date_to', null)) }}" id="date_to">
             {!! $errors->first('date_to', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
             <small class="form-text text-muted">Data di scadenza o rimozione (lasciare vuoto se attiva)</small>
         </div>

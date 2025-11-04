@@ -24,8 +24,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class CarAssignee extends Pivot
 {
-
-    protected $table = 'car_assignees';
+    protected $table = 'car_office';
     /**
      * The attributes that should be cast.
      *
@@ -33,17 +32,26 @@ class CarAssignee extends Pivot
      */
     protected $casts = [
         'date_from' => 'datetime:Y-m-d',
+        'date_to' => 'datetime:Y-m-d',
     ];
 
+    protected $fillable = [
+        'car_id',
+        'office_id',
+        'date_from',
+        'date_to',
+        'note'
+    ];
 
-    public function car()
-    {
-        return $this->belongsTo(Car::class);
-    }
-
-    public function office()
-    {
-        return $this->belongsTo(Office::class);
-    }
+//
+//    public function car()
+//    {
+//        return $this->belongsTo(Car::class);
+//    }
+//
+//    public function office()
+//    {
+//        return $this->belongsTo(Office::class);
+//    }
 
 }

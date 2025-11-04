@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enum\PlateTypeEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -23,15 +24,18 @@ class CarPlateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'car_id' => 'nullable|exists:cars,id',
+            'car_id' => 'nullable|integer|exists:cars,id',
             'name' => [
                 'required', 
                 'string', 
                 'max:20',
                 'regex:/^[A-Z0-9\s]+$/',
-                Rule::unique('car_plates', 'name')->ignore($this->car_plate?->id)
+                Rule::unique('plates', 'name')->ignore($this->car_plate?->id)
             ],
-            'type' => 'required|in:POLIZIA,CIVILE,ALTRO',
+            'type' => [
+                'required',
+                Rule::enum(PlateTypeEnum::class)
+            ],
             'date_from' => 'required|date',
             'date_to' => 'nullable|date|after_or_equal:date_from',
             'note' => 'nullable|string'
@@ -70,7 +74,7 @@ class CarPlateRequest extends FormRequest
             'car_id.required' => 'Devi selezionare un veicolo.',
             'car_id.exists' => 'Il veicolo selezionato non esiste.',
             'type.required' => 'Il tipo di targa è obbligatorio.',
-            'type.in' => 'Il tipo di targa deve essere POL (Polizia), CIV (Civile) o ALTRO.',
+            'type.in' => 'Il tipo di targa deve essere POLIZIA, CIVILE o ALTRO.',
             'date_from.required' => 'La data di inizio è obbligatoria.',
             'date_from.date' => 'La data di inizio deve essere una data valida.',
             'date_to.date' => 'La data di fine deve essere una data valida.',

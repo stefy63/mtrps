@@ -11,7 +11,6 @@ use App\Services\FilterOfficeService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
@@ -24,17 +23,17 @@ class MovementController extends Controller
     public function index(Request $request): View
     {
         $query = Movement::with([
-            'car.carPlates' => fn($query) => $query->orderBy('date_from', 'desc'),
+            'car.carPlates' => fn($q) => $q->wherePivotNull('date_to'),
             'car.carBrand',
             'office',
         ]);
-
         // Filtri
+        $search = $request->search;
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query = FilterCarService::getCarWithFilter($query, $search);
-            $query = FilterOfficeService::getOfficeWithFilter($query, $search)
+            $query->where('code', 'LIKE', "%{$search}%")
                 ->orWhere('code', 'like', "%{$search}%");
+            $query = FilterCarService::getCarWithFilter($query, $search);
+            $query = FilterOfficeService::getOfficeWithFilter($query, $search);
         }
 
         if ($request->filled('date_from')) {
@@ -66,7 +65,7 @@ class MovementController extends Controller
 
         $movements = $query->paginate();
 
-        $cars = Car::with('carPlates')->orderBy('model')->get();
+        $cars = Car::with(['carPlates' => fn($q) => $q->wherePivotNull('date_to')])->orderBy('model')->get();
         $stats = [
             'total' => Movement::count(),
             'pending' => $pending,
@@ -80,8 +79,54 @@ class MovementController extends Controller
         return view('movement.index', compact(
             'movements',
             'cars',
-            'stats'
+            'stats',
+            'search'
         ))->with('i', ($request->input('page', 1) - 1) * $movements->perPage());
+    }
+
+
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function getForm(Request $request): View
+    {
+        $movement = new Movement();
+        if ($request->has('car_id')) {
+            $movement->car_id = $request->car_id;
+        }
+        $movement->code = Movement::generateCode();
+        $movement->date_from = Carbon::now()->addDay()->setTime(8, 0);
+        $cars = Car::with([
+            'carBrand',
+            'carPlates' => fn($q) => $q->wherePivotNull('date_to'),
+        ])->get();
+        $offices = Office::get();
+        $button = false;
+
+        return view('movement.form', compact(
+            'movement',
+            'cars',
+            'offices',
+            'button'
+        ));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeForm(MovementRequest $request): RedirectResponse
+    {
+        try {
+            DB::beginTransaction();
+            $data = $request->validated();
+            $movement = Movement::create($data);
+            DB::commit();
+            return $this->sendResponse($movement, 'Movimento creato con successo.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return $this->sendError('Errore durante la creazione del movimento.');
+        }
     }
 
     /**
@@ -90,23 +135,14 @@ class MovementController extends Controller
     public function create(Request $request): View
     {
         $movement = new Movement();
-
-        // Pre-popola se viene passato un car_id
         if ($request->has('car_id')) {
             $movement->car_id = $request->car_id;
         }
-
-        // Genera il codice movimento
         $movement->code = Movement::generateCode();
-
-        // Imposta date di default
-        $movement->departure_datetime = Carbon::now()->addDay()->setTime(8, 0);
-        $movement->arrival_datetime = Carbon::now()->addDay()->setTime(18, 0);
-
+        $movement->date_from = Carbon::now()->addDay()->setTime(8, 0);
         $cars = Car::with([
-            'carBrand', 'carPlates' => function ($query) {
-                $query->orderBy('date_from', 'desc');
-            }
+            'carBrand',
+            'carPlates' => fn($q) => $q->wherePivotNull('date_to'),
         ])->get();
         $offices = Office::get();
 
@@ -124,20 +160,16 @@ class MovementController extends Controller
     {
         try {
             DB::beginTransaction();
-
             $data = $request->validated();
-
             Movement::create($data);
-
             DB::commit();
-
             return Redirect::route('movements.index')
                 ->with('toast_success', 'Movimento registrato con successo.');
         } catch (\Throwable $e) {
             DB::rollBack();
             return Redirect::back()
                 ->withInput()
-                ->with('toast_error', 'Errore durante la registrazione del movimento: '.$e->getMessage());
+                ->with('toast_error', 'Errore durante la registrazione del movimento.');
         }
     }
 
@@ -147,9 +179,7 @@ class MovementController extends Controller
     public function show(Movement $movement): View
     {
         $movement->load([
-            'car.carPlates',
-            'car.carBrand',
-            'car.carType',
+            'car.carPlates' => fn($q) => $q->wherePivotNull('date_to'),
             'car.carPower',
             'office',
         ]);
@@ -163,9 +193,7 @@ class MovementController extends Controller
     public function edit(Movement $movement): View
     {
         $cars = Car::with([
-            'carPlates' => function ($query) {
-                $query->orderBy('date_from', 'desc');
-            }
+            'carPlates' => fn($q) => $q->wherePivotNull('date_to'),
         ])->get();
         $offices = Office::get();
 
@@ -183,13 +211,9 @@ class MovementController extends Controller
     {
         try {
             DB::beginTransaction();
-
             $data = $request->validated();
-
             $movement->update($data);
-
             DB::commit();
-
             return Redirect::route('movements.index')
                 ->with('toast_success', 'Movimento aggiornato con successo.');
         } catch (\Throwable $e) {
@@ -208,7 +232,6 @@ class MovementController extends Controller
         try {
             // Non elimina fisicamente ma fa soft delete
             $movement->delete();
-
             return Redirect::route('movements.index')
                 ->with('toast_success', 'Movimento cancellato con successo.');
         } catch (\Throwable $e) {
@@ -217,193 +240,4 @@ class MovementController extends Controller
         }
     }
 
-    /**
-     * Update movement status
-     */
-    public function updateStatus(Request $request, Movement $movement): RedirectResponse
-    {
-        $request->validate([
-            'status' => ['required', 'in:'.implode(',', array_keys(Movement::getStatuses()))]
-        ]);
-
-        try {
-            $movement->update([
-                'status' => $request->status,
-                'updated_by' => Auth::id()
-            ]);
-
-            // Se approva, imposta authorized_by
-            if ($request->status === Movement::STATUS_APPROVED && !$movement->authorized_by) {
-                $movement->update(['authorized_by' => Auth::id()]);
-            }
-
-            return Redirect::back()
-                ->with('toast_success', 'Stato del movimento aggiornato.');
-        } catch (\Throwable $e) {
-            return Redirect::back()
-                ->with('toast_error', 'Errore durante l\'aggiornamento dello stato.');
-        }
-    }
-
-    /**
-     * Get car availability for date range
-     */
-    public function checkAvailability(Request $request)
-    {
-        $request->validate([
-            'car_id' => 'required|exists:cars,id',
-            'departure_datetime' => 'required|date',
-            'arrival_datetime' => 'required|date|after:departure_datetime',
-            'exclude_id' => 'nullable|exists:movements,id'
-        ]);
-
-        $conflictingMovements = Movement::where('car_id', $request->car_id)
-            ->where('status', '!=', Movement::STATUS_CANCELLED)
-            ->where(function ($query) use ($request) {
-                $query->whereBetween('departure_datetime', [$request->departure_datetime, $request->arrival_datetime])
-                    ->orWhereBetween('arrival_datetime', [$request->departure_datetime, $request->arrival_datetime])
-                    ->orWhere(function ($q) use ($request) {
-                        $q->where('departure_datetime', '<=', $request->departure_datetime)
-                            ->where('arrival_datetime', '>=', $request->arrival_datetime);
-                    });
-            });
-
-        if ($request->exclude_id) {
-            $conflictingMovements->where('id', '!=', $request->exclude_id);
-        }
-
-        $conflicts = $conflictingMovements->with('driver')->get();
-
-        return response()->json([
-            'available' => $conflicts->isEmpty(),
-            'conflicts' => $conflicts
-        ]);
-    }
-
-    /**
-     * Get last km for a car
-     */
-    public function getLastKm(Request $request)
-    {
-        $request->validate([
-            'car_id' => 'required|exists:cars,id'
-        ]);
-
-        $lastKm = $this->getLastKmForCar($request->car_id);
-
-        return response()->json([
-            'last_km' => $lastKm
-        ]);
-    }
-
-    /**
-     * Helper: Get frequent destinations
-     */
-    private function getFrequentDestinations(): array
-    {
-        $destinations = [];
-//        Movement::select('arrival_location', DB::raw('count(*) as count'))
-//            ->groupBy('arrival_location')
-//            ->orderBy('count', 'desc')
-//            ->limit(10)
-////            ->pluck('arrival_location')
-//            ->toArray();
-
-        // Aggiungi destinazioni predefinite per enti pubblici
-        $defaultDestinations = [
-            'Palazzo del Governo - Roma',
-            'Aeroporto Fiumicino',
-            'Aeroporto Malpensa',
-            'Stazione Centrale Milano',
-            'Stazione Termini Roma',
-            'Centro Congressi EUR',
-            'Fiera Milano Rho',
-            'Ministero dell\'Interno - Roma',
-            'Questura',
-            'Tribunale',
-        ];
-
-        return array_unique(array_merge($destinations, $defaultDestinations));
-    }
-
-    /**
-     * Helper: Get last km for car
-     */
-    private function getLastKmForCar($carId, $excludeId = null): ?int
-    {
-        return 0;
-    }
-
-    /**
-     * Helper: Build movement timeline
-     */
-    private function buildMovementTimeline(Movement $movement): array
-    {
-        $timeline = [];
-
-        // Creazione
-        $timeline[] = [
-            'date' => $movement->created_at,
-            'type' => 'created',
-            'description' => 'Movimento creato',
-            'user' => $movement->creator?->name ?? 'Sistema'
-        ];
-
-        // Approvazione
-        if ($movement->authorized_by && $movement->status != Movement::STATUS_PENDING) {
-            $timeline[] = [
-                'date' => $movement->updated_at,
-                'type' => 'approved',
-                'description' => 'Movimento approvato',
-                'user' => $movement->authorizer->name
-            ];
-        }
-
-        // Partenza
-        if ($movement->actual_departure) {
-            $timeline[] = [
-                'date' => $movement->actual_departure,
-                'type' => 'departed',
-                'description' => 'Partenza effettiva',
-                'user' => $movement->driver->name
-            ];
-        }
-
-        // Arrivo
-        if ($movement->actual_arrival) {
-            $timeline[] = [
-                'date' => $movement->actual_arrival,
-                'type' => 'arrived',
-                'description' => 'Arrivo effettivo',
-                'user' => $movement->driver->name
-            ];
-        }
-
-        // Completamento
-        if ($movement->status === Movement::STATUS_COMPLETED) {
-            $timeline[] = [
-                'date' => $movement->updated_at,
-                'type' => 'completed',
-                'description' => 'Movimento completato',
-                'user' => $movement->updater?->name ?? 'Sistema'
-            ];
-        }
-
-        // Cancellazione
-        if ($movement->status === Movement::STATUS_CANCELLED) {
-            $timeline[] = [
-                'date' => $movement->updated_at,
-                'type' => 'cancelled',
-                'description' => 'Movimento annullato',
-                'user' => $movement->updater?->name ?? 'Sistema'
-            ];
-        }
-
-        // Ordina per data
-        usort($timeline, function ($a, $b) {
-            return $a['date']->timestamp - $b['date']->timestamp;
-        });
-
-        return $timeline;
-    }
 }

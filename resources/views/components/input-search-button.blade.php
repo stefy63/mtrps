@@ -9,10 +9,10 @@
                 <i class="bi bi-search"></i>
             </button>
             <input x-ref="searchInput" name="search" type="text" class="form-control" placeholder="Cerca..."
-                   @input="handleInput()" :value="query" x-model="query">
+                   @input="handleInput()" :value="query" x-model="query" autofocus>
             <button
                     type="button"
-                    class="btn btn-outline-warning"
+                    class="btn btn-warning"
                     x-show="query.length > 0"
                     @click="clearAndSubmit()"
             >
@@ -42,7 +42,9 @@
                 },
                 submitForm() {
                     this.$refs.searchForm.submit();
-                    this.loading = false
+                    setTimeout(() => {
+                        this.loading = false
+                    }, 1000)
                 },
                 clearAndSubmit() {
                     this.$refs.searchInput.value = ''

@@ -241,7 +241,7 @@
                                     label="{{ __('Targa Polizia') }}"
                                     labelKey="name"
                                     idKey="id"
-                                    modal-url="{{ route('car-plates.getForm') }}"
+                                    modal-url="{{ route('car-plates.getForm',['type' => \App\Enum\PlateTypeEnum::POLIZIA]) }}"
                                     modal-title="Nuova targa"
                             />
                             <div class="form-check form-switch mb-3">
@@ -267,7 +267,7 @@
                                     label="{{ __('Targa Civile') }}"
                                     labelKey="name"
                                     idKey="id"
-                                    modal-url="{{ route('car-plates.getForm') }}"
+                                    modal-url="{{ route('car-plates.getForm',['type' => \App\Enum\PlateTypeEnum::CIVILE]) }}"
                                     modal-title="Nuova targa"
                             />
                             <div class="form-check form-switch mb-3">
@@ -292,7 +292,7 @@
                                     label="{{ __('Targa Originale') }}"
                                     labelKey="name"
                                     idKey="id"
-                                    modal-url="{{ route('car-plates.getForm') }}"
+                                    modal-url="{{ route('car-plates.getForm',['type' => \App\Enum\PlateTypeEnum::ORIGINALE]) }}"
                                     modal-title="Nuova targa"
                             />
                             <div class="form-check form-switch mb-3">
@@ -310,14 +310,14 @@
                     <x-dynamic-select
                             name="assignee_id"
                             :required="'false'"
-                            :value="old('assignee_id', $car->carOffices?->first()->id ?? null)"
+                            :value="old('assignee_id', $car->carOffices[0]?->id ?? null)"
                             :options="$offices"
                             :errors="$errors"
-                            endpoint="{{ route('home') }}"
+                            endpoint="{{ route('offices.storeForm') }}"
                             label="{{ __('Assegnatario') }}"
                             labelKey="full_name"
                             idKey="id"
-                            modal-url="{{ route('home') }}"
+                            modal-url="{{ route('offices.getForm') }}"
                             modal-title="Nuovo Assegnatario"
                     />
                 </div>
