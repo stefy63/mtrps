@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Car;
-use App\Models\Movement;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MovementRequest extends FormRequest
@@ -26,17 +24,28 @@ class MovementRequest extends FormRequest
         $rules = [
             'car_id' => [
                 'required',
+                'integer',
                 'exists:cars,id'
             ],
-            'office_id' => 'required|exists:offices,id',
+            'office_id' => 'required|integer|exists:offices,id',
             'code' => 'required|string|max:100',
         ];
         $rules['date_from'] = 'required|date';
-        $rules['date_to'] = 'nullable|date|after:date_from';
+        $rules['date_to'] = 'nullable|date|after_or_equal:date_from';
 
         return $rules;
     }
 
+    /**
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'car_id' => (int) $this->car_id,
+            'office_id' => (int) $this->office_id,
+        ]);
+    }
 
     /**
      * Get custom validation messages

@@ -60,6 +60,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Car extends Model
 {
 
+    protected static function booted()
+    {
+        static::addGlobalScope('available', function (Builder $builder) {
+            $builder->whereAvailable(true);
+        });
+    }
     protected $perPage = 20;
 
     /**
@@ -90,6 +96,7 @@ class Car extends Model
         'date_revision',
         'doc',
         'note',
+        'available',
         'createdBy',
         'updatedBy',
     ];

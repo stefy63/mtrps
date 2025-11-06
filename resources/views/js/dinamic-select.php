@@ -19,9 +19,24 @@
                         modalClass: this.modalClass,
                         onSelect: (newItem) => {
                             console.log(newItem)
-                            // this.options.push(newItem);
-                            // this.option_id = newItem[this.idKey];
-                            // this.search = newItem[this.labelKey];
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Salvato!',
+                                text: newItem.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then((result) => {
+                                location.reload();
+                            });
+                        },
+                        onError: (err) => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Errore!',
+                                text: err.message || 'Salvataggio non riuscito.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
                         },
                     });
                 },
@@ -38,9 +53,10 @@
                 loading: true,
                 myModal: null,
                 onSelect: null,
+                onError: null,
                 modalClass: '',
 
-                async loadModal({url, title, endpoint, idKey, labelKey, modalClass, onSelect}) {
+                async loadModal({url, title, endpoint, idKey, labelKey, modalClass, onSelect, onError}) {
                     this.loading = true;
                     Object.assign(this, {
                         modalTitle: title,
@@ -48,6 +64,7 @@
                         idKey,
                         labelKey,
                         onSelect,
+                        onError,
                         modalClass
                     });
 
@@ -84,8 +101,9 @@
                         body: JSON.stringify(formData)
                     }).then(response => {
                         if (!response.ok) {
-                            console.log(response);
-                            return false;
+                            return response.json().then(err => {
+                                throw new Error(err.message || `${response.status}: ${response.statusText}`);
+                            });
                         }
                         return response.json();
                     }).then((data) => {
@@ -93,23 +111,12 @@
                             if (typeof this.onSelect === 'function') {
                                 this.onSelect(data.data);
                             }
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Salvato!',
-                                text: data.message,
-                                timer: 2000,
-                                showConfirmButton: false
-                            });
                         }
                     }).catch(error => {
                         console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Errore!',
-                            text: 'Salvataggio non riuscito.',
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
+                        if (typeof this.onError === 'function') {
+                            this.onError(error);
+                        }
                     }).finally(() => {
                         this.modalContent = '';
                         this.myModal.hide();
@@ -185,7 +192,23 @@
                             this.options.push(newItem);
                             this.option_id = newItem[this.idKey];
                             this.search = newItem[this.labelKey];
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Salvato!',
+                                text: newItem.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
                         },
+                        onError: (newItem) => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Errore!',
+                                text: 'Salvataggio non riuscito.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }
                     });
                 },
             }

@@ -22,12 +22,13 @@ class StoreMaintenanceGarageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'maintenance_id' => 'required|exists:maintenances,id',
             'name' => 'required|string|max:255',
+            'address' => 'nullable|string|max:255',
             'piva' => 'nullable|numeric|digits:11',
             'cf' => 'nullable|string|size:16',
             'iban' => 'nullable|string|regex:/^IT\d{2}[A-Z]\d{22}$/i',
             'pec' => 'nullable|email|max:255',
+            'mail' => 'nullable|email|max:255',
             'acc' => 'required|in:yes,no',
             'anti_mafia' => 'required|in:yes,no',
             'durc' => 'nullable|date',
@@ -44,16 +45,17 @@ class StoreMaintenanceGarageRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'maintenance_id.required' => 'Seleziona una manutenzione',
-            'maintenance_id.exists' => 'La manutenzione selezionata non è valida',
             'name.required' => 'Inserisci il nome dell\'officina',
             'name.max' => 'Il nome non può superare i 255 caratteri',
+            'address.max' => 'Il nome non può superare i 255 caratteri',
             'piva.numeric' => 'La P.IVA deve contenere solo numeri',
             'piva.digits' => 'La P.IVA deve essere di 11 cifre',
             'cf.size' => 'Il Codice Fiscale deve essere di 16 caratteri',
             'iban.regex' => 'L\'IBAN non è nel formato corretto (IT + 2 cifre + 1 lettera + 22 cifre)',
             'pec.email' => 'L\'indirizzo PEC non è valido',
             'pec.max' => 'L\'indirizzo PEC non può superare i 255 caratteri',
+            'mail.email' => 'L\'indirizzo PEC non è valido',
+            'mail.max' => 'L\'indirizzo PEC non può superare i 255 caratteri',
             'acc.required' => 'Specifica se l\'officina è accreditata',
             'acc.in' => 'Il valore di accreditamento non è valido',
             'anti_mafia.required' => 'Specifica se è presente la certificazione antimafia',

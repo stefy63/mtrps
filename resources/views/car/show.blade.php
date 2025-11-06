@@ -12,7 +12,7 @@
                     <div class="card-header"
                          style="display: flex; justify-content: space-between; align-items: center;">
                         <div class="float-left">
-                            <span class="card-title">{{ __('Dati Vettura') }} : {{ $car->carBrand?->name }}</span>
+                            <span class="card-title">{{ __('Dati Vettura') }} : {{ $car->full_name }}</span>
                         </div>
                         <div class="float-right">
                             <a class="btn btn-primary btn-sm" href="{{ route('cars.index') }}"> {{ __('Back') }}</a>
@@ -202,6 +202,7 @@
                                 <table class="table table-hover table-responsive">
                                     <thead>
                                     <tr>
+                                        <th scope="col">Codice</th>
                                         <th scope="col">Ufficio</th>
                                         <th scope="col">Dal</th>
                                         <th scope="col">Al</th>
@@ -212,6 +213,12 @@
                                     @if(count($car->movements))
                                         @foreach($car->movements as $m)
                                             <tr>
+                                                <td class="col-3">
+                                                    <a href="{{ route('movements.edit', $m->id) }}"
+                                                       class="text-decoration-none">
+                                                        <strong>{{ $m->code }}</strong>
+                                                    </a>
+                                                </td>
                                                 <td class="col-3">{{$m->office->full_name}}</td>
                                                 <td class="col-3">{{date('d/m/Y', strtotime($m->date_from))}}</td>
                                                 <td class="col-3">{{$m->date_to ? date('d/m/Y', strtotime($m->date_to)) : '---'}}</td>

@@ -12,9 +12,9 @@ return new class extends Migration {
     {
         Schema::create('cars', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('car_type_id')->nullable();
             $table->unsignedBigInteger('car_owner_id')->nullable();
             $table->unsignedBigInteger('car_brand_id')->nullable();
+            $table->unsignedBigInteger('car_type_id')->nullable();
             $table->unsignedBigInteger('car_power_id')->nullable();
             $table->unsignedBigInteger('car_profit_account_id')->nullable();
             $table->string('model')->nullable();
@@ -32,6 +32,7 @@ return new class extends Migration {
             $table->date('date_revision')->nullable();
             $table->date('doc')->nullable();
             $table->text('note')->nullable();
+            $table->boolean('available')->default(true);
             $table->unsignedBigInteger('created_by')->unsigned()->nullable();
             $table->unsignedBigInteger('updated_by')->unsigned()->nullable();
             $table->timestamps();

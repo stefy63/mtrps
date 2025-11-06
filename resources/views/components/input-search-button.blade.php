@@ -4,7 +4,7 @@
 })'
 >
     <form x-ref="searchForm" class="row" :action="action" method="GET">
-        <div class="input-group col-md-6">
+        <div class="input-group">
             <button @click="submitForm" type="button" class="btn btn-primary">
                 <i class="bi bi-search"></i>
             </button>
@@ -56,4 +56,8 @@
         }
     </script>
 </div>
-
+<style>
+    .form-control:focus {
+        box-shadow: none !important;
+    }
+</style>

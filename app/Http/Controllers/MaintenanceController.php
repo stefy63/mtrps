@@ -6,6 +6,7 @@ use App\Http\Requests\StoreMaintenanceRequest;
 use App\Http\Requests\UpdateMaintenanceRequest;
 use App\Models\Car;
 use App\Models\Maintenance;
+use App\Models\MaintenanceGarage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -21,7 +22,7 @@ class MaintenanceController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Maintenance::with(['car.carPlates', 'car.carBrand', 'maintenanceGarages', 'maintenanceTypes']);
+        $query = Maintenance::with(['car.carPlates', 'maintenanceGarages', 'maintenanceTypes']);
 
         // Filtri
         if ($request->filled('car_id')) {
@@ -61,6 +62,7 @@ class MaintenanceController extends Controller
 
         // Ordinamento
         $query->orderBy('date_from', 'desc');
+        $garages = MaintenanceGarage::get();
 
         $maintenances = $query->paginate(20);
 
@@ -69,7 +71,7 @@ class MaintenanceController extends Controller
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questa manutenzione?');
 
-        return view('maintenance.index', compact('maintenances', 'cars'))
+        return view('maintenance.index', compact('maintenances', 'cars', 'garages'))
             ->with('i', ($request->input('page', 1) - 1) * $maintenances->perPage());
     }
 
@@ -96,7 +98,7 @@ class MaintenanceController extends Controller
     {
         try {
             $data = $request->validated();
-
+dd($data);
             // Controlla sovrapposizioni
             if ($this->hasOverlappingMaintenance($data['car_id'], $data['date_from'], $data['date_to'])) {
                 return Redirect::back()

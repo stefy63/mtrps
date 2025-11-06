@@ -16,9 +16,6 @@
                             </span>
 
                             <div class="float-right">
-                                <button class="btn btn-sm btn-outline-secondary me-2" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
-                                    <i class="bi bi-funnel"></i> Filtri
-                                </button>
                                 <a href="{{ route('maintenance-garages.create') }}" class="btn btn-primary btn-sm">
                                     <i class="bi bi-plus"></i> {{ __('Nuova Officina') }}
                                 </a>
@@ -26,209 +23,127 @@
                         </div>
                     </div>
 
-                    <!-- Filtri collassabili -->
-                    <div class="collapse" id="filterCollapse">
-                        <div class="card-body bg-light">
-                            <form method="GET" action="{{ route('maintenance-garages.index') }}" class="row g-3">
-                                <div class="col-md-3">
-                                    <label class="form-label">Manutenzione</label>
-                                    <select name="maintenance_id" class="form-select">
-                                        <option value="">Tutte le manutenzioni</option>
-                                        @foreach($maintenances as $maintenance)
-                                            <option value="{{ $maintenance->id }}" {{ request('maintenance_id') == $maintenance->id ? 'selected' : '' }}>
-                                                {{ $maintenance->car->name }} - {{ $maintenance->name }}
-                                                ({{ $maintenance->date_from->format('d/m/Y') }})
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Accreditamento</label>
-                                    <select name="acc" class="form-select">
-                                        <option value="">Tutti</option>
-                                        <option value="yes" {{ request('acc') == 'yes' ? 'selected' : '' }}>Accreditate</option>
-                                        <option value="no" {{ request('acc') == 'no' ? 'selected' : '' }}>Non accreditate</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Antimafia</label>
-                                    <select name="anti_mafia" class="form-select">
-                                        <option value="">Tutte</option>
-                                        <option value="yes" {{ request('anti_mafia') == 'yes' ? 'selected' : '' }}>Con certificazione</option>
-                                        <option value="no" {{ request('anti_mafia') == 'no' ? 'selected' : '' }}>Senza certificazione</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-5">
-                                    <label class="form-label">Cerca</label>
-                                    <input type="text" name="search" class="form-control" placeholder="Nome, P.IVA, CF, PEC..." value="{{ request('search') }}">
-                                </div>
-
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-search"></i> Applica Filtri
-                                    </button>
-                                    <a href="{{ route('maintenance-garages.index') }}" class="btn btn-secondary">
-                                        <i class="bi bi-x-circle"></i> Cancella
-                                    </a>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
                     <div class="card-body">
-                        @if(count($maintenanceGarages) > 0)
-                            <div class="table-responsive">
-                                <table class="table table-striped table-hover">
-                                    <thead class="thead">
-                                        <tr>
-                                            <th>Officina</th>
-                                            <th>P.IVA / CF</th>
-                                            <th>PEC</th>
-                                            <th>Certificazioni</th>
-                                            <th>DURC</th>
-                                            <th>Manutenzione</th>
-                                            <th>Veicolo</th>
-                                            <th>CIG</th>
-                                            <th width="120"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach ($maintenanceGarages as $garage)
-                                            <tr>
-                                                <td>
-                                                    <strong>{{ $garage->name }}</strong>
-                                                    @if($garage->description)
-                                                        <br><small class="text-muted">{{ Str::limit($garage->description, 30) }}</small>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($garage->piva)
-                                                        <small>P.IVA: {{ $garage->piva }}</small>
-                                                    @endif
-                                                    @if($garage->cf)
-                                                        <br><small>CF: {{ $garage->cf }}</small>
-                                                    @endif
-                                                    @if(!$garage->piva && !$garage->cf)
-                                                        <span class="text-muted">-</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($garage->pec)
-                                                        <small>{{ $garage->pec }}</small>
-                                                    @else
-                                                        <span class="text-muted">-</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex gap-1">
+                        {{-- Filtri --}}
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <x-input-search-button
+                                        action="{{ route('maintenance-garages.index') }}"
+                                        search="{{old('search', request('search') )}}"
+                                />
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="thead">
+                                <tr>
+                                    <th class="col-4">Officina</th>
+                                    <th class="col-1">P.IVA / CF</th>
+                                    <th class="col-1">Mail / PEC</th>
+                                    <th class="col-1">Certificazioni</th>
+                                    <th class="col-1">DURC</th>
+                                    <th class="col-1">Telefono</th>
+                                    <th class="col-2">Indirizzo</th>
+                                    <th class="col-1"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach ($maintenanceGarages as $garage)
+                                    <tr>
+                                        <td>
+                                            <strong>{{ $garage->name }}</strong>
+                                            @if($garage->description)
+                                                <br><small
+                                                        class="text-muted">{{ Str::limit($garage->description, 30) }}</small>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($garage->piva)
+                                                <small>P.IVA: {{ $garage->piva }}</small><br>
+                                            @endif
+                                            @if($garage->cf)
+                                                <small>CF: {{ $garage->cf }}</small>
+                                            @endif
+                                            @if(!$garage->piva && !$garage->cf)
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($garage->mail)
+                                                <small>MAIL: {{ $garage->mail }}</small><br>
+                                            @endif
+                                            @if($garage->pec)
+                                                <small>PEC: {{ $garage->pec }}</small>
+                                            @endif
+                                            @if(!$garage->mail && !$garage->pec)
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <div class="">
+                                                    <span class="badge
                                                         @if($garage->acc == 'yes')
-                                                            <span class="badge bg-success" data-bs-toggle="tooltip" title="Accreditata">
-                                                                <i class="bi bi-check-circle"></i> ACC
-                                                            </span>
+                                                             bg-success
                                                         @else
-                                                            <span class="badge bg-secondary" data-bs-toggle="tooltip" title="Non accreditata">
-                                                                <i class="bi bi-x-circle"></i> ACC
-                                                            </span>
+                                                        bg-danger-subtle
                                                         @endif
-
+                                                        w-100" data-bs-toggle="tooltip" title="Accreditamento">
+                                                        <i class="bi bi-check-circle"></i> ACC
+                                                    </span>
+                                                <span class="badge
                                                         @if($garage->anti_mafia == 'yes')
-                                                            <span class="badge bg-success" data-bs-toggle="tooltip" title="Certificazione Antimafia">
-                                                                <i class="bi bi-shield-check"></i> AM
-                                                            </span>
+                                                             bg-success
                                                         @else
-                                                            <span class="badge bg-secondary" data-bs-toggle="tooltip" title="Senza Certificazione Antimafia">
-                                                                <i class="bi bi-shield-x"></i> AM
-                                                            </span>
+                                                            bg-danger-subtle
                                                         @endif
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @if($garage->durc)
-                                                        @php
-                                                            $durcDate = \Carbon\Carbon::parse($garage->durc);
-                                                            $isExpired = $durcDate->isPast();
-                                                            $isExpiringSoon = $durcDate->isBetween(now(), now()->addDays(30));
-                                                        @endphp
-                                                        <span class="badge bg-{{ $isExpired ? 'danger' : ($isExpiringSoon ? 'warning' : 'success') }}">
+                                                        w-100" data-bs-toggle="tooltip"
+                                                      title="Certificazione Antimafia">
+                                                        <i class="bi bi-check-circle"></i> MAFIA
+                                                    </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @if($garage->durc)
+                                                @php
+                                                    $durcDate = \Carbon\Carbon::parse($garage->durc);
+                                                    $isExpired = $durcDate->isPast();
+                                                    $isExpiringSoon = $durcDate->isBetween(now(), now()->addDays(30));
+                                                @endphp
+                                                <span class="badge bg-{{ $isExpired ? 'danger' : ($isExpiringSoon ? 'warning' : 'success') }}">
                                                             {{ $durcDate->format('d/m/Y') }}
                                                         </span>
-                                                        @if($isExpired)
-                                                            <br><small class="text-danger">Scaduto</small>
-                                                        @elseif($isExpiringSoon)
-                                                            <br><small class="text-warning">In scadenza</small>
-                                                        @endif
-                                                    @else
-                                                        <span class="text-muted">-</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <small>{{ $garage->maintenance->name }}</small>
-                                                    <br><small class="text-muted">{{ $garage->maintenance->date_from->format('d/m/Y') }}</small>
-                                                </td>
-                                                <td>
-                                                    <small>{{ $garage->maintenance->car->name }}</small>
-                                                    @if($garage->maintenance->car->carPlates->count() > 0)
-                                                        <br><span class="badge bg-primary">{{ $garage->maintenance->car->carPlates->first()->name }}</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if($garage->cigs->count() > 0)
-                                                        <span class="badge bg-info">
-                                                            {{ $garage->cigs->count() }}
-                                                        </span>
-                                                    @else
-                                                        <span class="text-muted">-</span>
-                                                    @endif
-                                                </td>
-                                                <td class="text-end">
-                                                    <div class="btn-group dropstart">
-                                                        <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="bi bi-three-dots-vertical"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu">
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('maintenance-garages.show', $garage->id) }}">
-                                                                    <i class="bi bi-eye"></i> {{ __('Visualizza') }}
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('maintenance-garages.edit', $garage->id) }}">
-                                                                    <i class="bi bi-pencil"></i> {{ __('Modifica') }}
-                                                                </a>
-                                                            </li>
-                                                            <li><hr class="dropdown-divider"></li>
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('cigs.create', ['maintenance_garage_id' => $garage->id]) }}">
-                                                                    <i class="bi bi-file-earmark-text"></i> {{ __('Aggiungi CIG') }}
-                                                                </a>
-                                                            </li>
-                                                            <li><hr class="dropdown-divider"></li>
-                                                            <li>
-                                                                <form action="{{ route('maintenance-garages.destroy', $garage->id) }}" method="POST">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="dropdown-item text-danger" data-confirm-delete="true">
-                                                                        <i class="bi bi-trash"></i> {{ __('Elimina') }}
-                                                                    </button>
-                                                                </form>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @else
-                            <div class="alert alert-info">
-                                <i class="bi bi-info-circle"></i> Nessuna officina registrata.
-                                <a href="{{ route('maintenance-garages.create') }}" class="alert-link">Registra la prima officina</a>
-                            </div>
-                        @endif
+                                                @if($isExpired)
+                                                    <br><small class="text-danger">Scaduto</small>
+                                                @elseif($isExpiringSoon)
+                                                    <br><small class="text-warning">In scadenza</small>
+                                                @endif
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td style="font-size: 12px">
+                                            @if($garage->phone1)
+                                                <small>Tel: {{ $garage->phone1 }}</small><br>
+                                            @endif
+                                            @if($garage->phone2)
+                                                <small>Tel: {{ $garage->phone2 }}</small><br>
+                                            @endif
+                                            @if($garage->phone3)
+                                                <small>Tel: {{ $garage->phone3 }}</small><br>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <small>{{ $garage->address }}</small>
+                                        </td>
+                                        <td class="text-end">
+                                            <x-action-table-button itemRoute="maintenance-garages" :item="$garage"
+                                                                   :label="'Officina'"/>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -241,13 +156,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-<script>
-    // Inizializza i tooltip
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-</script>
-@endpush

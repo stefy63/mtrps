@@ -45,7 +45,7 @@ class MaintenanceGarage extends Model
      */
     public function maintenance()
     {
-        return $this->hasMany(Maintenance::class, 'maintenance_id', 'id');
+        return $this->hasMany(Maintenance::class, 'garage_id', 'id');
     }
     
     /**

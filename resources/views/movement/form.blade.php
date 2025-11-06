@@ -37,24 +37,29 @@
 
                     {{-- Veicolo --}}
                     <div class="col-md-6">
-                        <x-dynamic-select
-                                name="car_id"
-                                modalClass="modal-xl"
-                                :required="'true'"
-                                :value="old('car_id', $movement?->car_id)"
-                                :options="$cars"
-                                :errors="$errors"
-                                endpoint="{{ route('car.storeForm') }}"
-                                label="{{ __('Veicolo') }}"
-                                labelKey="full_name"
-                                idKey="id"
-                                modal-url="{{ route('car.getForm') }}"
-                                modal-title="Nuova Vettura"
-                        />
+                        @if($button)
+                            <x-dynamic-select
+                                    name="car_id"
+                                    modalClass="modal-xl"
+
+                                    :required="'true'"
+                                    :value="old('car_id', $movement?->car_id)"
+                                    :options="$cars"
+                                    :errors="$errors"
+                                    endpoint="{{ route('car.storeForm') }}"
+                                    label="{{ __('Veicolo') }}"
+                                    labelKey="full_name"
+                                    idKey="id"
+                                    modal-url="{{ route('car.getForm') }}"
+                                    modal-title="Nuova Vettura"
+                            />
+                        @else
+                            <input type="hidden" name="car_id" value="{{$movement?->car_id}}">
+                        @endif
                     </div>
 
 
-                    <div class="col-md-6">
+                    <div class="@if($button)col-md-6 @else col-md-12 @endif">
 
                         <x-dynamic-select
                                 name="office_id"

@@ -105,6 +105,7 @@
 @endpush
 @stack('scripts')
 @include('sweetalert::alert')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     // attende 3 secondi (3000 ms) e poi nasconde l'alert con un effetto fade-out
     setTimeout(function () {

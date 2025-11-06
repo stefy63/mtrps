@@ -8,12 +8,16 @@ use App\Models\Movement;
 use App\Models\Office;
 use App\Services\FilterCarService;
 use App\Services\FilterOfficeService;
+use App\Services\MovementService;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use phpDocumentor\Reflection\Types\Boolean;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class MovementController extends Controller
 {
@@ -27,6 +31,34 @@ class MovementController extends Controller
             'car.carBrand',
             'office',
         ]);
+
+        $total = Movement::withoutGlobalScope('inprogress')->count();
+        $pending = (clone $query)
+            ->withoutGlobalScope('inprogress')
+            ->whereNull('date_to')
+            ->whereNull('date_from')
+            ->count();
+        $notPending = (clone $query)
+            ->withoutGlobalScope('inprogress')
+            ->whereNotNull('date_to')
+            ->whereNotNull('date_from')
+            ->whereMonth('date_to', Carbon::now()->month)
+            ->count();
+        $inProgress = (clone $query)
+            ->withoutGlobalScope('inprogress')
+            ->whereNotNull('date_from')
+            ->whereNull('date_to')
+            ->count();
+        $inProgressMonth = (clone $query)
+            ->withoutGlobalScope('inprogress')
+            ->whereNotNull('date_from')
+            ->whereNull('date_to')
+            ->whereMonth('date_to', Carbon::now()->month)
+            ->count();
+
+        if ($inprogress = $request->exists('inprogress')) {
+            $query->withoutGlobalScope('inprogress');
+        }
         // Filtri
         $search = $request->search;
         if ($request->filled('search')) {
@@ -36,38 +68,11 @@ class MovementController extends Controller
             $query = FilterOfficeService::getOfficeWithFilter($query, $search);
         }
 
-        if ($request->filled('date_from')) {
-            $query->where('date_from', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->where('date_to', '<=', $request->date_to);
-        }
-
-        $pending = (clone $query)
-            ->whereNull('date_to')
-            ->whereNull('date_from')
-            ->count();
-        $notPending = (clone $query)
-            ->whereNotNull('date_to')
-            ->whereNotNull('date_from')
-            ->whereMonth('date_to', Carbon::now()->month)
-            ->count();
-        $inProgress = (clone $query)
-            ->whereNotNull('date_from')
-            ->whereNull('date_to')
-            ->count();
-        $inProgressMonth = (clone $query)
-            ->whereNotNull('date_from')
-            ->whereNull('date_to')
-            ->whereMonth('date_to', Carbon::now()->month)
-            ->count();
-
         $movements = $query->paginate();
 
         $cars = Car::with(['carPlates' => fn($q) => $q->wherePivotNull('date_to')])->orderBy('model')->get();
         $stats = [
-            'total' => Movement::count(),
+            'total' => $total,
             'pending' => $pending,
             'in_progress' => $inProgress,
             'completed_month' => $notPending,
@@ -80,10 +85,10 @@ class MovementController extends Controller
             'movements',
             'cars',
             'stats',
-            'search'
+            'search',
+            'inprogress'
         ))->with('i', ($request->input('page', 1) - 1) * $movements->perPage());
     }
-
 
 
     /**
@@ -115,17 +120,17 @@ class MovementController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function storeForm(MovementRequest $request): RedirectResponse
+    public function storeForm(MovementRequest $request): JsonResponse
     {
         try {
             DB::beginTransaction();
             $data = $request->validated();
-            $movement = Movement::create($data);
+            $movement = MovementService::create($data);
             DB::commit();
             return $this->sendResponse($movement, 'Movimento creato con successo.');
         } catch (\Throwable $e) {
             DB::rollBack();
-            return $this->sendError('Errore durante la creazione del movimento.');
+            return $this->sendError('Errore durante la creazione del movimento: '.$e->getMessage());
         }
     }
 
@@ -161,15 +166,15 @@ class MovementController extends Controller
         try {
             DB::beginTransaction();
             $data = $request->validated();
-            Movement::create($data);
+            $movement = MovementService::create($data);
             DB::commit();
             return Redirect::route('movements.index')
-                ->with('toast_success', 'Movimento registrato con successo.');
+                ->with('success', 'Movimento registrato con successo.');
         } catch (\Throwable $e) {
             DB::rollBack();
             return Redirect::back()
                 ->withInput()
-                ->with('toast_error', 'Errore durante la registrazione del movimento.');
+                ->with('error', 'Errore durante la creazione del movimento: '.$e->getMessage());
         }
     }
 
@@ -212,7 +217,7 @@ class MovementController extends Controller
         try {
             DB::beginTransaction();
             $data = $request->validated();
-            $movement->update($data);
+            \App\Facades\MovementService::update($movement, $data);
             DB::commit();
             return Redirect::route('movements.index')
                 ->with('toast_success', 'Movimento aggiornato con successo.');
@@ -220,7 +225,7 @@ class MovementController extends Controller
             DB::rollBack();
             return Redirect::back()
                 ->withInput()
-                ->with('toast_error', 'Errore durante l\'aggiornamento del movimento: '.$e->getMessage());
+                ->with('error', 'Errore durante l\'aggiornamento del movimento: '.$e->getMessage());
         }
     }
 
@@ -230,7 +235,6 @@ class MovementController extends Controller
     public function destroy(Movement $movement): RedirectResponse
     {
         try {
-            // Non elimina fisicamente ma fa soft delete
             $movement->delete();
             return Redirect::route('movements.index')
                 ->with('toast_success', 'Movimento cancellato con successo.');

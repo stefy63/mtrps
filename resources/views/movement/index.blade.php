@@ -139,113 +139,21 @@
 
                                 {{-- Filtri --}}
                                 <div class="row mb-3">
-                                    <div class="col-12">
+                                    <div class="col-10">
                                         <x-input-search-button
                                                 action="{{ route('movements.index') }}"
                                                 search="{{old('search', $search)}}"
                                         />
                                     </div>
+                                    <div class="col-2 text-start">
+                                        <x-input-checkbox
+                                                name="inprogress"
+                                                label="Terminate"
+                                                action="{{ route('movements.index') }}"
+                                                value="{{old('inprogress', $inprogress)}}"
+                                        />
+                                    </div>
                                 </div>
-{{--                                <form method="GET" action="{{ route('movements.index') }}" class="row g-3">--}}
-{{--                                    <div class="col-md-3">--}}
-{{--                                        <div class="form-floating">--}}
-{{--                                            <input type="text"--}}
-{{--                                                   name="search"--}}
-{{--                                                   class="form-control"--}}
-{{--                                                   id="search"--}}
-{{--                                                   placeholder="Cerca..."--}}
-{{--                                                   value="{{ request('search') }}">--}}
-{{--                                            <label for="search">Cerca (codice, targa, destinazione)</label>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-
-{{--                                    --}}{{--                                    <div class="col-md-2">--}}
-{{--                                    --}}{{--                                        <div class="form-floating">--}}
-{{--                                    --}}{{--                                            <select name="car_id" class="form-select" id="car_id">--}}
-{{--                                    --}}{{--                                                <option value="">Tutti i veicoli</option>--}}
-{{--                                    --}}{{--                                                @foreach($cars as $car)--}}
-{{--                                    --}}{{--                                                    <option value="{{ $car->id }}" {{ request('car_id') == $car->id ? 'selected' : '' }}>--}}
-{{--                                    --}}{{--                                                        {{ $car->name }}--}}
-{{--                                    --}}{{--                                                        @if($car->carPlates->first())--}}
-{{--                                    --}}{{--                                                            ({{ $car->carPlates->first()->name }})--}}
-{{--                                    --}}{{--                                                        @endif--}}
-{{--                                    --}}{{--                                                    </option>--}}
-{{--                                    --}}{{--                                                @endforeach--}}
-{{--                                    --}}{{--                                            </select>--}}
-{{--                                    --}}{{--                                            <label for="car_id">Veicolo</label>--}}
-{{--                                    --}}{{--                                        </div>--}}
-{{--                                    --}}{{--                                    </div>--}}
-
-{{--                                    --}}{{--                                    <div class="col-md-2">--}}
-{{--                                    --}}{{--                                        <div class="form-floating">--}}
-{{--                                    --}}{{--                                            <select name="driver_id" class="form-select" id="driver_id">--}}
-{{--                                    --}}{{--                                                <option value="">Tutti i conducenti</option>--}}
-{{--                                    --}}{{--                                                @foreach($drivers as $driver)--}}
-{{--                                    --}}{{--                                                    <option value="{{ $driver->id }}" {{ request('driver_id') == $driver->id ? 'selected' : '' }}>--}}
-{{--                                    --}}{{--                                                        {{ $driver->name }}--}}
-{{--                                    --}}{{--                                                    </option>--}}
-{{--                                    --}}{{--                                                @endforeach--}}
-{{--                                    --}}{{--                                            </select>--}}
-{{--                                    --}}{{--                                            <label for="driver_id">Conducente</label>--}}
-{{--                                    --}}{{--                                        </div>--}}
-{{--                                    --}}{{--                                    </div>--}}
-
-{{--                                    --}}{{--                                    <div class="col-md-1">--}}
-{{--                                    --}}{{--                                        <div class="form-floating">--}}
-{{--                                    --}}{{--                                            <select name="status" class="form-select" id="status">--}}
-{{--                                    --}}{{--                                                <option value="">Tutti</option>--}}
-{{--                                    --}}{{--                                                @foreach($statuses as $key => $label)--}}
-{{--                                    --}}{{--                                                    <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>--}}
-{{--                                    --}}{{--                                                        {{ $label }}--}}
-{{--                                    --}}{{--                                                    </option>--}}
-{{--                                    --}}{{--                                                @endforeach--}}
-{{--                                    --}}{{--                                            </select>--}}
-{{--                                    --}}{{--                                            <label for="status">Stato</label>--}}
-{{--                                    --}}{{--                                        </div>--}}
-{{--                                    --}}{{--                                    </div>--}}
-
-{{--                                    --}}{{--                                    <div class="col-md-1">--}}
-{{--                                    --}}{{--                                        <div class="form-floating">--}}
-{{--                                    --}}{{--                                            <select name="type" class="form-select" id="type">--}}
-{{--                                    --}}{{--                                                <option value="">Tutti</option>--}}
-{{--                                    --}}{{--                                                @foreach($types as $key => $label)--}}
-{{--                                    --}}{{--                                                    <option value="{{ $key }}" {{ request('type') == $key ? 'selected' : '' }}>--}}
-{{--                                    --}}{{--                                                        {{ $label }}--}}
-{{--                                    --}}{{--                                                    </option>--}}
-{{--                                    --}}{{--                                                @endforeach--}}
-{{--                                    --}}{{--                                            </select>--}}
-{{--                                    --}}{{--                                            <label for="type">Tipo</label>--}}
-{{--                                    --}}{{--                                        </div>--}}
-{{--                                    --}}{{--                                    </div>--}}
-
-{{--                                    <div class="col-md-2">--}}
-{{--                                        <div class="form-floating">--}}
-{{--                                            <input type="date"--}}
-{{--                                                   name="date_from"--}}
-{{--                                                   class="form-control"--}}
-{{--                                                   id="date_from"--}}
-{{--                                                   value="{{ request('date_from') }}">--}}
-{{--                                            <label for="date_from">Dal</label>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-
-{{--                                    <div class="col-md-2">--}}
-{{--                                        <div class="form-floating">--}}
-{{--                                            <input type="date"--}}
-{{--                                                   name="date_to"--}}
-{{--                                                   class="form-control"--}}
-{{--                                                   id="date_to"--}}
-{{--                                                   value="{{ request('date_to') }}">--}}
-{{--                                            <label for="date_to">Al</label>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-
-{{--                                    <div class="col-md-5 d-flex align-items-center gap-2 justify-content-end">--}}
-{{--                                        <button type="submit" class="btn btn-primary">--}}
-{{--                                            <i class="bi bi-search"></i>--}}
-{{--                                        </button>--}}
-{{--                                    </div>--}}
-{{--                                </form>--}}
                             </div>
                         </div>
 
@@ -254,17 +162,17 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                 <tr>
-                                    <th>
+                                    <th class="col-2">
                                         <a href="{{ route('movements.index', array_merge(request()->all(), ['sort' => 'code', 'direction' => request('sort') == 'code' && request('direction') == 'asc' ? 'desc' : 'asc'])) }}"
                                            class="text-decoration-none text-dark">
                                             Codice
                                         </a>
                                     </th>
-                                    <th>Veicolo</th>
-                                    <th>Ufficio</th>
-                                    <th>Dal</th>
-                                    <th>Al</th>
-                                    <th class="text-end">Azioni</th>
+                                    <th class="col-2">Veicolo</th>
+                                    <th class="col-5">Ufficio</th>
+                                    <th class="col-1">Dal</th>
+                                    <th class="col-1">Al</th>
+                                    <th class="text-end col-1">Azioni</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -299,7 +207,7 @@
                                         </td>
                                         <td>
                                             <div>
-                                                {{$movement->date_to ? $movement->date_to->format('d/m/Y') : '-'}}
+                                                {{$movement->date_to ? $movement->date_to->format('d/m/Y') : 'in corso'}}
                                             </div>
                                         </td>
                                         <td class="text-end">

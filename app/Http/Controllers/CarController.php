@@ -41,7 +41,9 @@ class CarController extends Controller
             'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
             'carEquipment' => fn($q) => $q->wherePivotNull('date_to'),
         ]);
-
+        if ($unavailable = $request->exists('unavailable')) {
+            $query->withoutGlobalScope('available');
+        }
         // Filtri
         if ($search = $request->search) {
             $query = FilterCarService::getRelationWithFilter($query, $search);
@@ -50,7 +52,7 @@ class CarController extends Controller
         confirmDelete('Cancella Vettura!', "Sei sicuro di voler cancellare questa vettura?");
 
         $cars = $query->paginate();
-        return view('car.index', compact('cars', 'search'))
+        return view('car.index', compact('cars', 'search','unavailable' ))
             ->with('i', ($request->input('page', 1) - 1) * $cars->perPage());
     }
 

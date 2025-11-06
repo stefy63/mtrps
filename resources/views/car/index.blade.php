@@ -28,10 +28,18 @@
                     <div class="card-body bg-white">
                         {{-- Filtri --}}
                         <div class="row mb-3">
-                            <div class="col-12">
+                            <div class="col-10">
                                 <x-input-search-button
                                         action="{{ route('cars.index') }}"
                                         search="{{old('search', $search)}}"
+                                />
+                            </div>
+                            <div class="col-2 text-start">
+                                <x-input-checkbox
+                                        name="unavailable"
+                                        label="Fuori Uso"
+                                        action="{{ route('cars.index') }}"
+                                        value="{{old('unavailable', $unavailable)}}"
                                 />
                             </div>
                         </div>
@@ -50,7 +58,7 @@
                                 </thead>
                                 <tbody>
                                 @foreach ($cars as $car)
-                                    <tr>
+                                    <tr class="@if(!$car->available) text-decoration-line-through @endif">
                                         {{--                                        <td>{{ $car->carPlates->first()?->name ?? 'N/A' }}</td>--}}
                                         <td>
                                             <ul class="list-unstyled">
@@ -80,7 +88,9 @@
                                         <td>{{ $car->carPower?->name ?? 'N/A' }}</td>
 
                                         <td class="text-end">
-                                            <x-action-table-button :item="$car" :label="'Vettura'"/>
+                                            @if($car->available)
+                                                <x-action-table-button :item="$car" :label="'Vettura'"/>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

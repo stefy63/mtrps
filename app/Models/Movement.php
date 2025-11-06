@@ -73,6 +73,14 @@ use Carbon\Carbon;
  */
 class Movement extends Model
 {
+
+    protected static function booted()
+    {
+        static::addGlobalScope('inprogress', function (Builder $builder) {
+            $builder->whereNull('date_to');
+        });
+    }
+
     protected $perPage = 20;
 
     /**

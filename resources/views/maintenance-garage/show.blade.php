@@ -39,7 +39,7 @@
                                                 <strong>Nome Officina:</strong>
                                             </div>
                                             <div class="col-md-8">
-                                                <h5 class="mb-0">{{ $maintenanceGarage->name }}</h5>
+{{--                                                <h5 class="mb-0">{{ $maintenanceGarage->name }}</h5>--}}
                                             </div>
                                         </div>
 
@@ -114,11 +114,11 @@
                                             </div>
                                             <div class="col-md-8">
                                                 @if($maintenanceGarage->acc == 'yes')
-                                                    <span class="badge bg-success">
+                                                    <span class="badge bg-success w-50">
                                                         <i class="bi bi-check-circle"></i> Accreditata
                                                     </span>
                                                 @else
-                                                    <span class="badge bg-secondary">
+                                                    <span class="badge bg-secondary w-50">
                                                         <i class="bi bi-x-circle"></i> Non accreditata
                                                     </span>
                                                 @endif
@@ -131,11 +131,11 @@
                                             </div>
                                             <div class="col-md-8">
                                                 @if($maintenanceGarage->anti_mafia == 'yes')
-                                                    <span class="badge bg-success">
+                                                    <span class="badge bg-success w-50">
                                                         <i class="bi bi-shield-check"></i> Presente
                                                     </span>
                                                 @else
-                                                    <span class="badge bg-secondary">
+                                                    <span class="badge bg-secondary w-50">
                                                         <i class="bi bi-shield-x"></i> Non presente
                                                     </span>
                                                 @endif
@@ -248,36 +248,36 @@
 
                             <div class="col-md-4">
                                 <!-- Info Manutenzione -->
-                                <div class="card mb-3">
-                                    <div class="card-header bg-primary text-white">
-                                        <h5 class="mb-0"><i class="bi bi-wrench"></i> Manutenzione</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="mb-2">
-                                            <strong>Tipo:</strong> {{ $maintenanceGarage->maintenance->name }}
-                                        </p>
-                                        <p class="mb-2">
-                                            <strong>Veicolo:</strong> {{ $maintenanceGarage->maintenance->car->name }}
-                                            @if($maintenanceGarage->maintenance->car->carPlates->count() > 0)
-                                                <br><span class="badge bg-primary">{{ $maintenanceGarage->maintenance->car->carPlates->first()->name }}</span>
-                                            @endif
-                                        </p>
-                                        <p class="mb-2">
-                                            <strong>Periodo:</strong><br>
-                                            {{ $maintenanceGarage->maintenance->date_from->format('d/m/Y') }}
-                                            @if($maintenanceGarage->maintenance->date_to)
-                                                - {{ $maintenanceGarage->maintenance->date_to->format('d/m/Y') }}
-                                            @else
-                                                (In corso)
-                                            @endif
-                                        </p>
-                                        <div class="d-grid">
-                                            <a href="{{ route('maintenances.show', $maintenanceGarage->maintenance->id) }}" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-eye"></i> Vedi Manutenzione
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
+{{--                                <div class="card mb-3">--}}
+{{--                                    <div class="card-header bg-primary text-white">--}}
+{{--                                        <h5 class="mb-0"><i class="bi bi-wrench"></i> Manutenzione</h5>--}}
+{{--                                    </div>--}}
+{{--                                    <div class="card-body">--}}
+{{--                                        <p class="mb-2">--}}
+{{--                                            <strong>Tipo:</strong> {{ $maintenanceGarage->maintenance->name }}--}}
+{{--                                        </p>--}}
+{{--                                        <p class="mb-2">--}}
+{{--                                            <strong>Veicolo:</strong> {{ $maintenanceGarage->maintenance->car->name }}--}}
+{{--                                            @if($maintenanceGarage->maintenance->car->carPlates->count() > 0)--}}
+{{--                                                <br><span class="badge bg-primary">{{ $maintenanceGarage->maintenance->car->carPlates->first()->name }}</span>--}}
+{{--                                            @endif--}}
+{{--                                        </p>--}}
+{{--                                        <p class="mb-2">--}}
+{{--                                            <strong>Periodo:</strong><br>--}}
+{{--                                            {{ $maintenanceGarage->maintenance->date_from->format('d/m/Y') }}--}}
+{{--                                            @if($maintenanceGarage->maintenance->date_to)--}}
+{{--                                                - {{ $maintenanceGarage->maintenance->date_to->format('d/m/Y') }}--}}
+{{--                                            @else--}}
+{{--                                                (In corso)--}}
+{{--                                            @endif--}}
+{{--                                        </p>--}}
+{{--                                        <div class="d-grid">--}}
+{{--                                            <a href="{{ route('maintenances.show', $maintenanceGarage->maintenance->id) }}" class="btn btn-sm btn-outline-primary">--}}
+{{--                                                <i class="bi bi-eye"></i> Vedi Manutenzione--}}
+{{--                                            </a>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
 
                                 <!-- Azioni Rapide -->
                                 <div class="card">
@@ -289,9 +289,9 @@
                                             <a href="{{ route('cigs.create', ['maintenance_garage_id' => $maintenanceGarage->id]) }}" class="btn btn-outline-info">
                                                 <i class="bi bi-file-earmark-text-fill"></i> Aggiungi CIG
                                             </a>
-                                            <a href="{{ route('maintenance-garages.edit', $maintenanceGarage->id) }}" class="btn btn-outline-warning">
-                                                <i class="bi bi-pencil"></i> Modifica Officina
-                                            </a>
+{{--                                            <a href="{{ route('maintenance-garages.edit', $maintenanceGarage->id) }}" class="btn btn-outline-warning">--}}
+{{--                                                <i class="bi bi-pencil"></i> Modifica Officina--}}
+{{--                                            </a>--}}
                                         </div>
                                     </div>
                                 </div>
