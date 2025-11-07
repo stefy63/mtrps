@@ -23,9 +23,10 @@ class StoreMaintenanceRequest extends FormRequest
     {
         return [
             'car_id' => 'required|exists:cars,id',
-//            'name' => 'required|string|max:255',
+            'garage_id' => 'required|exists:maintenance_garages,id',
+            'type_id' => 'nullable|exists:maintenance_types,id',
             'description' => 'nullable|string|max:255',
-            'date_from' => 'required|date',
+            'date_from' => 'required|date|after:2000-01-01',
             'date_to' => 'nullable|date|after_or_equal:date_from',
             'note' => 'nullable|string',
         ];
@@ -41,32 +42,16 @@ class StoreMaintenanceRequest extends FormRequest
         return [
             'car_id.required' => 'Seleziona un veicolo',
             'car_id.exists' => 'Il veicolo selezionato non è valido',
-            'name.required' => 'Inserisci il tipo di manutenzione',
-            'name.max' => 'Il tipo di manutenzione non può superare i 255 caratteri',
+            'garage_id.required' => 'Seleziona una Officina',
+            'garage_id.exists' => 'l\'officina selezionato non è valida',
+            'type_id.exists' => 'Il tipo intervento selezionato non è valido',
             'description.max' => 'La descrizione non può superare i 255 caratteri',
             'date_from.required' => 'Inserisci la data di inizio manutenzione',
             'date_from.date' => 'La data di inizio non è valida',
+            'date_from.after' => 'Inserire una data valida maggiore del 2000',
             'date_to.date' => 'La data di fine non è valida',
             'date_to.after_or_equal' => 'La data di fine deve essere successiva o uguale alla data di inizio',
         ];
     }
 
-    /**
-     * Prepare the data for validation.
-     */
-    protected function prepareForValidation(): void
-    {
-        // Pulizia dei dati
-        if ($this->has('description') && empty($this->description)) {
-            $this->merge(['description' => null]);
-        }
-
-        if ($this->has('date_to') && empty($this->date_to)) {
-            $this->merge(['date_to' => null]);
-        }
-
-        if ($this->has('note') && empty($this->note)) {
-            $this->merge(['note' => null]);
-        }
-    }
 }

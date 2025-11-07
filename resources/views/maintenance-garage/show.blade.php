@@ -39,7 +39,13 @@
                                                 <strong>Nome Officina:</strong>
                                             </div>
                                             <div class="col-md-8">
-{{--                                                <h5 class="mb-0">{{ $maintenanceGarage->name }}</h5>--}}
+                                                <h5 class="mb-0">{{ $maintenanceGarage->name }}</h5>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <strong>Indirizzo:</strong>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <span class="text-muted">{{ $maintenanceGarage->address }}</span>
                                             </div>
                                         </div>
 
@@ -97,6 +103,58 @@
                                             <div class="col-md-8">
                                                 @if($maintenanceGarage->pec)
                                                     <a href="mailto:{{ $maintenanceGarage->pec }}">{{ $maintenanceGarage->pec }}</a>
+                                                @else
+                                                    Non specificata
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col-md-4">
+                                                <strong>Mail:</strong>
+                                            </div>
+                                            <div class="col-md-8">
+                                                @if($maintenanceGarage->mail)
+                                                    <a href="mailto:{{ $maintenanceGarage->mail }}">{{ $maintenanceGarage->mail }}</a>
+                                                @else
+                                                    Non specificata
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col-md-4">
+                                                <strong>Telefono Ufficio:</strong>
+                                            </div>
+                                            <div class="col-md-8">
+                                                @if($maintenanceGarage->phone1)
+                                                    <a href="phone:{{ $maintenanceGarage->phone1 }}">{{ $maintenanceGarage->phone1 }}</a>
+                                                @else
+                                                    Non specificata
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col-md-4">
+                                                <strong>Fax:</strong>
+                                            </div>
+                                            <div class="col-md-8">
+                                                @if($maintenanceGarage->phone2)
+                                                    <code>{{ $maintenanceGarage->phone2 }}</code>
+                                                @else
+                                                    Non specificata
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-2">
+                                            <div class="col-md-4">
+                                                <strong>Responsabile:</strong>
+                                            </div>
+                                            <div class="col-md-8">
+                                                @if($maintenanceGarage->phone3)
+                                                    <a href="phone:{{ $maintenanceGarage->phone3 }}">{{ $maintenanceGarage->phone3 }}</a>
                                                 @else
                                                     Non specificata
                                                 @endif
@@ -205,80 +263,9 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- CIG Collegati -->
-                                @if($maintenanceGarage->cigs->count() > 0)
-                                    <div class="card">
-                                        <div class="card-header bg-secondary text-white">
-                                            <h5 class="mb-0"><i class="bi bi-file-earmark-text"></i> CIG Collegati</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table class="table table-sm">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>CIG</th>
-                                                            <th>Data</th>
-                                                            <th>Descrizione</th>
-                                                            <th>Importo</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @foreach($maintenanceGarage->cigs as $cig)
-                                                            <tr>
-                                                                <td><strong>{{ $cig->cig }}</strong></td>
-                                                                <td>{{ $cig->date ? \Carbon\Carbon::parse($cig->date)->format('d/m/Y') : '-' }}</td>
-                                                                <td>{{ $cig->description ?? '-' }}</td>
-                                                                <td>
-                                                                    @if($cig->taxable)
-                                                                        € {{ number_format($cig->taxable, 2, ',', '.') }}
-                                                                    @else
-                                                                        -
-                                                                    @endif
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
                             </div>
 
                             <div class="col-md-4">
-                                <!-- Info Manutenzione -->
-{{--                                <div class="card mb-3">--}}
-{{--                                    <div class="card-header bg-primary text-white">--}}
-{{--                                        <h5 class="mb-0"><i class="bi bi-wrench"></i> Manutenzione</h5>--}}
-{{--                                    </div>--}}
-{{--                                    <div class="card-body">--}}
-{{--                                        <p class="mb-2">--}}
-{{--                                            <strong>Tipo:</strong> {{ $maintenanceGarage->maintenance->name }}--}}
-{{--                                        </p>--}}
-{{--                                        <p class="mb-2">--}}
-{{--                                            <strong>Veicolo:</strong> {{ $maintenanceGarage->maintenance->car->name }}--}}
-{{--                                            @if($maintenanceGarage->maintenance->car->carPlates->count() > 0)--}}
-{{--                                                <br><span class="badge bg-primary">{{ $maintenanceGarage->maintenance->car->carPlates->first()->name }}</span>--}}
-{{--                                            @endif--}}
-{{--                                        </p>--}}
-{{--                                        <p class="mb-2">--}}
-{{--                                            <strong>Periodo:</strong><br>--}}
-{{--                                            {{ $maintenanceGarage->maintenance->date_from->format('d/m/Y') }}--}}
-{{--                                            @if($maintenanceGarage->maintenance->date_to)--}}
-{{--                                                - {{ $maintenanceGarage->maintenance->date_to->format('d/m/Y') }}--}}
-{{--                                            @else--}}
-{{--                                                (In corso)--}}
-{{--                                            @endif--}}
-{{--                                        </p>--}}
-{{--                                        <div class="d-grid">--}}
-{{--                                            <a href="{{ route('maintenances.show', $maintenanceGarage->maintenance->id) }}" class="btn btn-sm btn-outline-primary">--}}
-{{--                                                <i class="bi bi-eye"></i> Vedi Manutenzione--}}
-{{--                                            </a>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-
                                 <!-- Azioni Rapide -->
                                 <div class="card">
                                     <div class="card-header bg-info text-white">
@@ -289,9 +276,6 @@
                                             <a href="{{ route('cigs.create', ['maintenance_garage_id' => $maintenanceGarage->id]) }}" class="btn btn-outline-info">
                                                 <i class="bi bi-file-earmark-text-fill"></i> Aggiungi CIG
                                             </a>
-{{--                                            <a href="{{ route('maintenance-garages.edit', $maintenanceGarage->id) }}" class="btn btn-outline-warning">--}}
-{{--                                                <i class="bi bi-pencil"></i> Modifica Officina--}}
-{{--                                            </a>--}}
                                         </div>
                                     </div>
                                 </div>

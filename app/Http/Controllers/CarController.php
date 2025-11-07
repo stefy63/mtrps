@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Enum\PlateTypeEnum;
 use App\Facades\CarsService;
 use App\Http\Requests\CarRequest;
+use App\Http\Requests\StoreCarRequest;
+use App\Http\Requests\UpdateCarRequest;
 use App\Models\Car;
 use App\Models\CarBrand;
 use App\Models\CarEmploymentCode;
@@ -65,13 +67,24 @@ class CarController extends Controller
         $carPowers = CarPower::get(['id', 'name']);
         $carProfitAccounts = CarProfitAccount::get(['id', 'name']);
         $carEmployment = CarEmploymentCode::get(['id', 'extended']);
+        $polPlates = Plate::whereType(PlateTypeEnum::POLIZIA)->get(['id', 'name']);
+        $civPlates = Plate::whereType(PlateTypeEnum::CIVILE)->get(['id', 'name']);
+        $origPlates = Plate::whereType(PlateTypeEnum::ORIGINALE)->get(['id', 'name']);
+        $equipments = Equipment::get();
+        $car_police_plate_id = null;
+        $car_civil_plate_id = null;
+        $car_origin_plate_id = null;
+        $assignee_id = null;
+        $offices = Office::get();
         $button = false;
+
         return view('car.form',
             compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment',
-                'button'));
+                'car_police_plate_id', 'car_civil_plate_id', 'car_origin_plate_id', 'polPlates', 'civPlates',
+                'offices', 'equipments', 'origPlates', 'offices', 'assignee_id', 'button'));
     }
 
-    public function storeForm(CarRequest $request): JsonResponse
+    public function storeForm(StoreCarRequest $request): JsonResponse
     {
         $carBrand = Car::create($request->validated());
         return $this->sendResponse($carBrand, 'Vettura creata con successo.');
@@ -108,7 +121,7 @@ class CarController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CarRequest $request): RedirectResponse
+    public function store(StoreCarRequest $request): RedirectResponse
     {
         try {
             DB::beginTransaction();
@@ -185,7 +198,7 @@ class CarController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CarRequest $request, Car $car): RedirectResponse
+    public function update(UpdateCarRequest $request, Car $car): RedirectResponse
     {
         try {
             DB::beginTransaction();

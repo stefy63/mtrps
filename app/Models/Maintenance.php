@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Maintenance
@@ -25,6 +27,12 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Maintenance extends Model
 {
+    protected static function booted()
+    {
+        static::addGlobalScope('closed', function (Builder $builder) {
+            $builder->whereNull('date_to');
+        });
+    }
 
     protected $perPage = 20;
 
@@ -33,7 +41,7 @@ class Maintenance extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['car_id', 'name', 'description', 'date_from', 'date_to', 'note'];
+    protected $fillable = ['car_id', 'garage_id', 'type_id', 'description', 'date_from', 'date_to', 'note'];
 
     /**
      * The attributes that should be cast.
@@ -42,31 +50,32 @@ class Maintenance extends Model
      */
     protected $casts = [
         'date_from' => 'datetime:Y-m-d',
+        'date_to' => 'datetime:Y-m-d',
     ];
 
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function car()
+    public function car(): BelongsTo
     {
-        return $this->belongsTo(Car::class);
+        return $this->belongsTo(Car::class, 'car_id');
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function maintenanceGarages()
+    public function maintenanceGarages(): BelongsTo
     {
-        return $this->belongsTo(MaintenanceGarage::class);
+        return $this->belongsTo(MaintenanceGarage::class, 'garage_id');
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function maintenanceTypes()
+    public function maintenanceTypes(): BelongsTo
     {
-        return $this->belongsTo(MaintenanceType::class);
+        return $this->belongsTo(MaintenanceType::class, 'type_id');
     }
 
 }

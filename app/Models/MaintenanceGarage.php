@@ -37,7 +37,23 @@ class MaintenanceGarage extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['maintenance_id', 'name', 'piva', 'cf', 'iban', 'pec', 'acc', 'anti_mafia', 'durc', 'description', 'note'];
+    protected $fillable = ['maintenance_id',
+        'name',
+        'address',
+        'piva',
+        'cf',
+        'iban',
+        'pec',
+        'mail',
+        'phone1',
+        'phone2',
+        'phone3',
+        'acc',
+        'anti_mafia',
+        'durc',
+        'description',
+        'note'
+    ];
 
 
     /**

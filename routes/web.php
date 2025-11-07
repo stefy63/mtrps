@@ -12,6 +12,9 @@ use App\Http\Controllers\CarPowerController;
 use App\Http\Controllers\CarProfitAccountController;
 use App\Http\Controllers\CarSetupController;
 use App\Http\Controllers\CarTypeController;
+use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\MaintenanceGarageController;
+use App\Http\Controllers\MaintenanceTypeController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\ProfileController;
@@ -49,6 +52,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('offices/store-form', [OfficeController::class, 'storeForm'])->name('offices.storeForm');
     Route::get('movements/get-form', [MovementController::class, 'getForm'])->name('movement.getForm');
     Route::post('movements/store-form', [MovementController::class, 'storeForm'])->name('movement.storeForm');
+    Route::get('maintenance-garages/get-form',
+        [MaintenanceGarageController::class, 'getForm'])->name('maintenance-garage.getForm');
+    Route::post('maintenance-garages/store-form',
+        [MaintenanceGarageController::class, 'storeForm'])->name('maintenance-garage.storeForm');
+    Route::get('maintenance-types/get-form',
+        [MaintenanceTypeController::class, 'getForm'])->name('maintenance-type.getForm');
+    Route::post('maintenance-types/store-form',
+        [MaintenanceTypeController::class, 'storeForm'])->name('maintenance-type.storeForm');
+    Route::get('maintenances/get-form', [MaintenanceController::class, 'getForm'])->name('maintenance.getForm');
+    Route::post('maintenances/store-form', [MaintenanceController::class, 'storeForm'])->name('maintenance.storeForm');
 
 
     Route::get('/home', [MovementController::class, 'index'])->name('home');
@@ -58,12 +71,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('car-owners', CarOwnerController::class);
     Route::resource('car-assignees', CarAssigneeController::class);
     Route::get('car-assignees-current', [CarAssigneeController::class, 'current'])->name('car-assignees.current');
-    Route::get('car-assignees/vehicle/{car}',
-        [CarAssigneeController::class, 'getByVehicle'])->name('car-assignees.by-vehicle');
-    Route::get('car-assignees/vehicle/{car}/history',
-        [CarAssigneeController::class, 'vehicleHistory'])->name('car-assignees.vehicle-history');
-    Route::get('api/car-assignees/check-overlaps',
-        [CarAssigneeController::class, 'checkOverlaps'])->name('car-assignees.check-overlaps');
     Route::resource('car-brands', CarBrandController::class);
     Route::resource('car-powers', CarPowerController::class);
     Route::resource('car-profit-accounts', CarProfitAccountController::class);
@@ -96,17 +103,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('car-fuels/statistics/{car}',
         [App\Http\Controllers\CarFuelController::class, 'statistics'])->name('car-fuels.statistics');
     Route::resource('car-fuels', CarFuelController::class);
-    Route::get('maintenance-garages/suggestions', [
-        App\Http\Controllers\MaintenanceGarageController::class, 'suggestions'
-    ])->name('maintenance-garages.suggestions');
-    Route::get('maintenance-garages/validate-piva', [
-        App\Http\Controllers\MaintenanceGarageController::class, 'validatePiva'
-    ])->name('maintenance-garages.validate-piva');
-    Route::resource('maintenance-garages', App\Http\Controllers\MaintenanceGarageController::class);
-    Route::get('maintenance-types/suggestions',
-        [App\Http\Controllers\MaintenanceTypeController::class, 'suggestions'])->name('maintenance-types.suggestions');
-    Route::get('maintenance-types/statistics/{maintenance}',
-        [App\Http\Controllers\MaintenanceTypeController::class, 'statistics'])->name('maintenance-types.statistics');
+    Route::resource('maintenance-garages', MaintenanceGarageController::class);
     Route::resource('maintenance-types', App\Http\Controllers\MaintenanceTypeController::class);
     Route::get('cigs/generate', [App\Http\Controllers\CigController::class, 'generateCig'])->name('cigs.generate');
     Route::get('cigs/statistics', [App\Http\Controllers\CigController::class, 'statistics'])->name('cigs.statistics');
@@ -134,7 +131,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 //    Route::post('imports/plates', [App\Http\Controllers\ImportController::class, 'importPlates'])->name('imports.plates');
 //    Route::post('imports/offices', [App\Http\Controllers\ImportController::class, 'importOffices'])->name('imports.offices');
 //    Route::post('imports/equipments', [App\Http\Controllers\ImportController::class, 'importEquipments'])->name('imports.equipments');
-//    Route::post('imports/car-assignees', [App\Http\Controllers\ImportController::class, 'importCarAssignees'])->name('imports.car-assignees');
 //    Route::post('imports/maintenance-garages', [App\Http\Controllers\ImportController::class, 'importMaintenanceGarages'])->name('imports.maintenance-garages');
 //    Route::post('imports/maintenance-types', [App\Http\Controllers\ImportController::class, 'importMaintenanceTypes'])->name('imports.maintenance-types');
 //    Route::post('imports/maintenances', [App\Http\Controllers\ImportController::class, 'importMaintenances'])->name('imports.maintenances');

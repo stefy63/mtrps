@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('car_id')->nullable();
             $table->unsignedBigInteger('garage_id')->nullable();
-            $table->unsignedBigInteger('types_id')->nullable();
+            $table->unsignedBigInteger('type_id')->nullable();
+            $table->text('description')->nullable();
             $table->date('date_from')->useCurrent();
             $table->date('date_to')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
             $table->foreign('car_id')->references('id')->on('cars')->onDelete('set null');
             $table->foreign('garage_id')->references('id')->on('maintenance_garages');
-            $table->foreign('types_id')->references('id')->on('maintenance_types');
+            $table->foreign('type_id')->references('id')->on('maintenance_types');
         });
     }
 

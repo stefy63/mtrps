@@ -139,18 +139,13 @@
 
                                 {{-- Filtri --}}
                                 <div class="row mb-3">
-                                    <div class="col-10">
+                                    <div class="col-12">
                                         <x-input-search-button
                                                 action="{{ route('movements.index') }}"
                                                 search="{{old('search', $search)}}"
-                                        />
-                                    </div>
-                                    <div class="col-2 text-start">
-                                        <x-input-checkbox
                                                 name="inprogress"
                                                 label="Terminate"
-                                                action="{{ route('movements.index') }}"
-                                                value="{{old('inprogress', $inprogress)}}"
+                                                check="{{old('inprogress', $inprogress)}}"
                                         />
                                     </div>
                                 </div>
@@ -168,8 +163,8 @@
                                             Codice
                                         </a>
                                     </th>
-                                    <th class="col-2">Veicolo</th>
-                                    <th class="col-5">Ufficio</th>
+                                    <th class="col-3">Veicolo</th>
+                                    <th class="col-4">Ufficio</th>
                                     <th class="col-1">Dal</th>
                                     <th class="col-1">Al</th>
                                     <th class="text-end col-1">Azioni</th>
@@ -186,7 +181,10 @@
                                         </td>
                                         <td>
                                             <div>
-                                                <strong>{{ $movement->car?->full_name }}</strong>
+                                                <a href="{{route('cars.show', $movement->car_id)}}"
+                                                   class="text-decoration-none">
+                                                    <strong>{{ $movement->car?->full_name }}</strong>
+                                                </a>
                                                 @if($movement->car?->carPlates->first())
                                                     <br>
                                                     <small class="text-muted">
@@ -197,7 +195,10 @@
                                         </td>
                                         <td>
                                             <div>
+                                                <a href="{{route('offices.show', $movement->office_id)}}"
+                                                   class="text-decoration-none">
                                                 {{$movement->office?->full_name ?? ''}}
+                                                </a>
                                             </div>
                                         </td>
                                         <td>
@@ -212,7 +213,7 @@
                                         </td>
                                         <td class="text-end">
                                             <div class="btn-group dropstart">
-                                                <x-action-table-button :item="$movement" :label="'Movimento'" />
+                                                <x-action-table-button :item="$movement" :label="'Movimento'"/>
                                             </div>
                                         </td>
                                     </tr>

@@ -128,109 +128,150 @@
                                    class="form-control @error('mail') is-invalid @enderror"
                                    value="{{ old('mail', $maintenanceGarage->mail ?? '') }}"
                                    placeholder="officina@mail.it">
-                            <label for="mail">{{ __('PEC (Posta Elettronica Certificata)') }}</label>
+                            <label for="mail">{{ __('MAIL (Posta Elettronica)') }}</label>
                             @error('mail')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Certificazioni -->
-        <div class="card">
-            <div class="card-header bg-light">
-                <h5 class="mb-0"><i class="bi bi-shield-check"></i> Certificazioni e Documenti</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <!-- Accreditamento -->
+
+                    <!-- TELEFONI -->
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">{{ __('Accreditamento') }} <span class="text-danger">*</span></label>
-                        <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="acc" id="acc_yes" value="yes"
-                                   {{ old('acc', $maintenanceGarage->acc ?? 'no') == 'yes' ? 'checked' : '' }} required>
-                            <label class="btn btn-outline-success" for="acc_yes">
-                                <i class="bi bi-check-circle"></i> Sì
-                            </label>
-
-                            <input type="radio" class="btn-check" name="acc" id="acc_no" value="no"
-                                   {{ old('acc', $maintenanceGarage->acc ?? 'no') == 'no' ? 'checked' : '' }} required>
-                            <label class="btn btn-outline-secondary" for="acc_no">
-                                <i class="bi bi-x-circle"></i> No
-                            </label>
-                        </div>
-                        @error('acc')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Certificazione Antimafia -->
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">{{ __('Certificazione Antimafia') }} <span
-                                    class="text-danger">*</span></label>
-                        <div class="btn-group w-100" role="group">
-                            <input type="radio" class="btn-check" name="anti_mafia" id="anti_mafia_yes" value="yes"
-                                   {{ old('anti_mafia', $maintenanceGarage->anti_mafia ?? 'no') == 'yes' ? 'checked' : '' }} required>
-                            <label class="btn btn-outline-success" for="anti_mafia_yes">
-                                <i class="bi bi-shield-check"></i> Sì
-                            </label>
-
-                            <input type="radio" class="btn-check" name="anti_mafia" id="anti_mafia_no" value="no"
-                                   {{ old('anti_mafia', $maintenanceGarage->anti_mafia ?? 'no') == 'no' ? 'checked' : '' }} required>
-                            <label class="btn btn-outline-secondary" for="anti_mafia_no">
-                                <i class="bi bi-shield-x"></i> No
-                            </label>
-                        </div>
-                        @error('anti_mafia')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- DURC -->
-                    <div class="col-md-4 mb-3">
-                        <div class="form-floating">
-                            <input type="date" name="durc" id="durc"
-                                   class="form-control @error('durc') is-invalid @enderror"
-                                   value="{{ old('durc', isset($maintenanceGarage) && $maintenanceGarage->durc ? $maintenanceGarage->durc->format('Y-m-d') : '') }}">
-                            <label for="durc">{{ __('Scadenza DURC') }}</label>
-                            @error('durc')
+                        <div class="form-floating ">
+                            <input type="tel" name="phone1" id="phone1"
+                                   class="form-control @error('phone1') is-invalid @enderror"
+                                   value="{{ old('phone1', $maintenanceGarage->phone1 ?? '') }}"
+                                   placeholder="+39 011455487">
+                            <label for="phone1">{{ __('Telefono Ufficio') }}</label>
+                            @error('phone1')
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <div id="durc-alert" class="mt-1"></div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="form-floating ">
+                            <input type="tel" name="phone2" id="phone2"
+                                   class="form-control @error('phone2') is-invalid @enderror"
+                                   value="{{ old('phone2', $maintenanceGarage->phone2 ?? '') }}"
+                                   placeholder="+39 011455487">
+                            <label for="phone2">{{ __('Telefono Fax') }}</label>
+                            @error('phone1')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="form-floating ">
+                            <input type="tel" name="phone3" id="phone3"
+                                   class="form-control @error('phone3') is-invalid @enderror"
+                                   value="{{ old('phone3', $maintenanceGarage->phone3 ?? '') }}"
+                                   placeholder="+39 333 1232321">
+                            <label for="phone3">{{ __('Telefono Responsabile') }}</label>
+                            @error('phone3')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
+                </div>
 
-                <!-- Note -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-floating">
+        </div>
+    </div>
+
+    <!-- Certificazioni -->
+    <div class="card">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="bi bi-shield-check"></i> Certificazioni e Documenti</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Accreditamento -->
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">{{ __('Accreditamento') }} <span class="text-danger">*</span></label>
+                    <div class="btn-group w-100" role="group">
+                        <input type="radio" class="btn-check" name="acc" id="acc_yes" value="yes"
+                               {{ old('acc', $maintenanceGarage->acc ?? 'no') == 'yes' ? 'checked' : '' }} required>
+                        <label class="btn btn-outline-success" for="acc_yes">
+                            <i class="bi bi-check-circle"></i> Sì
+                        </label>
+
+                        <input type="radio" class="btn-check" name="acc" id="acc_no" value="no"
+                               {{ old('acc', $maintenanceGarage->acc ?? 'no') == 'no' ? 'checked' : '' }} required>
+                        <label class="btn btn-outline-secondary" for="acc_no">
+                            <i class="bi bi-x-circle"></i> No
+                        </label>
+                    </div>
+                    @error('acc')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Certificazione Antimafia -->
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">{{ __('Certificazione Antimafia') }} <span
+                                class="text-danger">*</span></label>
+                    <div class="btn-group w-100" role="group">
+                        <input type="radio" class="btn-check" name="anti_mafia" id="anti_mafia_yes" value="yes"
+                               {{ old('anti_mafia', $maintenanceGarage->anti_mafia ?? 'no') == 'yes' ? 'checked' : '' }} required>
+                        <label class="btn btn-outline-success" for="anti_mafia_yes">
+                            <i class="bi bi-shield-check"></i> Sì
+                        </label>
+
+                        <input type="radio" class="btn-check" name="anti_mafia" id="anti_mafia_no" value="no"
+                               {{ old('anti_mafia', $maintenanceGarage->anti_mafia ?? 'no') == 'no' ? 'checked' : '' }} required>
+                        <label class="btn btn-outline-secondary" for="anti_mafia_no">
+                            <i class="bi bi-shield-x"></i> No
+                        </label>
+                    </div>
+                    @error('anti_mafia')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- DURC -->
+                <div class="col-md-4 mb-3">
+                    <div class="form-floating">
+                        <input type="date" name="durc" id="durc"
+                               class="form-control @error('durc') is-invalid @enderror"
+                               value="{{ old('durc', isset($maintenanceGarage) && $maintenanceGarage->durc ? $maintenanceGarage->durc : '') }}">
+                        <label for="durc">{{ __('Scadenza DURC') }}</label>
+                        @error('durc')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div id="durc-alert" class="mt-1"></div>
+                </div>
+            </div>
+
+            <!-- Note -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-floating">
                             <textarea name="note" id="note"
                                       class="form-control @error('note') is-invalid @enderror"
                                       style="height: 100px"
                                       placeholder="Note aggiuntive...">{{ old('note', $maintenanceGarage->note ?? '') }}</textarea>
-                            <label for="note">{{ __('Note (opzionale)') }}</label>
-                            @error('note')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        <label for="note">{{ __('Note (opzionale)') }}</label>
+                        @error('note')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    @if($button)
-        <div class="row mt-3">
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save"></i> {{ __('Salva Officina') }}
-                </button>
-                <a href="{{ route('maintenance-garages.index') }}" class="btn btn-secondary">
-                    <i class="bi bi-x-circle"></i> {{ __('Annulla') }}
-                </a>
-            </div>
-        </div>
-    @endif
 </div>
+@if($button)
+    <div class="row mt-3">
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> {{ __('Salva Officina') }}
+            </button>
+            <a href="{{ route('maintenance-garages.index') }}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> {{ __('Annulla') }}
+            </a>
+        </div>
+    </div>
+    @endif
+    </div>

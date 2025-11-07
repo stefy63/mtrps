@@ -12,6 +12,7 @@
         modalTitle: "{{ $modalTitle ?? "Nuovo elemento" }}",
         modalClass: "{{ $modalClass ?? "" }}",
         class: "{{ $class ?? "" }}",
+        disabled: "{{$disabled ?? false}}"
     })'
 >
 
@@ -23,6 +24,7 @@
             <div class="input-group">
                 <!-- Input ricerca -->
                 <input type="text"
+                       :disabled="disabled"
                        id="{{ $name }}"
                        :required="required"
                        aria-describedby="button-add-type"
@@ -46,10 +48,12 @@
             <ul class="list-group position-absolute w-100 mt-1 z-10"
                 x-show="open"
                 style="max-height: 200px; overflow-y: auto; z-index: 10">
-                <li class="list-group-item list-group-item-action"
-                    @click="clearSearch(); $refs.hidden.dispatchEvent(new Event('change'));">
-                    Nessuna
-                </li>
+                <template x-if="search === ''">
+                    <li class="list-group-item list-group-item-action"
+                        @click="clearSearch(); $refs.hidden.dispatchEvent(new Event('change'));">
+                        Nessuna
+                    </li>
+                </template>
                 <template x-for="option in filteredOptions" :key="option[idKey]">
                     <li class="list-group-item list-group-item-action"
                         @click="option_id = option.id; search = option[labelKey]; open = false; $refs.hidden.dispatchEvent(new Event('change'));"
@@ -58,7 +62,7 @@
                 </template>
             </ul>
         </div>
-        <input x-ref="hidden" type="hidden" name="{{ $name }}" :value="option_id" >
+        <input x-ref="hidden" type="hidden" name="{{ $name }}" :value="option_id">
     </div>
 
 

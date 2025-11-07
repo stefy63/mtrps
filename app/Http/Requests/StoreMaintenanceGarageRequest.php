@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rule;
 
 class StoreMaintenanceGarageRequest extends FormRequest
 {
@@ -31,7 +33,14 @@ class StoreMaintenanceGarageRequest extends FormRequest
             'mail' => 'nullable|email|max:255',
             'acc' => 'required|in:yes,no',
             'anti_mafia' => 'required|in:yes,no',
-            'durc' => 'nullable|date',
+            'durc' => [
+                'nullable',
+                'date',
+                'after:2000-01-01'
+            ],
+            'phone1' => 'nullable|numeric|regex:/\+[0-9]{5,20}/',
+            'phone2' => 'nullable|numeric|regex:/\+[0-9]{5,20}/',
+            'phone3' => 'nullable|numeric|regex:/\+[0-9]{5,20}/',
             'description' => 'nullable|string|max:255',
             'note' => 'nullable|string',
         ];
@@ -60,7 +69,11 @@ class StoreMaintenanceGarageRequest extends FormRequest
             'acc.in' => 'Il valore di accreditamento non è valido',
             'anti_mafia.required' => 'Specifica se è presente la certificazione antimafia',
             'anti_mafia.in' => 'Il valore della certificazione antimafia non è valido',
+            'phone1.regex' => 'Formato telefono ufficio non valido.',
+            'phone2.regex' => 'Formato telefono fax non valido.',
+            'phone3.regex' => 'Formato telefono responsabile non valido.',
             'durc.date' => 'La data DURC non è valida',
+            'durc.after' => 'La data DURC è inferiore al 2000',
             'description.max' => 'La descrizione non può superare i 255 caratteri',
         ];
     }

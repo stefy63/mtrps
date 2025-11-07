@@ -37,11 +37,10 @@
 
                     {{-- Veicolo --}}
                     <div class="col-md-6">
-                        @if($button)
                             <x-dynamic-select
                                     name="car_id"
                                     modalClass="modal-xl"
-
+                                    disabled="{{!$button}}"
                                     :required="'true'"
                                     :value="old('car_id', $movement?->car_id)"
                                     :options="$cars"
@@ -53,9 +52,6 @@
                                     modal-url="{{ route('car.getForm') }}"
                                     modal-title="Nuova Vettura"
                             />
-                        @else
-                            <input type="hidden" name="car_id" value="{{$movement?->car_id}}">
-                        @endif
                     </div>
 
 

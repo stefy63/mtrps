@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\MovementService;
 use App\Http\Requests\MovementRequest;
 use App\Models\Car;
 use App\Models\Movement;
 use App\Models\Office;
 use App\Services\FilterCarService;
 use App\Services\FilterOfficeService;
-use App\Services\MovementService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -16,8 +16,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
-use phpDocumentor\Reflection\Types\Boolean;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class MovementController extends Controller
 {

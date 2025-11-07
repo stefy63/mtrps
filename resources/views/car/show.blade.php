@@ -15,6 +15,9 @@
                             <span class="card-title">{{ __('Dati Vettura') }} : {{ $car->full_name }}</span>
                         </div>
                         <div class="float-right">
+                            <a class="btn btn-sm btn-warning" href="{{ route('cars.edit', $car->id) }}">
+                                <i class="bi bi-pencil"></i> {{ __('Modifica') }}
+                            </a>
                             <a class="btn btn-primary btn-sm" href="{{ route('cars.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
@@ -39,6 +42,7 @@
 
 
                         <div class="tab-content" id="nav-tabContent">
+                            {{--                            Vettura --}}
                             <div class="tab-pane fade show active" id="nav-car" role="tabpanel"
                                  aria-labelledby="nav-car-tab">
                                 <div class="row">
@@ -185,6 +189,7 @@
                                     </div>
                                 </div>
                             </div>
+                            {{--                            Movimenti--}}
                             <div class="tab-pane fade" id="nav-movement" role="tabpanel"
                                  aria-labelledby="nav-movement-tab">
                                 <div class="text-end m-2">
@@ -212,16 +217,29 @@
                                     <tbody>
                                     @if(count($car->movements))
                                         @foreach($car->movements as $m)
+                                            @php
+                                                $movementIsActive = !$m->date_to || $m->date_to >= now();
+                                            @endphp
                                             <tr>
-                                                <td class="col-3">
+                                                <td class="col-2">
                                                     <a href="{{ route('movements.edit', $m->id) }}"
                                                        class="text-decoration-none">
                                                         <strong>{{ $m->code }}</strong>
                                                     </a>
                                                 </td>
                                                 <td class="col-3">{{$m->office->full_name}}</td>
-                                                <td class="col-3">{{date('d/m/Y', strtotime($m->date_from))}}</td>
-                                                <td class="col-3">{{$m->date_to ? date('d/m/Y', strtotime($m->date_to)) : '---'}}</td>
+                                                <td class="col-2">{{date('d/m/Y', strtotime($m->date_from))}}</td>
+                                                <td class="col-2">
+                                                    @if($movementIsActive)
+                                                        <span class="badge bg-warning text-dark w-75">
+                                                            <i class="bi bi-clock"></i> In corso
+                                                        </span>
+                                                    @else
+                                                        <span class="badge bg-success">
+                                                            <i class="bi bi-check-circle"></i> Completata
+                                                        </span>
+                                                    @endif
+{{--                                                    {{$m->date_to ? date('d/m/Y', strtotime($m->date_to)) : '---'}}</td>--}}
                                                 <td class="col-3">{{$m->note}}</td>
                                             </tr>
                                         @endforeach
@@ -229,28 +247,90 @@
                                     </tbody>
                                 </table>
                             </div>
+                            {{--                            Manutenzioni--}}
                             <div class="tab-pane fade" id="nav-maintenance" role="tabpanel"
                                  aria-labelledby="nav-maintenance-tab">
 
+                                <div class="text-end m-2">
+                                    <x-button-modal-form
+                                            endpoint="{{ route('maintenance.storeForm') }}"
+                                            label="{{ __('Manutenzioni') }}"
+                                            url="{{ route('maintenance.getForm', ['car_id' => $car->id]) }}"
+                                            modalTitle="Nuova Manutenzione"
+                                            modalClass="modal-xl"
+                                            class="btn-primary"
+                                            icon="bi-database-fill-add"
+                                    />
+                                </div>
                                 <table class="table table-hover table-responsive">
                                     <thead>
                                     <tr>
-                                        <th scope="col">Officina</th>
-                                        <th scope="col">Tipo intervento</th>
-                                        <th scope="col">Dal</th>
-                                        <th scope="col">Al</th>
-                                        <th scope="col">Note</th>
+                                        <th class="col-2">Officina</th>
+                                        <th class="col-2">Indirizzo</th>
+                                        <th class="col-1">Telefoni</th>
+                                        <th class="col-2">Mail/PEC</th>
+                                        <th class="col-1">Tipo intervento</th>
+                                        <th class="col-1">Dal</th>
+                                        <th class="col-1">Al</th>
+                                        <th class="col-2">Note</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @if($car->maintenances->count())
                                         @foreach($car->maintenances as $m)
+                                            @php
+                                                $maintenanceIsActive = !$m->date_to || $m->date_to >= now();
+                                            @endphp
                                             <tr>
-                                                <td class="col-3">{{$m->maintenanceGarages->name ?? ''}}</td>
-                                                <td class="col-3">{{$m->maintenanceTypes->name ?? ''}}</td>
-                                                <td class="col-3">{{date('d/m/Y', strtotime($m->date_from))}}</td>
-                                                <td class="col-3">{{$m->date_to ? date('d/m/Y', strtotime($m->date_to)) : '---'}}</td>
-                                                <td class="col-3">{{$m->note}}</td>
+                                                <td class="text-truncate">
+                                                    <a href="{{route('maintenances.show', $m->id)}}"
+                                                       class="text-decoration-none">
+                                                        {{$m->maintenanceGarages?->name ?? ''}}
+                                                    </a>
+                                                </td>
+                                                <td class="text-truncate">{{$m->maintenanceGarages?->address ?? ''}}</td>
+                                                <td class="text-truncate">
+                                                    @if($m->maintenanceGarages?->phone1)
+                                                        <small class="text-muted">
+                                                            Uff: {{$m->maintenanceGarages?->phone1 }}
+                                                        </small><br>
+                                                    @endif
+                                                    @if($m->maintenanceGarages?->phone2)
+                                                        <small class="text-muted">
+                                                            Fax: {{$m->maintenanceGarages?->phone2 }}
+                                                        </small><br>
+                                                    @endif
+                                                    @if($m->maintenanceGarages?->phone3)
+                                                        <small class="text-muted">
+                                                            Resp: {{$m->maintenanceGarages?->phone3 }}
+                                                        </small>
+                                                    @endif
+                                                </td>
+                                                <td class="text-truncate">
+                                                    @if($m->maintenanceGarages?->mail)
+                                                        <small class="text-muted">
+                                                            Mail: {{$m->maintenanceGarages?->mail }}
+                                                        </small><br>
+                                                    @endif
+                                                    @if($m->maintenanceGarages?->pec)
+                                                        <small class="text-muted">
+                                                            Pec: {{$m->maintenanceGarages?->pec }}
+                                                        </small><br>
+                                                    @endif</td>
+                                                <td>{{$m->maintenanceTypes?->name ?? ''}}</td>
+                                                <td>{{date('d/m/Y', strtotime($m->date_from))}}</td>
+                                                <td>
+                                                    @if($maintenanceIsActive)
+                                                        <span class="badge bg-warning text-dark w-75">
+                                                            <i class="bi bi-clock"></i> In corso
+                                                        </span>
+                                                    @else
+                                                        <span class="badge bg-success">
+                                                            <i class="bi bi-check-circle"></i> Completata
+                                                        </span>
+                                                    @endif
+{{--                                                    {{$m->date_to ? date('d/m/Y', strtotime($m->date_to)) : '---'}}</td>--}}
+                                                <td>{{$m->note}}</td>
                                             </tr>
                                         @endforeach
                                     @endif

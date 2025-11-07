@@ -1,6 +1,6 @@
 <!-- Modale -->
-<div class="modal fade" :class="modalClass" id="dinamicModal" tabindex="-1" x-data="modalHandler()" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="dinamicModal" tabindex="-1" x-data="modalHandler()" aria-hidden="true">
+    <div class="modal-dialog" :class="modalClass">
         <div class="modal-content">
             <form x-ref="innerForm">
                 <div class="modal-header">

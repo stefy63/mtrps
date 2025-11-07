@@ -123,13 +123,13 @@
                                         </td>
                                         <td style="font-size: 12px">
                                             @if($garage->phone1)
-                                                <small>Tel: {{ $garage->phone1 }}</small><br>
+                                                <small>Uff.: {{ $garage->phone1 }}</small><br>
                                             @endif
                                             @if($garage->phone2)
-                                                <small>Tel: {{ $garage->phone2 }}</small><br>
+                                                <small>Fax: {{ $garage->phone2 }}</small><br>
                                             @endif
                                             @if($garage->phone3)
-                                                <small>Tel: {{ $garage->phone3 }}</small><br>
+                                                <small>Resp.: {{ $garage->phone3 }}</small><br>
                                             @endif
                                         </td>
                                         <td>

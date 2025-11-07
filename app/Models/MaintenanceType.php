@@ -29,7 +29,7 @@ class MaintenanceType extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['maintenance_id', 'name', 'description', 'note'];
+    protected $fillable = ['name', 'description', 'note'];
 
 
     /**
@@ -37,7 +37,7 @@ class MaintenanceType extends Model
      */
     public function maintenance()
     {
-        return $this->hasMany(Maintenance::class, 'maintenance_id', 'id');
+        return $this->hasMany(Maintenance::class, 'type_id', 'id');
     }
     
 }

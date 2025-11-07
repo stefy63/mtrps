@@ -28,21 +28,16 @@
                     <div class="card-body bg-white">
                         {{-- Filtri --}}
                         <div class="row mb-3">
-                            <div class="col-10">
+                            <div class="col-12">
                                 <x-input-search-button
                                         action="{{ route('cars.index') }}"
                                         search="{{old('search', $search)}}"
-                                />
-                            </div>
-                            <div class="col-2 text-start">
-                                <x-input-checkbox
                                         name="unavailable"
                                         label="Fuori Uso"
-                                        action="{{ route('cars.index') }}"
-                                        value="{{old('unavailable', $unavailable)}}"
+                                        check="{{old('unavailable', $unavailable)}}"
+                                        check="true"
                                 />
                             </div>
-                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">

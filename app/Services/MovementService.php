@@ -19,7 +19,6 @@ class MovementService
             );
         }
 
-        dd($movement->toArray(), $data);
         $movement->update($data);
     }
 

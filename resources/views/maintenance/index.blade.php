@@ -16,10 +16,6 @@
                             </span>
 
                             <div class="float-right">
-                                <button class="btn btn-sm btn-outline-secondary me-2" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#filterCollapse">
-                                    <i class="bi bi-funnel"></i> Filtri
-                                </button>
                                 <a href="{{ route('maintenances.create') }}" class="btn btn-primary btn-sm">
                                     <i class="bi bi-plus"></i> {{ __('Nuova Manutenzione') }}
                                 </a>
@@ -27,93 +23,40 @@
                         </div>
                     </div>
 
-                    <!-- Filtri collassabili -->
-                    <div class="collapse" id="filterCollapse">
-                        <div class="card-body bg-light">
-                            <form method="GET" action="{{ route('maintenances.index') }}" class="row g-3">
-                                <div class="col-md-3">
-                                    <label class="form-label">Veicolo</label>
-                                    <select name="car_id" class="form-select">
-                                        <option value="">Tutti i veicoli</option>
-                                        @foreach($cars as $car)
-                                            <option value="{{ $car->id }}" {{ request('car_id') == $car->id ? 'selected' : '' }}>
-                                                {{ $car->name }}
-                                                @if($car->carPlates->count() > 0)
-                                                    - {{ $car->carPlates->first()->name }}
-                                                @endif
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Stato</label>
-                                    <select name="status" class="form-select">
-                                        <option value="">Tutti gli stati</option>
-                                        <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>In
-                                            corso
-                                        </option>
-                                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>
-                                            Completate
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Data dal</label>
-                                    <input type="date" name="date_from" class="form-control"
-                                           value="{{ request('date_from') }}">
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Data al</label>
-                                    <input type="date" name="date_to" class="form-control"
-                                           value="{{ request('date_to') }}">
-                                </div>
-
-                                <div class="col-md-3">
-                                    <label class="form-label">Cerca</label>
-                                    <input type="text" name="search" class="form-control" placeholder="Cerca..."
-                                           value="{{ request('search') }}">
-                                </div>
-
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-search"></i> Applica Filtri
-                                    </button>
-                                    <a href="{{ route('maintenances.index') }}" class="btn btn-secondary">
-                                        <i class="bi bi-x-circle"></i> Cancella
-                                    </a>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
                     <div class="card-body">
+                        {{-- Filtri --}}
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <x-input-search-button
+                                        action="{{ route('maintenances.index') }}"
+                                        search="{{old('search', $search)}}"
+                                        name="closed"
+                                        label="Chiuse"
+                                        check="{{old('closed', $closed)}}"
+                                />
+                            </div>
+                        </div>
                         @if(count($maintenances) > 0)
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
                                     <thead class="thead">
                                     <tr>
-                                        <th>Stato</th>
-                                        <th>Veicolo</th>
-                                        <th>Targa</th>
-                                        <th>Tipo Manutenzione</th>
-                                        <th>Data Inizio</th>
-                                        <th>Data Fine</th>
-                                        <th>Durata</th>
-                                        <th>Officina</th>
-                                        <th>Telefono</th>
-                                        <th width="120"></th>
+                                        <th class="col-1">Stato</th>
+                                        <th class="col-2">Veicolo</th>
+                                        <th class="col-1">Targa</th>
+                                        <th class="col-1">Tipo Manutenzione</th>
+                                        <th class="col-1">Data Inizio</th>
+                                        <th class="col-1">Data Fine</th>
+                                        <th class="col-2">Officina</th>
+                                        <th class="col-1">Mail</th>
+                                        <th class="col-1">Telefono</th>
+                                        <th class="col-1"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @foreach ($maintenances as $maintenance)
                                         @php
                                             $isActive = !$maintenance->date_to || $maintenance->date_to >= now();
-                                            $duration = $maintenance->date_to
-                                                ? $maintenance->date_from->diff($maintenance->date_to)->days
-                                                : $maintenance->date_from->diff(now())->days;
                                         @endphp
                                         <tr>
                                             <td>
@@ -127,22 +70,27 @@
                                                         </span>
                                                 @endif
                                             </td>
-                                            <td>
-                                                <strong>{{ $maintenance->car->carType->name }}</strong>
-                                                @if($maintenance->car->carBrand)
-                                                    <br><small
-                                                            class="text-muted">{{ $maintenance->car->carBrand->name }}</small>
-                                                @endif
+                                            <td class="text-truncate">
+                                                <a href="{{route('cars.show', $maintenance->car_id)}}"
+                                                   class="text-decoration-none">
+                                                    <strong>{{ $maintenance->car?->carType->name }}</strong>
+                                                    @if($maintenance->car?->carBrand)
+                                                        <br>
+                                                        <small class="text-muted">{{ $maintenance->car?->carBrand->name }}</small>
+                                                    @endif
+                                                </a>
                                             </td>
                                             <td>
-                                                @if($maintenance->car->carPlates->count() > 0)
-                                                    <span class="badge bg-primary w-75">{{ $maintenance->car->carPlates->first()->name }}</span>
+                                                @if($maintenance->car?->carPlates->count() > 0)
+                                                    <span class="badge bg-primary w-75">
+                                                        {{ $maintenance->car?->carPlates()->whereType('POLIZIA')->first()?->name }}
+                                                    </span>
                                                 @else
                                                     <span class="text-muted">-</span>
                                                 @endif
                                             </td>
                                             <td>
-                                                <strong>{{ $maintenance->maintenanceTypes->name }}</strong>
+                                                <strong>{{ $maintenance->maintenanceTypes?->name ?? '' }}</strong>
                                             </td>
                                             <td>
                                                 <small>{{ \Carbon\Carbon::parse($maintenance->date_from)->format('d/m/Y') }}</small>
@@ -154,27 +102,58 @@
                                                     <span class="text-muted">In corso</span>
                                                 @endif
                                             </td>
-                                            <td>
-                                                <span class="badge bg-secondary">
-                                                    {{ $duration }} {{ $duration == 1 ? 'giorno' : 'giorni' }}
+                                            <td class="text-truncate">
+                                                <span data-bs-toggle="tooltip">
+
+                                                <a href="{{route('maintenance-garages.show', $maintenance->garage_id)}}"
+                                                   class="text-decoration-none">
+                                                    {{ $maintenance->maintenanceGarages?->name ?? '' }}
+                                                    @if($maintenance->maintenanceGarages?->address)
+                                                        <br>
+                                                        <small class="text-muted">{{ $maintenance->maintenanceGarages?->address }}</small>
+                                                    @endif
+                                                </a>
                                                 </span>
                                             </td>
-                                            <td>
-                                                <span class="badge bg-info w-100">
-                                                    {{ $maintenance->maintenanceGarages->name }}
-                                                </span>
+                                            <td class="text-truncate">
+                                                @if($maintenance->maintenanceGarages?->mail)
+                                                    <small data-bs-toggle="tooltip"
+                                                           title="{{ $maintenance->maintenanceGarages?->mail }}">
+                                                        {{$maintenance->maintenanceGarages?->mail }}
+                                                    </small><br>
+                                                @endif
+                                                @if($maintenance->maintenanceGarages?->pec)
+                                                    <small data-bs-toggle="tooltip"
+                                                           title="{{ $maintenance->maintenanceGarages?->pec }}">
+                                                        {{$maintenance->maintenanceGarages?->pec }}
+                                                    </small><br>
+                                                @endif
                                             </td>
-                                            <td>
-{{--                                                @if($maintenance->note)--}}
-                                                    <small data-bs-toggle="tooltip" title="{{ $maintenance->phone }}">
-                                                        {{$maintenance->phone }}
+                                            <td style="font-size: 10px">
+                                                @if($maintenance->maintenanceGarages?->phone1)
+                                                    <small data-bs-toggle="tooltip"
+                                                           title="{{ $maintenance->maintenanceGarages?->phone1 }}">
+                                                        {{$maintenance->maintenanceGarages?->phone1 }}
+                                                    </small><br>
+                                                @endif
+                                                @if($maintenance->maintenanceGarages?->phone2)
+                                                    <small data-bs-toggle="tooltip"
+                                                           title="{{ $maintenance->maintenanceGarages?->phone2 }}">
+                                                        {{$maintenance->maintenanceGarages?->phone2 }}
+                                                    </small><br>
+                                                @endif
+                                                @if($maintenance->maintenanceGarages?->phone3)
+                                                    <small data-bs-toggle="tooltip"
+                                                           title="{{ $maintenance->maintenanceGarages?->phone3 }}">
+                                                        {{$maintenance->maintenanceGarages?->phone3 }}
                                                     </small>
-{{--                                                @else--}}
-{{--                                                    <span class="text-muted">-</span>--}}
-{{--                                                @endif--}}
+                                                @endif
                                             </td>
                                             <td class="text-end">
-                                                <x-action-table-button :item="$maintenance" :label="'Manutenzione'"  itemRoute="maintenances" />
+                                                @if($isActive)
+                                                    <x-action-table-button :item="$maintenance" :label="'Manutenzione'"
+                                                                           itemRoute="maintenances"/>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

@@ -150,6 +150,7 @@
                 isInvalid: Object.keys(config.errors).includes('car_type_id') || false,
                 modalClass: config.modalClass || '',
                 class: config.class || '',
+                disabled: config.disabled || false,
 
                 getClass() {
                     return "form-group mb-2 " + this.class
