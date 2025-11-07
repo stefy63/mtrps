@@ -163,8 +163,9 @@
                                             Codice
                                         </a>
                                     </th>
-                                    <th class="col-3">Veicolo</th>
-                                    <th class="col-4">Ufficio</th>
+                                    <th class="col-2">Veicolo</th>
+                                    <th class="col-2">Assegnatario</th>
+                                    <th class="col-3">Ufficio Destinatario</th>
                                     <th class="col-1">Dal</th>
                                     <th class="col-1">Al</th>
                                     <th class="text-end col-1">Azioni</th>
@@ -188,9 +189,17 @@
                                                 @if($movement->car?->carPlates->first())
                                                     <br>
                                                     <small class="text-muted">
-                                                        <i class="bi bi-credit-card"></i> {{ $movement->car?->carPlates->first()->name }}
+                                                        <i class="bi bi-credit-card"></i> {{ $movement->car?->carPlates()->whereType('POLIZIA')->first()->name }}
                                                     </small>
                                                 @endif
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <a href="{{route('offices.show', $movement->car?->carOffices[0]->id)}}"
+                                                   class="text-decoration-none">
+                                                {{$movement->car?->carOffices[0]->full_name ?? ''}}
+                                                </a>
                                             </div>
                                         </td>
                                         <td>

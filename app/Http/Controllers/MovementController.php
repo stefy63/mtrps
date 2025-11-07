@@ -27,6 +27,7 @@ class MovementController extends Controller
         $query = Movement::with([
             'car.carPlates' => fn($q) => $q->wherePivotNull('date_to'),
             'car.carBrand',
+            'car.carOffices' => fn($q) => $q->wherePivotNull('date_to'),
             'office',
         ]);
 
