@@ -76,7 +76,7 @@ class CarsService
 
         if (count($equipments) > 0) {
             foreach ($equipments as $key => $eq) {
-                if ((int) $eq['attivo'] === 1 && Equipment::whereId($key)->exists()) {
+                if (Equipment::whereId($key)->exists()) {
                     $car->carEquipment()->attach($key, [
                         'date_from' => now(),
                         'note' => $eq['note'] ?? '',

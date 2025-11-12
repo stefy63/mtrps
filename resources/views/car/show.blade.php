@@ -150,8 +150,9 @@
                                             <div class="form-group mb-2 mb20">
                                                 <strong>Equipaggiamento:</strong>
                                                 @foreach($car->carEquipment as $c)
-                                                    <div class="ms-3 row"><u class="col-3">{{ $c->name }}:</u> <strong
-                                                                class="col">{{ $c->pivot->note }}</strong></div>
+                                                    <div class="ms-3 row">
+                                                        <u class="col-6">{{ $c->name }}:</u>
+                                                        <strong class="col">{{ $c->pivot->note }}</strong></div>
                                                 @endforeach
                                             </div>
                                         @endif

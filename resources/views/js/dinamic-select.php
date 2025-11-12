@@ -18,16 +18,7 @@
                         endpoint: this.endpoint,
                         modalClass: this.modalClass,
                         onSelect: (newItem) => {
-                            console.log(newItem)
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Salvato!',
-                                text: newItem.message,
-                                timer: 2000,
-                                showConfirmButton: false
-                            }).then((result) => {
-                                location.reload();
-                            });
+                            window.dispatchEvent(new CustomEvent('button-modal-form', { detail: newItem}))
                         },
                         onError: (err) => {
                             Swal.fire({

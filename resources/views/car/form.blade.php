@@ -342,29 +342,67 @@
                                 label="{{ __('Nuovo Equipaggiamento') }}"
                                 url="{{ route('equipments.getForm', ['car_id' => $car->id]) }}"
                                 modalTitle="Nuovo Equipaggiamento"
-                                {{--                                    modalClass="modal-xl"--}}
                                 class="btn-primary"
                                 icon="bi-database-fill-add"
                         />
                     </div>
 
                     <div class="list-group">
-                        @foreach($equipments as $equipment)
-                            <!-- Elemento 1 -->
-                            <div class="list-group-item d-flex align-items-center">
-                                <input class="form-check-input me-2 flex-shrink-0"
-                                       type="checkbox" id="{{$equipment->id}}"
-                                       name="equipments[{{$equipment->id}}][attivo]" value="1"
-                                        @checked( in_array($equipment->id, old('equipments[$equipment->id][attivo]', $car->carEquipment->pluck('id')->toArray())) )
-                                >
-                                <label for="item1" class="flex-grow-1 mb-0 me-3">{{$equipment->name}}</label>
-                                <input type="text" class="form-control w-50"
-                                       value="{{old('equipments[$equipment->id][note]', $carEquipmentById[$equipment->id]?->pivot->note ?? '')}}"
-                                       name="equipments[{{$equipment->id}}][note]"
-                                       placeholder="Inserire dati..." disabled
-                                >
-                            </div>
-                        @endforeach
+                        <div x-data="{
+                                items: [],
+                                equipments: {{Js::from($equipments) ?? []}},
+                                carEquipments: {{ Js::from($car->carEquipment->pluck('id') ?? []) }},
+                                carById: {{Js::from($carEquipmentById)}},
+                                init() {
+                                    this.items = this.equipments.map(equipment => ({
+                                        ...equipment,
+                                        attivo: this.carEquipments.includes(equipment.id),
+                                        note: this.carById[equipment.id]?.pivot.note || ''
+                                    }));
+                                }
+                            }"
+                             @button-modal-form.window="items.push($event.detail)"
+                        >
+                            <template x-for="(item, index) in items" :key="index">
+                                    <!-- Elementi -->
+                                    <div class="list-group-item d-flex align-items-center">
+                                        <input class="form-check-input me-2 flex-shrink-0"
+                                               x-model="item.attivo"
+                                               type="checkbox" :id="item.id"
+                                               :name="'equipments[' + item.id + '][attivo]'"
+                                               :value="item.attivo?1:0"
+                                        >
+                                        <label :for="'label_' + item.id" class="flex-grow-1 mb-0 me-3" x-text="item.name"></label>
+                                        <input type="text" class="form-control w-50"
+                                               :id="'label_' + item.id"
+                                               x-model="item.note"
+                                               :name="'equipments[' + item.id + '][note]'"
+                                               placeholder="Inserire dati..."
+                                               :disabled="!item.attivo"
+                                        >
+                                    </div>
+
+
+                            </template>
+                        </div>
+
+
+                        {{--                        @foreach($equipments as $equipment)--}}
+                        {{--                            <!-- Elemento 1 -->--}}
+                        {{--                            <div class="list-group-item d-flex align-items-center">--}}
+                        {{--                                <input class="form-check-input me-2 flex-shrink-0"--}}
+                        {{--                                       type="checkbox" id="{{$equipment->id}}"--}}
+                        {{--                                       name="equipments[{{$equipment->id}}][attivo]" value="1"--}}
+                        {{--                                        @checked( in_array($equipment->id, old('equipments[$equipment->id][attivo]', $car->carEquipment->pluck('id')->toArray())) )--}}
+                        {{--                                >--}}
+                        {{--                                <label for="item1" class="flex-grow-1 mb-0 me-3">{{$equipment->name}}</label>--}}
+                        {{--                                <input type="text" class="form-control w-50"--}}
+                        {{--                                       value="{{old('equipments[$equipment->id][note]', $carEquipmentById[$equipment->id]?->pivot->note ?? '')}}"--}}
+                        {{--                                       name="equipments[{{$equipment->id}}][note]"--}}
+                        {{--                                       placeholder="Inserire dati..." disabled--}}
+                        {{--                                >--}}
+                        {{--                            </div>--}}
+                        {{--                        @endforeach--}}
                     </div>
                 </div>
             </div>
@@ -389,5 +427,6 @@
                 // if (!checkbox.checked) textInput.value = '';
             });
         });
+
     </script>
 @endpush
