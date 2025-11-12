@@ -54,7 +54,7 @@ class MaintenanceTypeController extends Controller
         try {
             MaintenanceType::create($request->validated());
 
-            return $this->sendResponse('toast_success', 'Tipo di intervento registrato con successo.');
+            return $this->sendResponse('success', 'Tipo di intervento registrato con successo.');
         } catch (\Throwable $e) {
             return $this->sendError('Errore nella registrazione del tipo di intervento.');
         }
@@ -84,7 +84,7 @@ class MaintenanceTypeController extends Controller
             MaintenanceType::create($request->validated());
 
             return Redirect::to('maintenance-types.index')
-                ->with('toast_success', 'Tipo di intervento registrato con successo.');
+                ->with('success', 'Tipo di intervento registrato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nella registrazione del tipo di intervento.')
@@ -131,7 +131,7 @@ class MaintenanceTypeController extends Controller
             $maintenanceType->update($request->validated());
 
             return Redirect::route('maintenance-types.index')
-                ->with('toast_success', 'Tipo di intervento aggiornato con successo.');
+                ->with('success', 'Tipo di intervento aggiornato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'aggiornamento del tipo di intervento.')
@@ -151,7 +151,7 @@ class MaintenanceTypeController extends Controller
             $maintenanceType->delete();
 
             return Redirect::route('maintenance-types.index')
-                ->with('toast_success', 'Tipo di intervento eliminato con successo.');
+                ->with('success', 'Tipo di intervento eliminato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'eliminazione del tipo di intervento.');

@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use RealRashid\SweetAlert\ToSweetAlert;
+use RealRashid\SweetAlert\Facades\Alert;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
                 ToSweetAlert::class,
             ]
         );
+        $middleware->alias([
+            'Alert' => Alert::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

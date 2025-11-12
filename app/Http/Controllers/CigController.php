@@ -130,7 +130,7 @@ class CigController extends Controller
                 : route('cigs.index');
 
             return Redirect::to($redirectRoute)
-                ->with('toast_success', 'CIG registrato con successo.');
+                ->with('success', 'CIG registrato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nella registrazione del CIG.')
@@ -194,7 +194,7 @@ class CigController extends Controller
             $cig->update($data);
 
             return Redirect::route('cigs.index')
-                ->with('toast_success', 'CIG aggiornato con successo.');
+                ->with('success', 'CIG aggiornato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'aggiornamento del CIG.')
@@ -214,7 +214,7 @@ class CigController extends Controller
             $cig->delete();
 
             return Redirect::route('cigs.index')
-                ->with('toast_success', 'CIG eliminato con successo.');
+                ->with('success', 'CIG eliminato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'eliminazione del CIG.');

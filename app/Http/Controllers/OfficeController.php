@@ -83,7 +83,7 @@ class OfficeController extends Controller
                 Office::create($data);
             }
             return Redirect::route('offices.index')
-                ->with('toast_success', 'Ufficio creato.');
+                ->with('success', 'Ufficio creato.');
         } catch (\Throwable $e) {
             return Redirect::back()->with('toast_error', 'Ufficio non salvato!');
         }
@@ -127,7 +127,7 @@ class OfficeController extends Controller
                 Redirect::back()->withErrors();
             }
             return Redirect::route('offices.index')
-                ->with('toast_success', 'Ufficio Aggiornato');
+                ->with('success', 'Ufficio Aggiornato');
         } catch (\Throwable $e) {
             return Redirect::back()->with('toast_error', 'Office Not updated');
         }
@@ -145,7 +145,7 @@ class OfficeController extends Controller
             $office->delete();
 
             return Redirect::route('offices.index')
-                ->with('toast_success', 'Office deleted successfully');
+                ->with('success', 'Office deleted successfully');
         } catch (\Throwable $e) {
             Redirect::back()->with('toast_error', 'Office Not deleted');
         }

@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CarBrandRequest;
 use App\Models\CarBrand;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\CarBrandRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
@@ -17,10 +17,11 @@ class CarBrandController extends Controller
      */
     public function index(Request $request): View
     {
-        $carBrands = CarBrand::paginate();
+        $carBrands = CarBrand::with('cars');
+        $carBrands->when($search = $request->search)->where('name', 'LIKE', "%{$search}%");
         confirmDelete('Cancella Marca Vettura!', "Sei sicuro di voler cancellare questa Marca di Autovettura?");
-
-        return view('car-brand.index', compact('carBrands'))
+        $carBrands = $carBrands->paginate();
+        return view('car-brand.index', compact('carBrands', 'search'))
             ->with('i', ($request->input('page', 1) - 1) * $carBrands->perPage());
     }
 
@@ -45,7 +46,7 @@ class CarBrandController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function storeForm(CarBrandRequest $request):  JsonResponse
+    public function storeForm(CarBrandRequest $request): JsonResponse
     {
         $carBrand = CarBrand::create($request->validated());
         return $this->sendResponse($carBrand, 'Marca vettura creata con successo.');
@@ -70,7 +71,7 @@ class CarBrandController extends Controller
         $carBrand = CarBrand::with([
             'cars.carPlates',
             'cars.carType',
-            ])->find($id);
+        ])->find($id);
 
         return view('car-brand.show', compact('carBrand'));
     }

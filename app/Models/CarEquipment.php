@@ -52,18 +52,4 @@ class CarEquipment extends Pivot
         'note'
     ];
 
-//
-//    /**
-//     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-//     */
-//    public function cars(): Bel
-//    {
-//        return $this->belongsToMany(Car::class);
-//    }
-//
-//    public function equipments()
-//    {
-//        return $this->belongsTo(Equipment::class);;
-//    }
-
 }

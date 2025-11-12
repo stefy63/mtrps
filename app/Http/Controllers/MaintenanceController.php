@@ -161,7 +161,7 @@ class MaintenanceController extends Controller
             Maintenance::create($data);
 
             return Redirect::route('maintenances.index')
-                ->with('toast_success', 'Manutenzione registrata con successo.');
+                ->with('success', 'Manutenzione registrata con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nella registrazione della manutenzione.')
@@ -225,7 +225,7 @@ class MaintenanceController extends Controller
             $maintenance->update($data);
 
             return Redirect::route('maintenances.index')
-                ->with('toast_success', 'Manutenzione aggiornata con successo.');
+                ->with('success', 'Manutenzione aggiornata con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'aggiornamento della manutenzione.')
@@ -252,7 +252,7 @@ class MaintenanceController extends Controller
             $maintenance->delete();
 
             return Redirect::route('maintenances.index')
-                ->with('toast_success', 'Manutenzione eliminata con successo.');
+                ->with('success', 'Manutenzione eliminata con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'eliminazione della manutenzione.');

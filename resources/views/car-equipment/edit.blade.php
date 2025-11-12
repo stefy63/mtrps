@@ -11,17 +11,17 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <div class="float-left">
+                        <div class="float-start">
                             <span class="card-title">{{ __('Modifica') }} Equipaggiamento</span>
                         </div>
-                        <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('car-equipments.index') }}">
+                        <div class="float-end">
+                            <a class="btn btn-primary btn-sm" href="{{ route('equipments.index') }}">
                                 <i class="bi bi-arrow-left"></i> {{ __('Indietro') }}
                             </a>
                         </div>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('car-equipments.update', $carEquipment->id) }}" role="form" enctype="multipart/form-data">
+                        <form method="POST" action="{{ route('equipments.update', $carEquipment->id) }}" role="form" enctype="multipart/form-data">
                             {{ method_field('PATCH') }}
                             @csrf
 

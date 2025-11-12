@@ -48,6 +48,7 @@ class ImportKmController extends Controller
             }
             $rowNumber = 0;
             $errors = [];
+            $countError = 0;
             $inserted = 0;
             $expectedHeaders = [];
             DB::beginTransaction();
@@ -61,9 +62,11 @@ class ImportKmController extends Controller
                 $row = array_combine($expectedHeaders, array_map(fn($val) => $this->cleanValue($val), $row));
                 // logica di importazione
                 if (!$importKmService->insert($row)) {
+                    $countError++;
                     $errors[] = $row;
+                } else {
+                    $inserted++;
                 }
-                $inserted++;
             }
             fclose($stream);
             if (file_exists($fullPath)) {
@@ -71,10 +74,10 @@ class ImportKmController extends Controller
             }
 
             // Preparazione del messaggio di ritorno
-            $msg = "Import completato. Aggiornate {$inserted} vetture.";
+            $msg = "Import completato. Aggiornate {$inserted} vetture di cui {$countError} errate o non trovate.";
             $redirect = redirect('cars');
             if (!empty($errors)) {
-                $msg .= "Ci sono errori in alcune righe.";
+                $msg .= " Ci sono errori in alcune righe.";
                 $redirect = Redirect::back();
             }
             DB::commit();

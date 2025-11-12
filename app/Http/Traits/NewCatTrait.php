@@ -64,17 +64,17 @@ trait NewCatTrait
             $car->carOwner()->associate($this->firstOrCreate(new CarOwner(), $fieldName, $data['Proprieta']));
         }
         $this->getConversion($car, 'Colore', $data);
-//        $this->getConversion($car, 'Pntermici', $data, true);
         $this->getConversion($car, 'TipologiaDiMezzo', $data);
+        $this->getConversion($car, 'Telaio', $data);
+        $this->getConversion($car, 'Conto', $data);
+        $car['note'] = "Ente: {$data['Ente']}\nCODICE PAN Fuel Card IP: {$data['CodicePanFuelCardIp']}\nCODICE PAN Fuel Card Q8: {$data['CodicePanFuelCardQ8']}";
+
+//        $this->getConversion($car, 'Pntermici', $data, true);
 //        $this->getConversion($car, 'Note', $data);
 //        $this->getConversion($car, 'Serb', $data);
 //        $this->getConversion($car, 'ModelloPneumatici', $data);
-        $this->getConversion($car, 'Telaio', $data);
-        $this->getConversion($car, 'Conto', $data);
 //        $data['DataRevisione'] = new \Carbon\Carbon($data['DataRevisione']);
 //        $this->getConversion($car, 'DataRevisione', $data);
-        $car['note'] = "Ente: {$data['Ente']}\nCODICE PAN Fuel Card IP: {$data['CodicePanFuelCardIp']}\nCODICE PAN Fuel Card Q8: {$data['CodicePanFuelCardQ8']}";
-
 
         $car->save();
         return $car;

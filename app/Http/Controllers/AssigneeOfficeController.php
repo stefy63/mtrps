@@ -66,7 +66,7 @@ class AssigneeOfficeController extends Controller
             AssigneeOffice::create($request->validated());
 
             return Redirect::route('assignee-offices.index')
-                ->with('toast_success', 'Ufficio assegnatario creato con successo.');
+                ->with('success', 'Ufficio assegnatario creato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->withInput()
@@ -128,7 +128,7 @@ class AssigneeOfficeController extends Controller
             $assigneeOffice->update($request->validated());
 
             return Redirect::route('assignee-offices.index')
-                ->with('toast_success', 'Ufficio assegnatario aggiornato con successo.');
+                ->with('success', 'Ufficio assegnatario aggiornato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->withInput()
@@ -148,7 +148,7 @@ class AssigneeOfficeController extends Controller
             $assigneeOffice->delete();
 
             return Redirect::route('assignee-offices.index')
-                ->with('toast_success', 'Ufficio assegnatario eliminato con successo.');
+                ->with('success', 'Ufficio assegnatario eliminato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'eliminazione dell\'ufficio: ' . $e->getMessage());

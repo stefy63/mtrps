@@ -13,18 +13,26 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Car Brands') }}
+                                {{ __('Marche Vetture') }}
                             </span>
 
                              <div class="float-right">
                                 <a href="{{ route('car-brands.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                  {{ __('Nuova Marca') }}
                                 </a>
                               </div>
                         </div>
                     </div>
 
                     <div class="card-body bg-white">
+
+                        <div class="col-12">
+                            <x-input-search-button
+                                    action="{{ route('car-brands.index') }}"
+                                    search="{{old('search', $search)}}"
+                            />
+                        </div>
+
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">

@@ -4,7 +4,7 @@ use App\Http\Controllers\AssigneeOfficeController;
 use App\Http\Controllers\CarAssigneeController;
 use App\Http\Controllers\CarBrandController;
 use App\Http\Controllers\CarController;
-use App\Http\Controllers\CarEquipmentController;
+use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\CarFuelController;
 use App\Http\Controllers\CarOwnerController;
 use App\Http\Controllers\CarPlateController;
@@ -62,6 +62,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [MaintenanceTypeController::class, 'storeForm'])->name('maintenance-type.storeForm');
     Route::get('maintenances/get-form', [MaintenanceController::class, 'getForm'])->name('maintenance.getForm');
     Route::post('maintenances/store-form', [MaintenanceController::class, 'storeForm'])->name('maintenance.storeForm');
+    Route::get('equipments/get-form', [EquipmentController::class, 'getForm'])->name('equipments.getForm');
+    Route::post('equipments/store-form', [EquipmentController::class, 'storeForm'])->name('equipments.storeForm');
 
 
     Route::get('/home', [MovementController::class, 'index'])->name('home');
@@ -89,7 +91,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [CarSetupController::class, 'checkConflicts'])->name('car-setups.check-conflicts');
     Route::resource('car-plates', CarPlateController::class);
     Route::resource('assignee-offices', AssigneeOfficeController::class);
-    Route::resource('car-equipments', CarEquipmentController::class);
+    Route::resource('equipments', EquipmentController::class);
     Route::resource('movements', MovementController::class);
     Route::get('maintenances/suggestions',
         [App\Http\Controllers\MaintenanceController::class, 'suggestions'])->name('maintenances.suggestions');

@@ -16,12 +16,13 @@
                         </p>
 
                         <!-- Bottone per scaricare il template -->
-                        <a href="{{ route('export.template-km', ['template' => 'cars']) }}" class="btn btn-success mb-4">
+                        <a href="{{ route('export.template-km', ['template' => 'cars']) }}"
+                           class="btn btn-success mb-4">
                             <i class="bi bi-download"></i> Scarica Template CSV
                         </a>
 
                         <!-- Form per caricare il CSV -->
-                        <form action="{{ route('imports.km') }}" method="POST" enctype="multipart/form-data">
+                        <form id="postForm" action="{{ route('imports.km') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
                                 <label for="km_csv_file" class="form-label">Seleziona file CSV</label>
@@ -32,7 +33,7 @@
                                 @enderror
                             </div>
 
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary btn-submit">
                                 <i class="bi bi-upload"></i> Carica File
                             </button>
                         </form>
@@ -52,3 +53,12 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script type="text/javascript">
+        $('form').on( "submit", function (e) {
+            $('.bi-upload').hide();
+            $(".btn-submit").prepend('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+            $(".btn-submit").attr("disabled", 'disabled');
+        })
+    </script>
+@endpush

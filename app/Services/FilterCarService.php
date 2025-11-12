@@ -16,9 +16,9 @@ class FilterCarService
      * @param  string  $search
      * @return mixed
      */
-    public static function getCarWithFilter(Builder $query, string $search): Builder
+    public static function getCarWithFilter(Builder $query, string $search, string $car = 'car'): Builder
     {
-        return $query->orWhereHas('car', function ($q) use ($search) {
+        return $query->orWhereHas($car, function ($q) use ($search) {
             self::getRelationWithFilter($q, $search);
         });
     }

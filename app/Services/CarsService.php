@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Enum\PlateTypeEnum;
 use App\Models\Car;
-use App\Models\CarPlate;
 use App\Models\Equipment;
 use App\Models\Plate;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -61,15 +60,50 @@ class CarsService
 
     public function setCarEquipments(Car $car, array $equipments)
     {
+        $currentEquipments = $car->carEquipment()
+            ->whereNull('date_to')
+            ->pluck('equipments.id')
+            ->toArray();
+
+        if (!empty($currentEquipments)) {
+            foreach ($currentEquipments as $equipmentId) {
+                $car->carEquipment()->wherePivotNull('date_to')->updateExistingPivot(
+                    $equipmentId,
+                    ['date_to' => now()]
+                );
+            }
+        }
+
         if (count($equipments) > 0) {
-            $car->carEquipment()->detach();
             foreach ($equipments as $key => $eq) {
                 if ((int) $eq['attivo'] === 1 && Equipment::whereId($key)->exists()) {
-                    $car->carEquipment()->attach($key,
-                        ['date_from' => now(), 'note' => $eq['note'] ?? '']);
+                    $car->carEquipment()->attach($key, [
+                        'date_from' => now(),
+                        'note' => $eq['note'] ?? '',
+                    ]);
                 }
-            };
+            }
         }
         return $car;
+    }
+
+    public function setCarUnaivalable(Car $car)
+    {
+        $oldOffice = $car->carOffices()->wherePivotNull('date_to')->first();
+        $car->carOffices()->wherePivotNull('date_to')->updateExistingPivot($oldOffice->id, [
+            'date_to' => $dateToAssignee ?? now()
+        ]);
+
+        $car->carOffices()->newPivotStatement()
+            ->where('car_id', $car->id)
+            ->update(['date_to' => now()]);
+
+        $car->carPlates()->where('type', '<>', 'ORIGINALE')->newPivotStatement()
+            ->where('car_id', $car->id)
+            ->update(['date_to' => now()]);
+
+        $car->carEquipment()->newPivotStatement()
+            ->where('car_id', $car->id)
+            ->update(['date_to' => now()]);
     }
 }

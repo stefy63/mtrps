@@ -173,7 +173,7 @@ class MovementController extends Controller
             DB::rollBack();
             return Redirect::back()
                 ->withInput()
-                ->with('error', 'Errore durante la creazione del movimento: '.$e->getMessage());
+                ->with('toast_error', 'Errore durante la creazione del movimento: '.$e->getMessage());
         }
     }
 
@@ -219,12 +219,12 @@ class MovementController extends Controller
             \App\Facades\MovementService::update($movement, $data);
             DB::commit();
             return Redirect::route('movements.index')
-                ->with('toast_success', 'Movimento aggiornato con successo.');
+                ->with('success', 'Movimento aggiornato con successo.');
         } catch (\Throwable $e) {
             DB::rollBack();
             return Redirect::back()
                 ->withInput()
-                ->with('error', 'Errore durante l\'aggiornamento del movimento: '.$e->getMessage());
+                ->with('toast_error', 'Errore durante l\'aggiornamento del movimento: '.$e->getMessage());
         }
     }
 
@@ -236,7 +236,7 @@ class MovementController extends Controller
         try {
             $movement->delete();
             return Redirect::route('movements.index')
-                ->with('toast_success', 'Movimento cancellato con successo.');
+                ->with('success', 'Movimento cancellato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore durante la cancellazione del movimento.');

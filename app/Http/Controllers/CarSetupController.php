@@ -121,7 +121,7 @@ class CarSetupController extends Controller
             $carSetup = CarSetup::create($request->validated());
 
             return Redirect::route('car-setups.index')
-                ->with('toast_success', 'Allestimento creato con successo.');
+                ->with('success', 'Allestimento creato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->withInput()
@@ -167,7 +167,7 @@ class CarSetupController extends Controller
             $carSetup->update($request->validated());
 
             return Redirect::route('car-setups.index')
-                ->with('toast_success', 'Allestimento aggiornato con successo.');
+                ->with('success', 'Allestimento aggiornato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->withInput()
@@ -184,7 +184,7 @@ class CarSetupController extends Controller
             $carSetup->delete();
 
             return Redirect::route('car-setups.index')
-                ->with('toast_success', 'Allestimento eliminato con successo.');
+                ->with('success', 'Allestimento eliminato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore durante l\'eliminazione: ' . $e->getMessage());

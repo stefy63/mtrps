@@ -32,7 +32,7 @@
                                 @enderror
                             </div>
 
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary btn-submit">
                                 <i class="bi bi-upload"></i> Carica File
                             </button>
                         </form>
@@ -43,3 +43,13 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script type="text/javascript">
+        $('form').on( "submit", function (e) {
+            $('.bi-upload').hide();
+            $(".btn-submit").prepend('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+            $(".btn-submit").attr("disabled", 'disabled');
+        })
+    </script>
+@endpush

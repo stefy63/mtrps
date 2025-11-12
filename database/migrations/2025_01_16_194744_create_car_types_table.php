@@ -14,12 +14,10 @@ return new class extends Migration
     {
         Schema::create('car_types', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('employment_code_id')->nullable();
             $table->string('name');
             $table->string('description')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
-            $table->foreign('employment_code_id')->references('id')->on('employment_codes')->onDelete('set null');
         });
         $catTypes = new CarTypeSeeder();
         $catTypes->run();

@@ -95,7 +95,7 @@ class MaintenanceGarageController extends Controller
         try {
             MaintenanceGarage::create($request->validated());
             return Redirect::to('maintenance-garages.index')
-                ->with('toast_success', 'Officina registrata con successo.');
+                ->with('success', 'Officina registrata con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nella registrazione dell\'officina.')
@@ -140,7 +140,7 @@ class MaintenanceGarageController extends Controller
             $maintenanceGarage->update($request->validated());
 
             return Redirect::route('maintenance-garages.index')
-                ->with('toast_success', 'Officina aggiornata con successo.');
+                ->with('success', 'Officina aggiornata con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'aggiornamento dell\'officina.')
@@ -166,7 +166,7 @@ class MaintenanceGarageController extends Controller
             $maintenanceGarage->delete();
 
             return Redirect::route('maintenance-garages.index')
-                ->with('toast_success', 'Officina eliminata con successo.');
+                ->with('success', 'Officina eliminata con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'eliminazione dell\'officina.');

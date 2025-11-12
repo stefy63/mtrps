@@ -10,7 +10,7 @@
         "laravel/framework": "12.1.1.0",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.6",
-        "realrashid/sweet-alert": "^7.2",
+        "realrashid/sweet-alert": "^v7.3.0",
         "twbs/bootstrap-icons": "^1.11"
     },
     "require-dev": {

@@ -104,7 +104,7 @@ class CarFuelController extends Controller
             CarFuel::create($data);
 
             return Redirect::route('car-fuels.index')
-                ->with('toast_success', 'Rifornimento registrato con successo.');
+                ->with('success', 'Rifornimento registrato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nella registrazione del rifornimento.')
@@ -159,7 +159,7 @@ class CarFuelController extends Controller
             $carFuel->update($request->validated());
 
             return Redirect::route('car-fuels.index')
-                ->with('toast_success', 'Rifornimento aggiornato con successo.');
+                ->with('success', 'Rifornimento aggiornato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'aggiornamento del rifornimento.')
@@ -179,7 +179,7 @@ class CarFuelController extends Controller
             $carFuel->delete();
 
             return Redirect::route('car-fuels.index')
-                ->with('toast_success', 'Rifornimento eliminato con successo.');
+                ->with('success', 'Rifornimento eliminato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore nell\'eliminazione del rifornimento.');

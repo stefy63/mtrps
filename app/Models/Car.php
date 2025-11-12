@@ -106,7 +106,8 @@ class Car extends Model
     {
         return $this->belongsToMany(Office::class)
             ->using(CarAssignee::class)
-            ->withPivot('date_from', 'date_to', 'note');
+            ->withPivot('date_from', 'date_to', 'note')
+            ->withTimestamps();
     }
 
     /**
@@ -117,6 +118,7 @@ class Car extends Model
         return $this->belongsToMany(Equipment::class)
             ->using(CarEquipment::class)
             ->withPivot('date_from', 'date_to', 'note')
+            ->wherePivotNull('date_to')
             ->withTimestamps();
     }
 
@@ -143,7 +145,7 @@ class Car extends Model
      */
     public function carOwner()
     {
-        return $this->belongsTo(CarOwner::class, 'car_owner_id', 'id');
+        return $this->belongsTo(CarOwner::class, 'car_owner_id');
     }
 
     /**
@@ -151,7 +153,7 @@ class Car extends Model
      */
     public function carPower()
     {
-        return $this->belongsTo(CarPower::class, 'car_power_id', 'id');
+        return $this->belongsTo(CarPower::class, 'car_power_id');
     }
 
     /**
@@ -159,7 +161,7 @@ class Car extends Model
      */
     public function carProfitAccount()
     {
-        return $this->belongsTo(CarProfitAccount::class, 'car_profit_account_id', 'id');
+        return $this->belongsTo(CarProfitAccount::class, 'car_profit_account_id');
     }
 
     /**
@@ -167,16 +169,7 @@ class Car extends Model
      */
     public function carType()
     {
-        return $this->belongsTo(CarType::class, 'car_type_id', 'id');
-    }
-
-
-    /**
-     * @return HasMany
-     */
-    public function carFuels()
-    {
-        return $this->hasMany(CarFuel::class);
+        return $this->belongsTo(CarType::class, 'car_type_id');
     }
 
     /**
@@ -188,14 +181,6 @@ class Car extends Model
             ->using(CarPlate::class)
             ->withPivot('date_from', 'date_to', 'note')
             ->withTimestamps();
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function carSetups()
-    {
-        return $this->hasMany(CarSetup::class);
     }
 
     /**
@@ -220,28 +205,6 @@ class Car extends Model
     public function movements()
     {
         return $this->hasMany(Movement::class);
-    }
-
-    /**
-     * Relazione per ottenere solo le targhe attive
-     */
-    public function activePlates()
-    {
-        return $this->hasMany(CarPlate::class)->where(function($query) {
-            $query->where('date_from', '<=', now())
-                  ->where(function($q) {
-                      $q->whereNull('date_to')
-                        ->orWhere('date_to', '>=', now());
-                  });
-        });
-    }
-
-    /**
-     * Accessor per ottenere la targa attiva corrente
-     */
-    public function getCurrentPlateAttribute()
-    {
-        return $this->activePlates()->first();
     }
 
     /**

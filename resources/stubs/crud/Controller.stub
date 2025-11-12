@@ -56,7 +56,7 @@ class {{modelName}}Controller extends Controller
             }
 
             return Redirect::route('{{modelRoute}}.index')
-                ->with('toast_success', '{{modelName}} created successfully.');
+                ->with('success', '{{modelName}} created successfully.');
         } catch (\Throwable $e) {
             return Redirect::back()->with('toast_error', '{{modelName}} Not created');
         }
@@ -100,7 +100,7 @@ class {{modelName}}Controller extends Controller
                 Redirect::back()->withErrors();
             }
             return Redirect::route('{{modelRoute}}.index')
-                ->with('toast_success', '{{modelName}} updated successfully');
+                ->with('success', '{{modelName}} updated successfully');
         } catch (\Throwable $e) {
             return Redirect::back()->with('toast_error', '{{modelName}} Not updated');
         }
@@ -118,7 +118,7 @@ class {{modelName}}Controller extends Controller
             ${{modelNameLowerCase}}->delete();
 
             return Redirect::route('{{modelRoute}}.index')
-                ->with('toast_success', '{{modelName}} deleted successfully');
+                ->with('success', '{{modelName}} deleted successfully');
         } catch (\Throwable $e) {
             Redirect::back()->with('toast_error', '{{modelName}} Not deleted');
         }

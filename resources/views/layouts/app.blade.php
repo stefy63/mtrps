@@ -83,12 +83,12 @@
     </nav>
 
     @if ($message = Session::get('success'))
-        <div class="alert alert-success m-4">
+        <div class="alert-custom alert alert-success m-4">
             <p>{{ $message }}</p>
         </div>
     @endif
     @if ($message = Session::get('error'))
-        <div class="alert alert-danger m-4">
+        <div class="alert-custom alert alert-danger m-4">
             <p>{{ $message }}</p>
         </div>
     @endif
@@ -104,12 +104,14 @@
     @include('js.dinamic-select')
 @endpush
 @stack('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous"></script>
 @include('sweetalert::alert')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     // attende 3 secondi (3000 ms) e poi nasconde l'alert con un effetto fade-out
     setTimeout(function () {
-        let alert = document.querySelector('.alert');
+        let alert = document.querySelector('.alert-custom');
         if (alert) {
             alert.style.transition = "opacity 1s ease"; // durata dissolvenza
             alert.style.opacity = 0;

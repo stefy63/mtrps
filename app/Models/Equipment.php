@@ -23,6 +23,7 @@ class Equipment extends Model
         return $this->belongsToMany(Car::class)
             ->using(CarEquipment::class)
             ->withPivot('date_from', 'date_to', 'note')
+            ->wherePivotNull('date_to')
             ->withTimestamps();
     }
 

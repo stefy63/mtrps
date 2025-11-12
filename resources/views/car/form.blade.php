@@ -120,6 +120,20 @@
                                placeholder="Tipologia di Mezzo">
                         {!! $errors->first('car_typology', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
+
+                    <div class="form-group mb-2 mb20" style="margin-top: 1.3rem">
+                        <label for="available" class="form-label">{{ __('Stato vettura') }}</label>
+                        <div class="form-check">
+                            <input type="hidden" name="available" value="0">
+                            <input type="checkbox" name="available"
+                                   class="form-check-input @error('available') is-invalid @enderror" value="1"
+                                   id="available" {{ old('available', !$car?->available) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="available">
+                                FUORI USO
+                            </label>
+                        </div>
+                        {!! $errors->first('winter_wheels', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                    </div>
                 </div>
                 <div class="col-md-6">
 
@@ -322,6 +336,18 @@
                     />
                 </div>
                 <div class="col-md-6">
+                    <div class="mb-3 text-end">
+                        <x-button-modal-form
+                                endpoint="{{ route('equipments.storeForm') }}"
+                                label="{{ __('Nuovo Equipaggiamento') }}"
+                                url="{{ route('equipments.getForm', ['car_id' => $car->id]) }}"
+                                modalTitle="Nuovo Equipaggiamento"
+                                {{--                                    modalClass="modal-xl"--}}
+                                class="btn-primary"
+                                icon="bi-database-fill-add"
+                        />
+                    </div>
+
                     <div class="list-group">
                         @foreach($equipments as $equipment)
                             <!-- Elemento 1 -->

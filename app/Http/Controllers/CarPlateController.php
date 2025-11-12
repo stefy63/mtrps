@@ -96,7 +96,7 @@ class CarPlateController extends Controller
             PlateService::associateCar($car, $plate);
             DB::commit();
             return Redirect::route('car-plates.index')
-                ->with('toast_success', 'Targa creata.');
+                ->with('success', 'Targa creata.');
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -156,7 +156,7 @@ class CarPlateController extends Controller
 
             DB::commit();
             return Redirect::route('car-plates.index')
-                ->with('toast_success', 'Targa aggiornata con successo.');
+                ->with('success', 'Targa aggiornata con successo.');
 
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -174,7 +174,7 @@ class CarPlateController extends Controller
         Plate::find($id)->delete();
 
         return Redirect::route('car-plates.index')
-            ->with('toast_success', 'Car Plate deleted successfully');
+            ->with('success', 'Car Plate deleted successfully');
     }
 
     /**

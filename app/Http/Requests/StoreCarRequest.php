@@ -26,6 +26,7 @@ class StoreCarRequest extends BaseFormRequest
             'car_employment_code_id' => 'nullable|exists:car_employment_codes,id',
             'assignee_id' => 'integer|exists:offices,id',
             'equipments' => 'array|nullable',
+            'available' => 'nullable|boolean',
             'model' => 'nullable|string|max:255',
             'color' => 'nullable|string|max:255',
             'cod_model' => 'nullable|string|max:255',
@@ -42,5 +43,12 @@ class StoreCarRequest extends BaseFormRequest
             'date_assignee' => 'nullable|date',
             'note' => 'nullable|string'
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'available' => !$this->available
+        ]);
     }
 }

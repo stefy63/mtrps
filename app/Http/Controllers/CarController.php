@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enum\PlateTypeEnum;
 use App\Facades\CarsService;
-use App\Http\Requests\CarRequest;
 use App\Http\Requests\StoreCarRequest;
 use App\Http\Requests\UpdateCarRequest;
 use App\Models\Car;
@@ -87,6 +86,7 @@ class CarController extends Controller
     public function storeForm(StoreCarRequest $request): JsonResponse
     {
         $carBrand = Car::create($request->validated());
+        confirmDelete('Cancella Vettura!', "Sei sicuro di voler cancellare questa vettura?");
         return $this->sendResponse($carBrand, 'Vettura creata con successo.');
     }
 
@@ -130,8 +130,9 @@ class CarController extends Controller
             $car = Car::create($data);
             $this->setRelatedTables($data, $car);
             DB::commit();
+            confirmDelete('Cancella Vettura!', "Sei sicuro di voler cancellare questa vettura?");
             return Redirect::route('cars.index')
-                ->with('toast_success', 'Vettura aggiornata');
+                ->with('success', 'Vettura aggiornata');
         } catch (\Throwable $e) {
             DB::rollBack();
             return Redirect::back()
@@ -169,8 +170,8 @@ class CarController extends Controller
     {
         $car = Car::with([
             'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
-            'carPlates',
-            'carEquipment'
+            'carPlates' => fn($q) => $q->wherePivotNull('date_to'),
+            'carEquipment' => fn($q) => $q->wherePivotNull('date_to')
         ])->find($id);
         $carEquipmentById = $car->carEquipment()->wherePivotNull('date_to')->get()->keyBy('id');
         // Recupera i dati per le select
@@ -204,11 +205,12 @@ class CarController extends Controller
             DB::beginTransaction();
             $data = $request->validated();
             $data['updated_by'] = Auth::id();
-            $car->load(['carOffices', 'carPlates'])->update($data);
+            $car->update($data);
             $this->setRelatedTables($data, $car);
             DB::commit();
+            confirmDelete('Cancella Vettura!', "Sei sicuro di voler cancellare questa vettura?");
             return Redirect::route('cars.index')
-                ->with('toast_success', 'Vettura aggiornata');
+                ->with('success', 'Vettura aggiornata');
         } catch (\Throwable $e) {
             DB::rollBack();
             return Redirect::back()
@@ -224,13 +226,17 @@ class CarController extends Controller
     public function destroy($id): RedirectResponse
     {
         Car::find($id)->delete();
-
+        confirmDelete('Cancella Vettura!', "Sei sicuro di voler cancellare questa vettura?");
         return Redirect::route('cars.index')
-            ->with('toast_success', 'Vettura cancellata');
+            ->with('success', 'Vettura cancellata');
     }
 
     private function setRelatedTables(array $data, Car $car)
     {
+        if (!$data['available']) {
+            CarsService::setCarUnaivalable($car);
+            return;
+        }
         $car = CarsService::setOfficeAssignee($car, $data['assignee_id'], $data['date_assignee']);
         $car = CarsService::setCarPLate($car, $data['car_police_plate_id'], PlateTypeEnum::POLIZIA,
             isset($data['car_police_plate_force']));

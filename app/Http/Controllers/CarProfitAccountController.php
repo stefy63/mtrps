@@ -155,7 +155,7 @@ class CarProfitAccountController extends Controller
             CarProfitAccount::create($data);
 
             return Redirect::route('car-profit-accounts.index')
-                ->with('toast_success', 'Centro di costo creato con successo.');
+                ->with('success', 'Centro di costo creato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->withInput()
@@ -231,7 +231,7 @@ class CarProfitAccountController extends Controller
             $carProfitAccount->update($data);
 
             return Redirect::route('car-profit-accounts.index')
-                ->with('toast_success', 'Centro di costo aggiornato con successo.');
+                ->with('success', 'Centro di costo aggiornato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->withInput()
@@ -254,7 +254,7 @@ class CarProfitAccountController extends Controller
             $carProfitAccount->delete();
 
             return Redirect::route('car-profit-accounts.index')
-                ->with('toast_success', 'Centro di costo eliminato con successo.');
+                ->with('success', 'Centro di costo eliminato con successo.');
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore durante l\'eliminazione.');
@@ -275,7 +275,7 @@ class CarProfitAccountController extends Controller
             $status = $carProfitAccount->is_active ? 'attivato' : 'disattivato';
 
             return Redirect::back()
-                ->with('toast_success', "Centro di costo {$status} con successo.");
+                ->with('success', "Centro di costo {$status} con successo.");
         } catch (\Throwable $e) {
             return Redirect::back()
                 ->with('toast_error', 'Errore durante l\'aggiornamento dello stato.');
