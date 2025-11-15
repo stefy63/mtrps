@@ -53,7 +53,7 @@ class CarController extends Controller
         confirmDelete('Cancella Vettura!', "Sei sicuro di voler cancellare questa vettura?");
 
         $cars = $query->paginate();
-        return view('car.index', compact('cars', 'search','unavailable' ))
+        return view('car.index', compact('cars', 'search','unavailable', 'carEquipmentById' ))
             ->with('i', ($request->input('page', 1) - 1) * $cars->perPage());
     }
 
