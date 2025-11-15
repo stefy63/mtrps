@@ -98,13 +98,13 @@
                                         </td>
                                         <td>
                                             <small>
-                                                {{ $carPlate->cars->lenght > 0 ? \Carbon\Carbon::parse($carPlate->cars[0]?->pivot->date_from)->format('d/m/Y'): '' }}
+                                                {{ $carPlate->cars->count() > 0 ? \Carbon\Carbon::parse($carPlate->cars[0]?->pivot->date_from)->format('d/m/Y'): '' }}
                                             </small>
                                         </td>
                                         <td>
                                             <small>
                                                 @if($carPlate->date_to)
-                                                    {{ \Carbon\Carbon::parse($carPlate->cars[0]->pivot->date_to)->format('d/m/Y') }}
+                                                    {{ $carPlate->cars->count() > 0 ? \Carbon\Carbon::parse($carPlate->cars[0]?->pivot->date_to)->format('d/m/Y'): '' }}
                                                 @else
                                                     <em>In corso</em>
                                                 @endif
