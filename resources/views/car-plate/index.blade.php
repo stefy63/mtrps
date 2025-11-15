@@ -98,7 +98,7 @@
                                         </td>
                                         <td>
                                             <small>
-                                                {{ \Carbon\Carbon::parse($carPlate->cars[0]?->pivot->date_from)->format('d/m/Y') }}
+                                                {{ $carPlate->cars->lenght > 0 ? \Carbon\Carbon::parse($carPlate->cars[0]?->pivot->date_from)->format('d/m/Y'): '' }}
                                             </small>
                                         </td>
                                         <td>
