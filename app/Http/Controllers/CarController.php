@@ -53,7 +53,7 @@ class CarController extends Controller
         confirmDelete('Cancella Vettura!', "Sei sicuro di voler cancellare questa vettura?");
 
         $cars = $query->paginate();
-        return view('car.index', compact('cars', 'search','unavailable', 'carEquipmentById' ))
+        return view('car.index', compact('cars', 'search','unavailable' ))
             ->with('i', ($request->input('page', 1) - 1) * $cars->perPage());
     }
 
@@ -69,6 +69,7 @@ class CarController extends Controller
         $polPlates = Plate::whereType(PlateTypeEnum::POLIZIA)->get(['id', 'name']);
         $civPlates = Plate::whereType(PlateTypeEnum::CIVILE)->get(['id', 'name']);
         $origPlates = Plate::whereType(PlateTypeEnum::ORIGINALE)->get(['id', 'name']);
+        $carEquipmentById = $car->carEquipment()->wherePivotNull('date_to')->get()->keyBy('id');
         $equipments = Equipment::get();
         $car_police_plate_id = null;
         $car_civil_plate_id = null;
@@ -80,7 +81,7 @@ class CarController extends Controller
         return view('car.form',
             compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment',
                 'car_police_plate_id', 'car_civil_plate_id', 'car_origin_plate_id', 'polPlates', 'civPlates',
-                'offices', 'equipments', 'origPlates', 'offices', 'assignee_id', 'button'));
+                'offices', 'equipments', 'origPlates', 'offices', 'assignee_id', 'button', 'carEquipmentById'));
     }
 
     public function storeForm(StoreCarRequest $request): JsonResponse
@@ -105,6 +106,7 @@ class CarController extends Controller
         $polPlates = Plate::whereType(PlateTypeEnum::POLIZIA)->get(['id', 'name']);
         $civPlates = Plate::whereType(PlateTypeEnum::CIVILE)->get(['id', 'name']);
         $origPlates = Plate::whereType(PlateTypeEnum::ORIGINALE)->get(['id', 'name']);
+        $carEquipmentById = $car->carEquipment()->wherePivotNull('date_to')->get()->keyBy('id');
         $equipments = Equipment::get();
         $car_police_plate_id = null;
         $car_civil_plate_id = null;
@@ -115,7 +117,7 @@ class CarController extends Controller
         return view('car.create',
             compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment',
                 'car_police_plate_id', 'car_civil_plate_id', 'car_origin_plate_id', 'polPlates', 'civPlates',
-                'offices', 'equipments', 'origPlates', 'offices', 'assignee_id'));
+                'offices', 'equipments', 'origPlates', 'offices', 'assignee_id', 'carEquipmentById'));
     }
 
     /**
