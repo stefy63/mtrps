@@ -39,8 +39,8 @@
                             <td class="fw-bold">{{$d->active_cars_count}}</td>
                             <td class="fw-bold text-danger">{{$d->movements_to_count}}</td>
                             <td class="fw-bold text-info">{{$d->movements_from_count}}</td>
-                            <td class="fw-bold text-muted">{{$d->active_maintences_count}}</td>
-                            <td class="fw-bold text-success">{{($d->active_cars_count + $d->movements_from_count) - ($d->active_maintences_count + $d->movements_to_count)}}</td>
+                            <td class="fw-bold text-muted">{{$d->active_maintenance_count}}</td>
+                            <td class="fw-bold text-success">{{($d->active_cars_count + $d->movements_from_count) - ($d->active_maintenance_count + $d->movements_to_count)}}</td>
                         </tr>
                     @endforeach
                     </tbody>

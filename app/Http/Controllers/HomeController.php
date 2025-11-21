@@ -36,10 +36,10 @@ class HomeController extends Controller
                 'activeCars',
                 'movementsTo',
                 'movementsFrom',
-                'activeMaintences'
+                'activeMaintenance'
             ])
             ->orderByDesc(DB::raw('
-                (active_cars_count + movements_from_count) - (active_maintences_count + movements_to_count)
+                (active_cars_count + movements_from_count) - (active_maintenance_count + movements_to_count)
             '))
             ->get();
 

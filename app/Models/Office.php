@@ -43,7 +43,7 @@ class Office extends Model
             );
     }
 
-    public function activeMaintences(): BelongsToMany
+    public function activeMaintenance(): BelongsToMany
     {
         return $this->activeCars()
             ->whereHas('maintenances');
