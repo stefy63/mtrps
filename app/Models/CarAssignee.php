@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class CarAssignee
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class CarAssignee extends Pivot
 {
+    use SoftDeletes;
     protected $table = 'car_office';
     /**
      * The attributes that should be cast.

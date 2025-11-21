@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('description', 255);
             $table->string('extended', 255);
             $table->timestamps();
+            $table->softDeletes();
         });
 
         $carEmploymentCodeSeed = new CarEmploymentCodeSeeder();

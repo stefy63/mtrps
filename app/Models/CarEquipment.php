@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class CarEquipment
@@ -26,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class CarEquipment extends Pivot
 {
+    use SoftDeletes;
     protected $table = 'car_equipment';
 
     /**

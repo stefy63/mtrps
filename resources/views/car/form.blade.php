@@ -31,6 +31,8 @@
                             idKey="id"
                             modal-url="{{ route('car-brands.getForm') }}"
                             modal-title="Nuova Marca"
+{{--                            on-change="onBrandChanged"--}}
+                            {{--                            event="brand"--}}
                     />
 
                     <x-dynamic-select
@@ -127,7 +129,7 @@
                             <input type="hidden" name="available" value="0">
                             <input type="checkbox" name="available"
                                    class="form-check-input @error('available') is-invalid @enderror" value="1"
-                                   id="available" {{ old('available', !$car?->available) ? 'checked' : '' }}>
+                                   id="available" {{ old('available', $car?->available) ? '' : 'checked' }}>
                             <label class="form-check-label" for="available">
                                 FUORI USO
                             </label>
@@ -364,45 +366,28 @@
                              @button-modal-form.window="items.push($event.detail)"
                         >
                             <template x-for="(item, index) in items" :key="index">
-                                    <!-- Elementi -->
-                                    <div class="list-group-item d-flex align-items-center">
-                                        <input class="form-check-input me-2 flex-shrink-0"
-                                               x-model="item.attivo"
-                                               type="checkbox" :id="item.id"
-                                               :name="'equipments[' + item.id + '][attivo]'"
-                                               :value="item.attivo?1:0"
-                                        >
-                                        <label :for="'label_' + item.id" class="flex-grow-1 mb-0 me-3" x-text="item.name"></label>
-                                        <input type="text" class="form-control w-50"
-                                               :id="'label_' + item.id"
-                                               x-model="item.note"
-                                               :name="'equipments[' + item.id + '][note]'"
-                                               placeholder="Inserire dati..."
-                                               :disabled="!item.attivo"
-                                        >
-                                    </div>
+                                <!-- Elementi -->
+                                <div class="list-group-item d-flex align-items-center">
+                                    <input class="form-check-input me-2 flex-shrink-0"
+                                           x-model="item.attivo"
+                                           type="checkbox" :id="item.id"
+                                           :name="'equipments[' + item.id + '][attivo]'"
+                                           :value="item.attivo?1:0"
+                                    >
+                                    <label :for="'label_' + item.id" class="flex-grow-1 mb-0 me-3"
+                                           x-text="item.name"></label>
+                                    <input type="text" class="form-control w-50"
+                                           :id="'label_' + item.id"
+                                           x-model="item.note"
+                                           :name="'equipments[' + item.id + '][note]'"
+                                           placeholder="Inserire dati..."
+                                           :disabled="!item.attivo"
+                                    >
+                                </div>
 
 
                             </template>
                         </div>
-
-
-                        {{--                        @foreach($equipments as $equipment)--}}
-                        {{--                            <!-- Elemento 1 -->--}}
-                        {{--                            <div class="list-group-item d-flex align-items-center">--}}
-                        {{--                                <input class="form-check-input me-2 flex-shrink-0"--}}
-                        {{--                                       type="checkbox" id="{{$equipment->id}}"--}}
-                        {{--                                       name="equipments[{{$equipment->id}}][attivo]" value="1"--}}
-                        {{--                                        @checked( in_array($equipment->id, old('equipments[$equipment->id][attivo]', $car->carEquipment->pluck('id')->toArray())) )--}}
-                        {{--                                >--}}
-                        {{--                                <label for="item1" class="flex-grow-1 mb-0 me-3">{{$equipment->name}}</label>--}}
-                        {{--                                <input type="text" class="form-control w-50"--}}
-                        {{--                                       value="{{old('equipments[$equipment->id][note]', $carEquipmentById[$equipment->id]?->pivot->note ?? '')}}"--}}
-                        {{--                                       name="equipments[{{$equipment->id}}][note]"--}}
-                        {{--                                       placeholder="Inserire dati..." disabled--}}
-                        {{--                                >--}}
-                        {{--                            </div>--}}
-                        {{--                        @endforeach--}}
                     </div>
                 </div>
             </div>
@@ -418,7 +403,12 @@
 @endif
 
 @push('scripts')
-    <script>
+    <script type="module">
+
+        $(document).on('brand:changed', function (e) {
+            console.log("jQuery → brand:", e.originalEvent.detail);
+        });
+
         document.querySelectorAll('.list-group-item input[type="checkbox"]').forEach(checkbox => {
             const textInput = checkbox.closest('.list-group-item').querySelector('input[type="text"]');
             textInput.disabled = !checkbox.checked;

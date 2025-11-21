@@ -10,6 +10,7 @@
                 modalClass: config.modalClass || '',
                 class: config.class || '',
                 icon: config.icon || '',
+                eventName: config.event,
 
                 openModal() {
                     Alpine.store('modal').open({
@@ -18,15 +19,16 @@
                         endpoint: this.endpoint,
                         modalClass: this.modalClass,
                         onSelect: (newItem) => {
-                            window.dispatchEvent(new CustomEvent('button-modal-form', { detail: newItem}))
+                            this.$dispatch(this.eventName, newItem, {bubbles: true})
+                            // window.dispatchEvent(new CustomEvent('button-modal-form', {detail: newItem, bubbles: true}))
                         },
                         onError: (err) => {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Errore!',
                                 text: err.message || 'Salvataggio non riuscito.',
-                                timer: 2000,
-                                showConfirmButton: false
+                                // timer: 5000,
+                                showConfirmButton: true
                             });
                         },
                     });
@@ -142,7 +144,21 @@
                 modalClass: config.modalClass || '',
                 class: config.class || '',
                 disabled: config.disabled || false,
+                callbackName: config.callbackName,
+                eventName: config.eventName,
 
+                init() {
+                    this.$watch('option_id', val => {
+                        if (val && val !== oldId) {
+                            // 1️⃣ CALLBACK JS SPECIFICA PER L'ISTANZA
+                            if (this.callbackName && typeof window[this.callbackName] === 'function') {
+                                window[this.callbackName](val);
+                            }
+                            // 2️⃣ EVENTO SPECIFICO PER L'ISTANZA
+                            this.$dispatch(this.eventName, {value: val}, {bubbles: true});
+                        }
+                    });
+                },
                 getClass() {
                     return "form-group mb-2 " + this.class
                 },
@@ -188,17 +204,18 @@
                                 icon: 'success',
                                 title: 'Salvato!',
                                 text: newItem.message,
-                                timer: 2000,
+                                timer: 3000,
                                 showConfirmButton: false
                             });
                         },
                         onError: (newItem) => {
+                            console.log(newItem)
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Errore!',
                                 text: 'Salvataggio non riuscito.',
-                                timer: 2000,
-                                showConfirmButton: false
+                                // timer: 5000,
+                                showConfirmButton: true
                             });
                         }
                     });

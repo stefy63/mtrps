@@ -7,6 +7,7 @@
             modalClass: "{{ $modalClass ?? "" }}",
             class: "{{ $class ?? "" }}",
             icon: "{{$icon ?? null}}",
+            event: "{{$event ?? 'button-modal-form'}}"
         })'
 >
     <div>

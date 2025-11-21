@@ -104,9 +104,6 @@
     @include('js.dinamic-select')
 @endpush
 @stack('scripts')
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-        crossorigin="anonymous"></script>
 @include('sweetalert::alert')
 <script>
     // attende 3 secondi (3000 ms) e poi nasconde l'alert con un effetto fade-out

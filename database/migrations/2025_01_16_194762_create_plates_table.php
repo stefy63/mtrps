@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('type', array_map(fn($c) => $c->value ,PlateTypeEnum::cases()))->default('POLIZIA');
             $table->text('note')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

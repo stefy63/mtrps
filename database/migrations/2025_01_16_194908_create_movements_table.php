@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('date_to')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             // Indici e foreign keys
             $table->foreign('car_id')->references('id')->on('cars')->onDelete('set null');

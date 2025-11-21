@@ -73,11 +73,12 @@ use Carbon\Carbon;
  */
 class Movement extends Model
 {
+    use SoftDeletes;
 
     protected static function booted()
     {
         static::addGlobalScope('inprogress', function (Builder $builder) {
-            $builder->whereNull('date_to');
+            $builder->whereNull('date_to')->orWhere('date_to', '>=', now());
         });
     }
 
@@ -129,6 +130,7 @@ class Movement extends Model
     {
         $year = date('Y');
         $lastMovement = self::whereYear('created_at', $year)
+            ->withoutGlobalScope('inprogress')
             ->orderBy('id', 'desc')
             ->first();
 

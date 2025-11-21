@@ -1,23 +1,61 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span id="card_title">
+                                {{ __('Dashboard') }}
+                            </span>
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
+                    <div class="float-right" id="spinner">
+                        <div class="spinner-grow text-info" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
+                    </div>
                 </div>
+            </div>
+            <div class="card-body">
+                <table class="w-100 table table-striped table-bordered">
+                    <thead>
+                    <tr class="">
+                        <th class="text-bg-info fw-bold">
+                            ENTE
+                        </th>
+                        <th class="text-bg-info fw-bold ">TOTALI</th>
+                        <th class="text-bg-info fw-bold">PRESTATE</th>
+                        <th class="text-bg-info fw-bold">IN PRESTITO</th>
+                        <th class="text-bg-info fw-bold">IN RIPARAZIONE</th>
+                        <th class="text-bg-info fw-bold">DISPONIBILI</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($data as $d)
+                        <tr class="">
+                            <td class="fw-bold text-truncate">
+                                {{$d->ente}}
+                            </td>
+                            <td class="fw-bold">{{$d->active_cars_count}}</td>
+                            <td class="fw-bold text-danger">{{$d->movements_to_count}}</td>
+                            <td class="fw-bold text-info">{{$d->movements_from_count}}</td>
+                            <td class="fw-bold text-muted">{{$d->active_maintences_count}}</td>
+                            <td class="fw-bold text-success">{{($d->active_cars_count + $d->movements_from_count) - ($d->active_maintences_count + $d->movements_to_count)}}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-</div>
 @endsection
+@push('scripts')
+    <script type="module">
+        $('#spinner').hide();
+        setTimeout(() => {
+            $('#spinner').show();
+            location.reload();
+        }, 30000)
+    </script>
+
+@endpush

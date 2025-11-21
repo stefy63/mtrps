@@ -21,34 +21,22 @@
 
     <div class="col-md-6">
 
-        @if($button)
-            <div class="form-group mb-2 mb20">
-                <label for="car_id" class="form-label">{{ __('Veicolo') }} <span class="text-danger">*</span></label>
-                <select name="car_id" class="form-control @error('car_id') is-invalid @enderror" id="car_id">
-                    <option value="">Seleziona veicolo</option>
-                    @foreach($cars as $c)
-                        <option value="{{ $c->id }}" {{ old('car_id', $carPlate->cars[0]?->id ?? null) == $c->id ? 'selected' : '' }}>
-                            {{ $c->full_name }}
-                        </option>
-                    @endforeach
-                </select>
-                {!! $errors->first('car_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                <small class="form-text text-muted">Seleziona il veicolo a cui assegnare questa targa</small>
-            </div>
-        @endif
-
         <div class="form-group mb-2 mb20">
             <label for="name" class="form-label">{{ __('Numero Targa') }} <span class="text-danger">*</span></label>
-            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+            <input type="text" name="name" class="text-uppercase form-control @error('name') is-invalid @enderror"
                    value="{{ old('name', $carPlate?->name) }}" id="name" placeholder="Es: AB 123 CD" maxlength="20"
                    style="font-family: monospace; font-weight: bold;">
             {!! $errors->first('name', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
             <small class="form-text text-muted">Inserisci il numero di targa (solo lettere maiuscole e numeri)</small>
         </div>
 
+    </div>
+
+    <div class="col-md-6">
+
         <div class="form-group mb-2 mb20">
             <label for="type" class="form-label">{{ __('Tipo Targa') }} <span class="text-danger">*</span></label>
-            <select name="type" class="form-control @error('type') is-invalid @enderror" id="type">
+            <select name="type" class="form-control @error('type') is-invalid @enderror" id="type" @if(!$button) disabled @endif>
                 <option value="">Seleziona tipo</option>
                 <option value="CIVILE" {{ old('type', $carPlate?->type) == 'CIVILE' ? 'selected' : '' }}>
                     CIVILE - Civile (Standard)
@@ -57,34 +45,15 @@
                     POLIZIA - Polizia (Forze dell'Ordine)
                 </option>
                 <option value="ORIGINALE" {{ old('type', $carPlate?->type) == 'ORIGINALE' ? 'selected' : '' }}>
-                    ALTRO - Altro tipo
+                    ORIGINALE - Altro tipo
                 </option>
             </select>
             {!! $errors->first('type', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
             <small class="form-text text-muted">Tipo di targa secondo la classificazione italiana</small>
+            @if(!$button)
+                <input type="hidden"  name="type" value="{{$carPlate?->type}}" >
+            @endif
         </div>
-
-    </div>
-
-    <div class="col-md-6">
-
-        <div class="form-group mb-2 mb20">
-            <label for="date_from" class="form-label">{{ __('Data Inizio') }} <span class="text-danger">*</span></label>
-
-            <input type="date" name="date_from" class="form-control @error('date_from') is-invalid @enderror"
-                   value="{{ old('date_from', data_get($carPlate, 'cars.0.pivot.date_from', null)) }}" id="date_from">
-            {!! $errors->first('date_from', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-            <small class="form-text text-muted">Data di assegnazione della targa al veicolo</small>
-        </div>
-
-        <div class="form-group mb-2 mb20">
-            <label for="date_to" class="form-label">{{ __('Data Fine') }}</label>
-            <input type="date" name="date_to" class="form-control @error('date_to') is-invalid @enderror"
-                   value="{{ old('date_to',  data_get($carPlate, 'cars.0.pivot.date_to', null)) }}" id="date_to">
-            {!! $errors->first('date_to', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-            <small class="form-text text-muted">Data di scadenza o rimozione (lasciare vuoto se attiva)</small>
-        </div>
-
 
     </div>
 

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('web')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
         $carOwner = new \Database\Seeders\CarOwnerSeeder();
         $carOwner->run();

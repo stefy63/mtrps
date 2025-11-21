@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('date_to')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('car_id')->references('id')->on('cars')->onDelete('set null');
             $table->foreign('garage_id')->references('id')->on('maintenance_garages');
             $table->foreign('type_id')->references('id')->on('maintenance_types');

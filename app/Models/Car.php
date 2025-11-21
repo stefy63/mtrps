@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Car
@@ -59,6 +60,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Car extends Model
 {
+    use SoftDeletes;
 
     protected static function booted()
     {
@@ -105,7 +107,7 @@ class Car extends Model
     public function carOffices()
     {
         return $this->belongsToMany(Office::class)
-            ->using(CarAssignee::class)
+//            ->using(CarAssignee::class)
             ->withPivot('date_from', 'date_to', 'note')
             ->withTimestamps();
     }

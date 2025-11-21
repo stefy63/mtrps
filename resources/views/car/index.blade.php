@@ -44,7 +44,7 @@
                                     <tr>
                                         <th>Targa</th>
                                         <th>Modello</th>
-                                        <th>Proprietario</th>
+                                        <th>Assegnatario</th>
                                         <th>Colore</th>
                                         <th>Km</th>
                                         <th>Alimentazione</th>
@@ -76,8 +76,16 @@
                                                     @endforeach
                                                 </ul>
                                             </td>
-                                            <td>{{ $car->full_name ?? 'N/A' }}</td>
-                                            <td>{{ $car->carOwner?->name ?? 'N/A' }}</td>
+                                            <td>
+                                                @if($car->maintenances->count() > 0)
+                                                    <i class="bi bi-gear-fill text-danger"></i>
+                                                @endif
+                                                @if($car->movements->count() > 0)
+                                                    <i class="bi bi-car-front text-warning"></i>
+                                                @endif
+                                                {{ $car->full_name ?? 'N/A' }}
+                                            </td>
+                                            <td class="text-truncate">{{ $car->carOffices?->first()->full_name ?? 'N/A' }}</td>
                                             <td>{{ $car->color ?? 'N/A' }}</td>
                                             <td>{{ number_format($car->km ?? 0) }} km</td>
                                             <td>{{ $car->carPower?->name ?? 'N/A' }}</td>

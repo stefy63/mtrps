@@ -9,7 +9,7 @@
         <div class="offcanvas-body">
             <div class="dropdown mt-3">
                 <ul class="nav flex-column">
-                    <x-menu-link :href="route('movements.index')" :active="request()->routeIs('movements')">
+                    <x-menu-link :href="route('home')" :active="request()->routeIs('home')">
                         {{ __('Home') }}
                     </x-menu-link>
                     <x-menu-link :href="route('cars.index')" :active="request()->routeIs('dashboard')">

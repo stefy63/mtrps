@@ -17,5 +17,8 @@
         "postcss": "^8.4.31",
         "sass": "^1.56.1",
         "vite": "^6.0"
+    },
+    "dependencies": {
+        "jquery": "^3.7.1"
     }
 }

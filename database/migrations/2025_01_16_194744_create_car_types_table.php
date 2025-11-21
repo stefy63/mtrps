@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
         $catTypes = new CarTypeSeeder();
         $catTypes->run();

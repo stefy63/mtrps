@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Maintenance
@@ -27,10 +28,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Maintenance extends Model
 {
+    use SoftDeletes;
+
     protected static function booted()
     {
         static::addGlobalScope('closed', function (Builder $builder) {
-            $builder->whereNull('date_to');
+            $builder->whereNull('date_to')->orWhere('date_to', '>=', now());
         });
     }
 

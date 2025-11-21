@@ -27,6 +27,8 @@ return new class extends Migration {
             $table->string('cig')->nullable();
             $table->string('expenditure_chapter')->nullable();
             $table->string('note')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
             $table->foreign('car_id')->references('id')->on('cars');
             $table->foreign('maintenance_garage_id')->references('id')->on('maintenance_garages');
             $table->foreign('user_rup_id')->references('id')->on('users');
@@ -34,7 +36,6 @@ return new class extends Migration {
             $table->foreign('user_tender_notice_id')->references('id')->on('users');
             $table->foreign('user_tester_id')->references('id')->on('users');
             $table->foreign('maintenance_types_id')->references('id')->on('maintenance_types');
-            $table->timestamps();
         });
     }
 

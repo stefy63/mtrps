@@ -12,6 +12,7 @@ use App\Http\Controllers\CarPowerController;
 use App\Http\Controllers\CarProfitAccountController;
 use App\Http\Controllers\CarSetupController;
 use App\Http\Controllers\CarTypeController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\MaintenanceGarageController;
 use App\Http\Controllers\MaintenanceTypeController;
@@ -66,9 +67,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('equipments/store-form', [EquipmentController::class, 'storeForm'])->name('equipments.storeForm');
 
 
-    Route::get('/home', [MovementController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::resource('users', UserController::class);
     Route::resource('cars', CarController::class);
+//    Route::get('/car-types/{brand}', [CarTypeController::class, 'getType'])->name('car-type.get-type');
     Route::resource('car-types', CarTypeController::class);
     Route::resource('car-owners', CarOwnerController::class);
     Route::resource('car-assignees', CarAssigneeController::class);

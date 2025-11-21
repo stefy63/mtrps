@@ -24,7 +24,6 @@ class CarPlateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'car_id' => 'nullable|integer|exists:cars,id',
             'name' => [
                 'required', 
                 'string', 
@@ -36,8 +35,6 @@ class CarPlateRequest extends FormRequest
                 'required',
                 Rule::enum(PlateTypeEnum::class)
             ],
-            'date_from' => 'required|date',
-            'date_to' => 'nullable|date|after_or_equal:date_from',
             'note' => 'nullable|string'
         ];
     }
@@ -50,11 +47,8 @@ class CarPlateRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'car_id' => 'Veicolo',
             'name' => 'Numero Targa',
             'type' => 'Tipo Targa',
-            'date_from' => 'Data Inizio',
-            'date_to' => 'Data Fine',
             'note' => 'Note'
         ];
     }
@@ -71,14 +65,8 @@ class CarPlateRequest extends FormRequest
             'name.unique' => 'Questa targa è già registrata nel sistema.',
             'name.regex' => 'La targa deve contenere solo lettere maiuscole, numeri e spazi.',
             'name.max' => 'La targa non può superare i 20 caratteri.',
-            'car_id.required' => 'Devi selezionare un veicolo.',
-            'car_id.exists' => 'Il veicolo selezionato non esiste.',
             'type.required' => 'Il tipo di targa è obbligatorio.',
             'type.in' => 'Il tipo di targa deve essere POLIZIA, CIVILE o ALTRO.',
-            'date_from.required' => 'La data di inizio è obbligatoria.',
-            'date_from.date' => 'La data di inizio deve essere una data valida.',
-            'date_to.date' => 'La data di fine deve essere una data valida.',
-            'date_to.after_or_equal' => 'La data di fine deve essere successiva o uguale alla data di inizio.'
         ];
     }
 

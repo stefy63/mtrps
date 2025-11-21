@@ -2,6 +2,8 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 import * as bootstrap from 'bootstrap';
+import jQuery from 'jquery';
+window.$ = window.jQuery = jQuery;
 
 window.bootstrap = bootstrap;
 window.Alpine = Alpine;

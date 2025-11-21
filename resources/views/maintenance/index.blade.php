@@ -61,7 +61,7 @@
                                         <tr>
                                             <td>
                                                 @if($isActive)
-                                                    <span class="badge bg-warning text-dark w-75">
+                                                    <span class="badge bg-warning text-dark w-100">
                                                             <i class="bi bi-clock"></i> In corso
                                                         </span>
                                                 @else

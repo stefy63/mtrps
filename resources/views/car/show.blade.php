@@ -12,10 +12,10 @@
                     <div class="card-header"
                          style="display: flex; justify-content: space-between; align-items: center;">
                         <div class="float-left">
-                            <span class="card-title">{{ __('Dati Vettura') }} : {{ $car->full_name }}</span>
+                            <span class="card-title">{{ __('Dati Vettura') }} : {{ $car?->full_name ?? ''  }}</span>
                         </div>
                         <div class="float-right">
-                            <a class="btn btn-sm btn-warning" href="{{ route('cars.edit', $car->id) }}">
+                            <a class="btn btn-sm btn-warning" href="{{ route('cars.edit', $car->id ?? 0) }}">
                                 <i class="bi bi-pencil"></i> {{ __('Modifica') }}
                             </a>
                             <a class="btn btn-primary btn-sm" href="{{ route('cars.index') }}"> {{ __('Back') }}</a>
@@ -203,6 +203,7 @@
                                             modalClass="modal-xl"
                                             class="btn-primary"
                                             icon="bi-database-fill-add"
+                                            event="movement:inserted"
                                     />
                                 </div>
                                 <table class="table table-hover table-responsive">
@@ -261,6 +262,7 @@
                                             modalClass="modal-xl"
                                             class="btn-primary"
                                             icon="bi-database-fill-add"
+                                            event="maintenance:inserted"
                                     />
                                 </div>
                                 <table class="table table-hover table-responsive">
@@ -322,7 +324,7 @@
                                                 <td>{{date('d/m/Y', strtotime($m->date_from))}}</td>
                                                 <td>
                                                     @if($maintenanceIsActive)
-                                                        <span class="badge bg-warning text-dark w-75">
+                                                        <span class="badge bg-warning text-dark w-100">
                                                             <i class="bi bi-clock"></i> In corso
                                                         </span>
                                                     @else
@@ -345,3 +347,34 @@
         </div>
     </section>
 @endsection
+@push('scripts')
+    <script type="module">
+        $(document).ready(() => {
+            const tab = +location.search.split('tab=')[1] || 1
+            $('.nav-link').removeClass('active').attr('aria-selected', false)
+            $('.tab-pane').removeClass('show active')
+            console.log(tab)
+            switch (tab) {
+                case 1:
+                    $('#nav-car-tab').addClass('active').attr('aria-selected', true)
+                    $('#nav-car').addClass('show active')
+                    break
+                case 2:
+                    $('#nav-movement-tab').addClass('active').attr('aria-selected', true)
+                    $('#nav-movement').addClass('show active')
+                    break
+                case 3:
+                    $('#nav-maintenance-tab').addClass('active').attr('aria-selected', true)
+                    $('#nav-maintenance').addClass('show active')
+                    break
+            }
+        });
+        $(document).on('maintenance:inserted', function (e) {
+            window.location.href = '?tab=3';
+        })
+        $(document).on('movement:inserted', function (e) {
+            window.location.href = '?tab=2';
+        })
+
+    </script>
+@endpush

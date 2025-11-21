@@ -38,6 +38,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('created_by')->unsigned()->nullable();
             $table->unsignedBigInteger('updated_by')->unsigned()->nullable();
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('created_by', 'createdBy')->references('id')->on('users');
             $table->foreign('updated_by', 'updateBy')->references('id')->on('users');
             $table->foreign('car_type_id')->references('id')->on('car_types');

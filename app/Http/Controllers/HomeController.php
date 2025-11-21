@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Office;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -23,6 +24,25 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $typology = '(Auto Civili)';
+        $data = Office::query()
+            ->select('ente')
+            ->whereIn('id', function ($q) {
+                $q->select(DB::raw('MIN(id)'))
+                    ->from('offices')
+                    ->groupBy('ente');
+            })
+            ->withCount([
+                'activeCars',
+                'movementsTo',
+                'movementsFrom',
+                'activeMaintences'
+            ])
+            ->orderByDesc(DB::raw('
+                (active_cars_count + movements_from_count) - (active_maintences_count + movements_to_count)
+            '))
+            ->get();
+
+        return view('home', compact('data'));
     }
 }

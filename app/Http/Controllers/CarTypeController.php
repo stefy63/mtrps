@@ -103,4 +103,10 @@ class CarTypeController extends Controller
         return Redirect::route('car-types.index')
             ->with('success', 'Car Type deleted successfully');
     }
+
+    public function getType(int $brand): JsonResponse
+    {
+        $types = CarType::get(['id', 'name']);
+        return $this->sendResponse($types);
+    }
 }

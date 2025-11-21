@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class MaintenanceGarage
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class MaintenanceGarage extends Model
 {
+    use SoftDeletes;
     
     protected $perPage = 20;
 

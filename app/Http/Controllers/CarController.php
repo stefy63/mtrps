@@ -41,6 +41,8 @@ class CarController extends Controller
             'carPlates' => fn($q) => $q->wherePivotNull('date_to'),
             'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
             'carEquipment' => fn($q) => $q->wherePivotNull('date_to'),
+            'movements' => fn($q) => $q->whereNull('date_to'),
+            'maintenances' => fn($q) => $q->whereNull('date_to'),
         ]);
         if ($unavailable = $request->exists('unavailable')) {
             $query->withoutGlobalScope('available');
@@ -60,6 +62,7 @@ class CarController extends Controller
     public function getForm(): View
     {
         $car = new Car();
+        $car->available = true;
         $carTypes = CarType::get(['id', 'name']);
         $carOwners = CarOwner::get(['id', 'name']);
         $carBrands = CarBrand::get(['id', 'name']);
@@ -97,6 +100,7 @@ class CarController extends Controller
     public function create(): View
     {
         $car = new Car();
+        $car->available = true;
         $carTypes = CarType::get(['id', 'name']);
         $carOwners = CarOwner::get(['id', 'name']);
         $carBrands = CarBrand::get(['id', 'name']);

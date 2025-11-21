@@ -30,6 +30,7 @@ return new class extends Migration
             $table->date('durc')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
         $garageSeeder = new MaintenanceGarageSeeder();
         $garageSeeder->run();

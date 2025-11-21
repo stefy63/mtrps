@@ -11,6 +11,11 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    resolve: {
+        alias: {
+            '$': 'jQuery'
+        },
+    },
     css: {
         preprocessorOptions: {
             scss: {

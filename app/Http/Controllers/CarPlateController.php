@@ -58,15 +58,7 @@ class CarPlateController extends Controller
 
     public function storeForm(CarPlateRequest $request): JsonResponse
     {
-        DB::beginTransaction();
         $plate = Plate::create($request->validated());
-        throw_if(
-            !$car = Car::find($request->car_id),
-            Exception::class,
-            'Vettura non trovata'
-        );
-        PlateService::associateCar($car, $plate);
-        DB::commit();
         return $this->sendResponse($plate, 'Targa creata con successo.');
     }
 
@@ -76,8 +68,7 @@ class CarPlateController extends Controller
     public function create(): View
     {
         $carPlate = new Plate();
-        $cars = Car::get();
-        return view('car-plate.create', compact('carPlate', 'cars'));
+        return view('car-plate.create', compact('carPlate'));
     }
 
     /**
@@ -86,20 +77,11 @@ class CarPlateController extends Controller
     public function store(CarPlateRequest $request): RedirectResponse
     {
         try {
-            DB::beginTransaction();
-            $plate = Plate::create($request->validated());
-            throw_if(
-                !$car = Car::find($request->car_id),
-                Exception::class,
-                'Vettura non trovata'
-            );
-            PlateService::associateCar($car, $plate);
-            DB::commit();
+            Plate::create($request->validated());
             return Redirect::route('car-plates.index')
                 ->with('success', 'Targa creata.');
 
         } catch (\Throwable $e) {
-            DB::rollBack();
             return Redirect::back()
                 ->withInput()
                 ->withErrors('Errore: '.$e->getMessage());
@@ -118,7 +100,6 @@ class CarPlateController extends Controller
             'cars.carPlates' => fn($q) => $q->where('plates.id', '<>', $id)->wherePivotNull('date_to'),
         ])->find($id);
 
-        confirmDelete('Cancella Targa!', 'Sei sicuro di voler cancellare questa Targa?');
         return view('car-plate.show', compact('carPlate'));
     }
 
@@ -141,25 +122,11 @@ class CarPlateController extends Controller
     public function update(CarPlateRequest $request, Plate $carPlate): RedirectResponse
     {
         try {
-            DB::beginTransaction();
-            $carPlate->load(['cars' => fn($q) => $q->wherePivotNull('date_to')->first()]);
-            if ($carPlate->cars()->first()->id !== (int)$request->car_id) {
-                throw_if(
-                    !$car = Car::find($request->car_id),
-                    Exception::class,
-                    'Vettura non trovata'
-                );
-                PlateService::dissociateCar($carPlate->cars()->first(), $carPlate);
-                PlateService::associateCar($car, $carPlate);
-            }
             $carPlate->update($request->validated());
-
-            DB::commit();
             return Redirect::route('car-plates.index')
                 ->with('success', 'Targa aggiornata con successo.');
 
         } catch (\Throwable $e) {
-            DB::rollBack();
             return Redirect::back()
                 ->withInput()
                 ->withErrors('Errore: '.$e->getMessage());
