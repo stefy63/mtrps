@@ -38,7 +38,7 @@ class HomeController extends Controller
                 'movementsFrom',
                 'activeMaintenance'
             ])
-            ->orderByDesc('ente')
+            ->orderBy('ente')
             ->get();
 
         return view('home', compact('data'));
