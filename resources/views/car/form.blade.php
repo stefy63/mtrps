@@ -99,12 +99,26 @@
                             :value="old('car_employment_code_id', $car?->car_employment_code_id)"
                             :options="$carEmployment"
                             :errors="$errors"
-                            endpoint="{{ route('home') }}"
+                            endpoint="{{ route('employment-code.storeForm') }}"
                             label="{{ __('Codice di impiego') }}"
                             labelKey="extended"
                             idKey="id"
-                            modal-url="{{ route('home') }}"
+                            modal-url="{{ route('employment-code.getForm') }}"
                             modal-title="Nuovo codice di impiego"
+                    />
+
+                    <x-dynamic-select
+                            name="car_typology_id"
+                            :required="'false'"
+                            :value="old('car_typology_id', $car?->car_typology_id)"
+                            :options="$carTypologies"
+                            :errors="$errors"
+                            endpoint="{{ route('car-typology.storeForm') }}"
+                            label="{{ __('Tipologia di mezzo') }}"
+                            labelKey="name"
+                            idKey="id"
+                            modal-url="{{ route('car-typology.getForm') }}"
+                            modal-title="Nuova tipologia di mezzo"
                     />
 
                     <div class="form-group mb-2">
@@ -112,15 +126,6 @@
                         <input type="text" name="color" class="form-control @error('color') is-invalid @enderror"
                                value="{{ old('color', $car?->color) }}" id="color" placeholder="Colore">
                         {!! $errors->first('color', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                    </div>
-
-                    <div class="form-group mb-2 mb20">
-                        <label for="car_typology" class="form-label">{{ __('Tipologia di Mezzo') }}</label>
-                        <input type="text" name="car_typology"
-                               class="form-control @error('car_typology') is-invalid @enderror"
-                               value="{{ old('car_typology', $car?->car_typology) }}" id="car_typology"
-                               placeholder="Tipologia di Mezzo">
-                        {!! $errors->first('car_typology', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
                     <div class="form-group mb-2 mb20" style="margin-top: 1.3rem">

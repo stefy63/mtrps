@@ -40,6 +40,8 @@ class FilterCarService
                 $q->where('name', 'like', "%{$search}%");
             })->orWhereHas('carEquipment', function ($q) use ($search) {
                 $q->where('car_equipment.note', 'like', "%{$search}%");
+            })->orWhereHas('carTypology', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
             });
     }
 }

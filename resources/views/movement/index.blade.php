@@ -212,18 +212,20 @@
                                         </td>
                                         <td>
                                             <div>
-                                                {{$movement->date_from ? $movement->date_from->format('d/m/Y') : '-'}}
+                                                {{$movement->date_from ? $movement->date_from->format('d/m/Y H:i') : '-'}}
                                             </div>
                                         </td>
                                         <td>
                                             <div>
-                                                {{$movement->date_to ? $movement->date_to->format('d/m/Y') : 'in corso'}}
+                                                {{$movement->date_to ? $movement->date_to->format('d/m/Y H:i') : 'in corso'}}
                                             </div>
                                         </td>
                                         <td class="text-end">
-                                            <div class="btn-group dropstart">
-                                                <x-action-table-button :item="$movement" :label="'Movimento'"/>
-                                            </div>
+                                            @if(!$movement->date_to || $movement->date_to > now())
+                                                <div class="btn-group dropstart">
+                                                    <x-action-table-button :item="$movement" :label="'Movimento'"/>
+                                                </div>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty

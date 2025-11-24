@@ -44,7 +44,7 @@
                                     <tr>
                                         <th>Targa</th>
                                         <th>Modello</th>
-                                        <th>Assegnatario</th>
+                                        <th>Tipologia</th>
                                         <th>Colore</th>
                                         <th>Km</th>
                                         <th>Alimentazione</th>
@@ -85,7 +85,7 @@
                                                 @endif
                                                 {{ $car->full_name ?? 'N/A' }}
                                             </td>
-                                            <td class="text-truncate">{{ $car->carOffices?->first()->full_name ?? 'N/A' }}</td>
+                                            <td >({{ $car->carTypology->name ?? 'N/A' }})</td>
                                             <td>{{ $car->color ?? 'N/A' }}</td>
                                             <td>{{ number_format($car->km ?? 0) }} km</td>
                                             <td>{{ $car->carPower?->name ?? 'N/A' }}</td>

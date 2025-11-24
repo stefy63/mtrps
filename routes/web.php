@@ -4,6 +4,8 @@ use App\Http\Controllers\AssigneeOfficeController;
 use App\Http\Controllers\CarAssigneeController;
 use App\Http\Controllers\CarBrandController;
 use App\Http\Controllers\CarController;
+use App\Http\Controllers\CarTypologyController;
+use App\Http\Controllers\EmploymentCodeController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\CarFuelController;
 use App\Http\Controllers\CarOwnerController;
@@ -65,6 +67,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('maintenances/store-form', [MaintenanceController::class, 'storeForm'])->name('maintenance.storeForm');
     Route::get('equipments/get-form', [EquipmentController::class, 'getForm'])->name('equipments.getForm');
     Route::post('equipments/store-form', [EquipmentController::class, 'storeForm'])->name('equipments.storeForm');
+    Route::get('employment-code/get-form', [EmploymentCodeController::class, 'getForm'])->name('employment-code.getForm');
+    Route::post('employment-code/store-form', [EmploymentCodeController::class, 'storeForm'])->name('employment-code.storeForm');
+    Route::get('car-typology/get-form', [CarTypologyController::class, 'getForm'])->name('car-typology.getForm');
+    Route::post('car-typology/store-form', [CarTypologyController::class, 'storeForm'])->name('car-typology.storeForm');
 
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -114,6 +120,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('cigs/export', [App\Http\Controllers\CigController::class, 'export'])->name('cigs.export');
     Route::resource('cigs', App\Http\Controllers\CigController::class);
     Route::resource('offices', OfficeController::class);
+    Route::resource('employment-code', EmploymentCodeController::class);
+    Route::resource('car-typology', CarTypologyController::class);
 
 
 //    Rotte di import

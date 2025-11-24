@@ -216,7 +216,7 @@ class MovementController extends Controller
         try {
             DB::beginTransaction();
             $data = $request->validated();
-            \App\Facades\MovementService::update($movement, $data);
+            MovementService::update($movement, $data);
             DB::commit();
             return Redirect::route('movements.index')
                 ->with('success', 'Movimento aggiornato con successo.');

@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('car_power_id')->nullable();
             $table->unsignedBigInteger('car_profit_account_id')->nullable();
             $table->unsignedBigInteger('car_employment_code_id')->nullable();
+            $table->unsignedBigInteger('car_typology_id')->nullable();
             $table->string('model')->nullable();
             $table->string('color')->nullable();
             $table->string('cod_model')->nullable();
@@ -30,7 +31,7 @@ return new class extends Migration {
             $table->string('warranty')->nullable();
             $table->string('tel_warranty')->nullable();
             $table->string('chassis')->nullable();
-            $table->string('car_typology')->nullable();
+//            $table->string('car_typology')->nullable();
             $table->date('date_revision')->nullable();
             $table->date('doc')->nullable();
             $table->text('note')->nullable();
@@ -47,6 +48,7 @@ return new class extends Migration {
             $table->foreign('car_power_id')->references('id')->on('car_powers');
             $table->foreign('car_profit_account_id')->references('id')->on('car_profit_accounts');
             $table->foreign('car_employment_code_id')->references('id')->on('car_employment_codes');
+            $table->foreign('car_typology_id')->references('id')->on('car_typologies');
         });
     }
 

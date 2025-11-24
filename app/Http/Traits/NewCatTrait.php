@@ -8,6 +8,7 @@ use App\Models\CarEmploymentCode;
 use App\Models\CarOwner;
 use App\Models\CarPower;
 use App\Models\CarType;
+use App\Models\CarTypology;
 
 trait NewCatTrait
 {
@@ -23,7 +24,7 @@ trait NewCatTrait
         "Alimentazione" => 'name',
         "Colore" => 'color',
         "Pntermici" => 'winter_wheels',
-        "TipologiaDiMezzo" => 'car_typology',
+        "TipologiaDiMezzo" => 'name',
         "Conto" => 'profit_account',
         "CodicePanFuelCardQ8" => null,
         "CodicePanFuelCardIp" => null,
@@ -40,6 +41,10 @@ trait NewCatTrait
     private function newCar(array $data): Car
     {
         $car = new Car();
+        if (!empty($data['TipologiaDiMezzo']) && $fieldName = $this->conversion['TipologiaDiMezzo']) {
+            $typology = substr($data['TipologiaDiMezzo'], 1, -1);
+            $car->carTypology()->associate($this->firstOrCreate(new CarTypology(), $fieldName, $typology));
+        }
         if (!empty($data['CasaCostruttrice']) && $fieldName = $this->conversion['CasaCostruttrice']) {
             $car->carBrand()->associate($this->firstOrCreate(new CarBrand(), $fieldName, $data['CasaCostruttrice']));
         }
@@ -64,7 +69,7 @@ trait NewCatTrait
             $car->carOwner()->associate($this->firstOrCreate(new CarOwner(), $fieldName, $data['Proprieta']));
         }
         $this->getConversion($car, 'Colore', $data);
-        $this->getConversion($car, 'TipologiaDiMezzo', $data);
+//        $this->getConversion($car, 'TipologiaDiMezzo', $data);
         $this->getConversion($car, 'Telaio', $data);
         $this->getConversion($car, 'Conto', $data);
         $car['note'] = "Ente: {$data['Ente']}\nCODICE PAN Fuel Card IP: {$data['CodicePanFuelCardIp']}\nCODICE PAN Fuel Card Q8: {$data['CodicePanFuelCardQ8']}";

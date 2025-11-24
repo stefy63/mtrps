@@ -24,6 +24,7 @@ class StoreCarRequest extends BaseFormRequest
             'car_origin_plate_force' => 'nullable|boolean',
             'car_profit_account_id' => 'nullable|exists:car_profit_accounts,id',
             'car_employment_code_id' => 'nullable|exists:car_employment_codes,id',
+            'car_typology_id' => 'nullable|exists:car_typologies,id',
             'assignee_id' => 'integer|exists:offices,id',
             'equipments' => 'array|nullable',
             'available' => 'nullable|boolean',

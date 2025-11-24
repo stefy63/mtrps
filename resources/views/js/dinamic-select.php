@@ -223,6 +223,57 @@
             }
         })
 
+        Alpine.data('datetimePicker', (config = {}) => ({
+            value: config.value ?? '',
+            dateFormat: config.dateFormat ?? 'Y-m-d H:i',
+            altFormat: config.altFormat ?? 'd/m/Y H:i',
+            enableSeconds: config.enableSeconds ?? false,
+            fp: null,
+
+            init() {
+                this.fp = flatpickr(this.$refs.input, {
+                    enableTime: true,
+                    enableSeconds: this.enableSeconds,
+                    time_24hr: true,
+                    minuteIncrement: 15,
+                    dateFormat: this.dateFormat,
+                    altInput: true,
+                    altFormat: this.altFormat,
+                    allowInput: true,
+                    defaultDate: this.value || null,
+
+                    // 1️⃣ Selezione dal calendario
+                    onChange: (dates, str) => {
+                        this.value = str;
+                        this.$dispatch('input', this.value);
+                    },
+                    // onValueUpdate viene chiamato quando il valore interno cambia
+                    onValueUpdate: (selectedDates, dateStr) => {
+                        this.value = dateStr;
+                    },
+                    // 3️⃣ Uscita dal campo (validazione finale)
+                    onClose: () => {
+                        this.value = this.$refs.input.value;
+                        this.$dispatch('input', this.value);
+                    },
+                });
+
+                // Sync Alpine → Flatpickr
+                this.$watch('value', (v) => {
+                    if (!this.fp) return;
+                    if (v !== this.fp.input.value) {
+                        this.fp.setDate(v, true, this.dateFormat);
+                    }
+                });
+            },
+
+            clear() {
+                this.fp.clear();
+                this.value = '';
+                this.$dispatch('input', this.value);
+            }
+        }));
+
         Alpine.store('modal', {
             open(config) {
                 const modalComp = Alpine.$data(document.querySelector('#dinamicModal'));

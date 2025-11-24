@@ -86,13 +86,18 @@
                     {{-- Partenza Prevista --}}
                     <div class="col-md-3">
                         <div class="form-floating mb-3">
-                            <input type="date"
-                                   name="date_from"
-                                   class="form-control @error('date_from') is-invalid @enderror"
-                                   value="{{ old('date_from', $movement?->date_from?->format('Y-m-d')) }}"
-                                   id="departure_datetime"
-                                   required>
-                            <label for="departure_datetime">{{ __('Partenza Prevista') }} *</label>
+                            <x-datetime-picker
+                                    name="date_from"
+                                    value="{{ old('date_from', $movement?->date_from?->format('Y-m-d')) }}"
+                            />
+
+                            {{--                            <input type="date"--}}
+{{--                                   name="date_from"--}}
+{{--                                   class="form-control @error('date_from') is-invalid @enderror"--}}
+{{--                                   value="{{ old('date_from', $movement?->date_from?->format('Y-m-d')) }}"--}}
+{{--                                   id="departure_datetime"--}}
+{{--                                   required>--}}
+{{--                            <label for="departure_datetime">{{ __('Partenza Prevista') }} *</label>--}}
                             {!! $errors->first('date_from', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                         </div>
                     </div>
@@ -100,12 +105,18 @@
                     {{-- Arrivo Previsto --}}
                     <div class="col-md-3">
                         <div class="form-floating mb-3">
-                            <input type="date"
-                                   name="date_to"
-                                   class="form-control @error('date_to') is-invalid @enderror"
-                                   value="{{ old('date_to', $movement?->date_to?->format('Y-m-d')) }}"
-                                   id="arrival_datetime">
-                            <label for="arrival_datetime">{{ __('Arrivo Previsto') }} *</label>
+
+                            <x-datetime-picker
+                                    name="date_to"
+                                    value="{{ old('date_to', $movement?->date_to?->format('Y-m-d')) }}"
+                            />
+{{--                            --}}
+{{--                            <input type="date"--}}
+{{--                                   name="date_to"--}}
+{{--                                   class="form-control @error('date_to') is-invalid @enderror"--}}
+{{--                                   value="{{ old('date_to', $movement?->date_to?->format('Y-m-d')) }}"--}}
+{{--                                   id="arrival_datetime">--}}
+{{--                            <label for="arrival_datetime">{{ __('Arrivo Previsto') }} *</label>--}}
                             {!! $errors->first('date_to', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                         </div>
                     </div>

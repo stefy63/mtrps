@@ -24,9 +24,9 @@
                             ENTE
                         </th>
                         <th class="text-bg-info fw-bold ">TOTALI</th>
-                        <th class="text-bg-info fw-bold">PRESTATE</th>
-                        <th class="text-bg-info fw-bold">IN PRESTITO</th>
                         <th class="text-bg-info fw-bold">IN RIPARAZIONE</th>
+                        <th class="text-bg-info fw-bold">IN PRESTITO</th>
+                        <th class="text-bg-info fw-bold">PRESTATE</th>
                         <th class="text-bg-info fw-bold">DISPONIBILI</th>
                     </tr>
                     </thead>
@@ -34,12 +34,12 @@
                     @foreach($data as $d)
                         <tr class="">
                             <td class="fw-bold text-truncate">
-                                {{$d->ente}}
+                                    {{$d->ente}}
                             </td>
                             <td class="fw-bold">{{$d->active_cars_count}}</td>
-                            <td class="fw-bold text-danger">{{$d->movements_to_count}}</td>
-                            <td class="fw-bold text-info">{{$d->movements_from_count}}</td>
                             <td class="fw-bold text-muted">{{$d->active_maintenance_count}}</td>
+                            <td class="fw-bold text-info">{{$d->movements_from_count}}</td>
+                            <td class="fw-bold text-danger">{{$d->movements_to_count}}</td>
                             <td class="fw-bold text-success">{{($d->active_cars_count + $d->movements_from_count) - ($d->active_maintenance_count + $d->movements_to_count)}}</td>
                         </tr>
                     @endforeach

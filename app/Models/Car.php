@@ -104,6 +104,11 @@ class Car extends Model
     ];
     protected $appends = ['full_name'];
 
+    public function carTypology(): BelongsTo
+    {
+        return $this->belongsTo(CarTypology::class);
+    }
+
     public function carOffices()
     {
         return $this->belongsToMany(Office::class)

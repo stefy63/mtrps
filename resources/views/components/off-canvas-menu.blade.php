@@ -55,6 +55,12 @@
                             <x-menu-link :href="route('maintenance-types.index')" :active="request()->routeIs('dashboard')">
                                 {{ __('Tipi di intervento') }}
                             </x-menu-link>
+                            <x-menu-link :href="route('employment-code.index')" :active="request()->routeIs('dashboard')">
+                                {{ __('Codici d\'impiego') }}
+                            </x-menu-link>
+                            <x-menu-link :href="route('car-typology.index')" :active="request()->routeIs('dashboard')">
+                                {{ __('Tipologie Vetture') }}
+                            </x-menu-link>
                         </ul>
                     </li>
 

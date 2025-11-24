@@ -13,6 +13,7 @@ use App\Models\CarOwner;
 use App\Models\CarPower;
 use App\Models\CarProfitAccount;
 use App\Models\CarType;
+use App\Models\CarTypology;
 use App\Models\Equipment;
 use App\Models\Office;
 use App\Models\Plate;
@@ -38,6 +39,7 @@ class CarController extends Controller
             'carBrand',
             'carPower',
             'carProfitAccount',
+            'carTypology',
             'carPlates' => fn($q) => $q->wherePivotNull('date_to'),
             'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
             'carEquipment' => fn($q) => $q->wherePivotNull('date_to'),
@@ -64,6 +66,7 @@ class CarController extends Controller
         $car = new Car();
         $car->available = true;
         $carTypes = CarType::get(['id', 'name']);
+        $carTypologies = CarTypology::get(['id', 'name']);
         $carOwners = CarOwner::get(['id', 'name']);
         $carBrands = CarBrand::get(['id', 'name']);
         $carPowers = CarPower::get(['id', 'name']);
@@ -83,14 +86,13 @@ class CarController extends Controller
 
         return view('car.form',
             compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment',
-                'car_police_plate_id', 'car_civil_plate_id', 'car_origin_plate_id', 'polPlates', 'civPlates',
+                'car_police_plate_id', 'car_civil_plate_id', 'car_origin_plate_id', 'polPlates', 'civPlates', 'carTypologies',
                 'offices', 'equipments', 'origPlates', 'offices', 'assignee_id', 'button', 'carEquipmentById'));
     }
 
     public function storeForm(StoreCarRequest $request): JsonResponse
     {
         $carBrand = Car::create($request->validated());
-        confirmDelete('Cancella Vettura!', "Sei sicuro di voler cancellare questa vettura?");
         return $this->sendResponse($carBrand, 'Vettura creata con successo.');
     }
 
@@ -102,6 +104,7 @@ class CarController extends Controller
         $car = new Car();
         $car->available = true;
         $carTypes = CarType::get(['id', 'name']);
+        $carTypologies = CarTypology::get(['id', 'name']);
         $carOwners = CarOwner::get(['id', 'name']);
         $carBrands = CarBrand::get(['id', 'name']);
         $carPowers = CarPower::get(['id', 'name']);
@@ -120,7 +123,7 @@ class CarController extends Controller
 
         return view('car.create',
             compact('car', 'carTypes', 'carOwners', 'carBrands', 'carPowers', 'carProfitAccounts', 'carEmployment',
-                'car_police_plate_id', 'car_civil_plate_id', 'car_origin_plate_id', 'polPlates', 'civPlates',
+                'car_police_plate_id', 'car_civil_plate_id', 'car_origin_plate_id', 'polPlates', 'civPlates', 'carTypologies',
                 'offices', 'equipments', 'origPlates', 'offices', 'assignee_id', 'carEquipmentById'));
     }
 
@@ -157,6 +160,7 @@ class CarController extends Controller
             'carOwner',
             'carBrand',
             'carPower',
+            'carTypology',
             'carPlates' => fn($q) => $q->wherePivotNull('date_to'),
             'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
             'carEquipment' => fn($q) => $q->wherePivotNull('date_to'),
@@ -175,12 +179,14 @@ class CarController extends Controller
     public function edit($id): View
     {
         $car = Car::with([
+            'carTypology',
             'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
             'carPlates' => fn($q) => $q->wherePivotNull('date_to'),
             'carEquipment' => fn($q) => $q->wherePivotNull('date_to')
         ])->find($id);
         $carEquipmentById = $car->carEquipment()->wherePivotNull('date_to')->get()->keyBy('id');
         // Recupera i dati per le select
+        $carTypologies = CarTypology::get(['id', 'name']);
         $carTypes = CarType::get(['id', 'name']);
         $carOwners = CarOwner::get(['id', 'name']);
         $carBrands = CarBrand::get(['id', 'name']);
@@ -198,7 +204,7 @@ class CarController extends Controller
 
         return view('car.edit',
             compact('car', 'carTypes', 'carProfitAccounts', 'carOwners', 'carBrands', 'carPowers', 'offices',
-                'carEmployment', 'polPlates', 'civPlates', 'origPlates', 'car_police_plate_id', 'car_civil_plate_id',
+                'carEmployment', 'polPlates', 'civPlates', 'origPlates', 'car_police_plate_id', 'car_civil_plate_id', 'carTypologies',
                 'car_origin_plate_id', 'equipments', 'carEquipmentById'));
     }
 

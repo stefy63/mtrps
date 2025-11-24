@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('car_id')->nullable();
             $table->unsignedBigInteger('office_id')->nullable();
             $table->string('code')->unique();
-            $table->date('date_from')->useCurrent();
-            $table->date('date_to')->nullable();
+            $table->dateTime('date_from')->useCurrent();
+            $table->dateTime('date_to')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
             $table->softDeletes();
