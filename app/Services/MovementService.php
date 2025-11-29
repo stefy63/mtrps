@@ -12,12 +12,12 @@ class MovementService
 
     public function update(Movement $movement, array $data)
     {
-        if ($data['car_id'] !== $movement->car_id) {
+        // if ($data['car_id'] !== $movement->car_id) {
             throw_if(
-                $this->isBusyCar($data['car_id']) || $this->isAfterLastFreeCar($data['car_id'], $data['date_from']),
+                $this->isBusyCar($data, $movement) || $this->isAfterLastFreeCar($data, $movement),
                 'Vettura già impegnata.'
             );
-        }
+        // }
 
         $movement->update($data);
     }
@@ -25,7 +25,7 @@ class MovementService
     public function create(array $data)
     {
         throw_if(
-            $this->isBusyCar($data['car_id']) || $this->isAfterLastFreeCar($data['car_id'], $data['date_from']),
+            $this->isBusyCar($data) || $this->isAfterLastFreeCar($data),
             'Vettura già impegnata.'
         );
         return Movement::create($data);
@@ -33,24 +33,27 @@ class MovementService
 
 
     /**
-     * @param  int  $carId
+     * @param  array  $data
      * @return bool
      */
-    private function isBusyCar(int $carId): bool
+    private function isBusyCar(array $data, ?Movement $movement = null): bool
     {
-        return Movement::where('car_id', $carId)
-            ->whereNull('date_to')->exists();
+        return Movement::where('car_id', $data['car_id'])
+            ->when($movement?->id, fn($q) => $q->where('id', '!=', $movement->id))
+            ->whereNull('date_to')
+            ->exists();
     }
 
     /**
-     * @param  int  $carId
-     * @param  string  $date_from
+     * @param  array  $data
      * @return bool
      */
-    private function isAfterLastFreeCar(int $carId, string $date_from): bool
+    private function isAfterLastFreeCar(array $data, ?Movement $movement = null): bool
     {
-        return Movement::where('car_id', $carId)
-            ->whereDate('date_to', '>', $date_from)->exists();
+        return Movement::where('car_id', $data['car_id'])
+            ->when($movement?->id, fn($q) => $q->where('id', '!=', $movement->id))
+            ->where('date_to', '>', $data['date_from'])
+            ->exists();
     }
 
 }

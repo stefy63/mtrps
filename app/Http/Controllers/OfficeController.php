@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
+use function Pest\Laravel\get;
+
 class OfficeController extends Controller
 {
     /**
@@ -23,15 +25,17 @@ class OfficeController extends Controller
     public function index(Request $request): View
     {
         $search = $request->search;
-        $offices = Office::when($search, function ($q) use ($search) {
+        $query = Office::when($search, function ($q) use ($search) {
             return $q->where('ente', 'LIKE', "%{$search}%")
                 ->orWhere('name', 'LIKE', "%{$search}%")
                 ->orWhere('phone', 'LIKE', "%{$search}%")
                 ->orWhere('mail', 'LIKE', "%{$search}%")
                 ->orWhere('address', 'LIKE', "%{$search}%");
-        })->paginate();
+        });
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare?');
+
+        $offices = $query->paginate();
         return view('office.index', compact('offices', 'search'))
             ->with('i', ($request->input('page', 1) - 1) * $offices->perPage());
     }
@@ -97,6 +101,13 @@ class OfficeController extends Controller
      */
     public function show(Office $office): View
     {
+        $office->load([
+            'cars.carPlates',
+            'cars.carTypology',
+            'movementsTo.movements.office',
+            'movement',
+        ]);
+        // dd($office->toArray());
         return view('office.show', compact('office'));
     }
 

@@ -21,7 +21,10 @@
 
 <!-- Campo di selezione dinamica con ricerca -->
 <div :class="getClass()" x-if="options">
-    <label class="form-label @error($name) is-invalid @enderror" for="{{ $name }}" x-text="label"></label>
+    <label class="form-label @error($name) is-invalid @enderror" for="{{ $name }}">
+        <span x-text="label"></span>
+        @if ($required) <span class="text-danger">*</span> @endif
+    </label>
     <div class="position-relative">
         <div class="input-group">
             <!-- Input ricerca -->

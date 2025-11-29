@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -23,7 +24,7 @@ class Office extends Model
     ];
     protected $appends = ['full_name'];
 
-    public function movement()
+    public function movement(): HasMany
     {
         return $this->hasMany(Movement::class);
     }
@@ -52,12 +53,12 @@ class Office extends Model
     public function movementsTo(): BelongsToMany
     {
         return $this->activeCars()
-            ->whereHas('movements');
+            ->whereHas('movements', fn ($q) => $q->withoutGlobalScope('inprogress'));
     }
 
     public function movementsFrom(): HasMany
     {
-        return $this->hasMany(Movement::class);
+        return $this->hasMany(Movement::class)->withoutGlobalScope('inprogress');
     }
 
     /**

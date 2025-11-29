@@ -105,7 +105,7 @@
 @endpush
 @stack('scripts')
 @include('sweetalert::alert')
-<script>
+<script type="module">
     // attende 3 secondi (3000 ms) e poi nasconde l'alert con un effetto fade-out
     setTimeout(function () {
         let alert = document.querySelector('.alert-custom');
@@ -117,6 +117,7 @@
             }, 500); // tempo uguale alla durata della transition
         }
     }, 5000);
+
 </script>
 </body>
 </html>

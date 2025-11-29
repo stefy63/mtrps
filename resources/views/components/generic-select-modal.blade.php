@@ -2,7 +2,7 @@
 <div class="modal fade" id="dinamicModal" tabindex="-1" x-data="modalHandler()" aria-hidden="true">
     <div class="modal-dialog" :class="modalClass">
         <div class="modal-content">
-            <form x-ref="innerForm">
+            <form x-ref="innerForm" class="needs-validation" novalidate>
                 <div class="modal-header">
                     <h5 class="modal-title" x-text="modalTitle"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"

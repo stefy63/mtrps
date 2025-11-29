@@ -35,7 +35,7 @@
                                         name="unavailable"
                                         label="Fuori Uso"
                                         check="{{old('unavailable', $unavailable)}}"
-                                        check="true"
+                                        enableCheck="{{true}}"
                                 />
                             </div>
                             <div class="table-responsive">

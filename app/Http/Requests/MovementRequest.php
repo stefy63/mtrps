@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MovementRequest extends FormRequest
@@ -21,6 +22,7 @@ class MovementRequest extends FormRequest
      */
     public function rules(): array
     {
+        // dd($this->all());
         $rules = [
             'car_id' => [
                 'required',
@@ -30,8 +32,8 @@ class MovementRequest extends FormRequest
             'office_id' => 'required|integer|exists:offices,id',
             'code' => 'required|string|max:100',
         ];
-        $rules['date_from'] = 'required|date';
-        $rules['date_to'] = 'nullable|date|after_or_equal:date_from';
+        $rules['date_from'] = 'required|date|date_format:Y-m-d H:i';
+        $rules['date_to'] = 'nullable|date|date_format:Y-m-d H:i|after_or_equal:date_from';
 
         return $rules;
     }
@@ -43,7 +45,9 @@ class MovementRequest extends FormRequest
     {
         $this->merge([
             'car_id' => (int) $this->car_id,
-            'office_id' => (int) $this->office_id,
+            // 'office_id' => (int) $this->office_id,
+            'date_from' => Carbon::parse($this->date_from)->format('Y-m-d H:i'),
+            'date_to' => Carbon::parse($this->date_to)->format('Y-m-d H:i'),
         ]);
     }
 
@@ -55,18 +59,13 @@ class MovementRequest extends FormRequest
         return [
             'car_id.required' => 'Il veicolo è obbligatorio.',
             'car_id.exists' => 'Il veicolo selezionato non è valido.',
-            'driver_id.required' => 'Il conducente è obbligatorio.',
-            'driver_id.exists' => 'Il conducente selezionato non è valido.',
-            'departure_datetime.required' => 'La data/ora di partenza è obbligatoria.',
-            'departure_datetime.after_or_equal' => 'La partenza non può essere nel passato.',
-            'arrival_datetime.required' => 'La data/ora di arrivo è obbligatoria.',
-            'arrival_datetime.after' => 'L\'arrivo deve essere successivo alla partenza.',
-            'departure_location.required' => 'Il luogo di partenza è obbligatorio.',
-            'arrival_location.required' => 'Il luogo di arrivo è obbligatorio.',
-            'purpose.required' => 'Lo scopo del movimento è obbligatorio.',
-            'km_end.gt' => 'I km finali devono essere maggiori di quelli iniziali.',
-            'overnight_location.required_if' => 'Il luogo di pernottamento è obbligatorio se previsto.',
-            'passengers.*.exists' => 'Uno o più passeggeri selezionati non sono validi.',
+            'office_id.integer' => 'L\'ufficio deve essere un numero.',
+            'office_id.required' => 'L\'ufficio è obbligatorio.',
+            'office_id.exists' => 'L\'ufficio selezionato non è valido.',
+            'date_from.required' => 'La data di inizio è obbligatoria.',
+            'date_from.after_or_equal' => 'La data di inizio non può essere nel passato.',
+            'date_to.required' => 'La data di fine è obbligatoria.',
+            'date_to.after' => 'La data di fine deve essere successiva alla data di inizio.',
         ];
     }
 

@@ -106,8 +106,8 @@ class Movement extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'date_from' => 'date',
-        'date_to' => 'date',
+        'date_from' => 'datetime',
+        'date_to' => 'datetime',
     ];
 
     /**
@@ -129,8 +129,9 @@ class Movement extends Model
     public static function generateCode(): string
     {
         $year = date('Y');
-        $lastMovement = self::whereYear('created_at', $year)
-            ->withoutGlobalScope('inprogress')
+        $lastMovement = self::withoutGlobalScope('inprogress')
+            ->whereYear('created_at', $year)
+            ->withTrashed()
             ->orderBy('id', 'desc')
             ->first();
 

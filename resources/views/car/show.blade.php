@@ -230,8 +230,8 @@
                                                     </a>
                                                 </td>
                                                 <td class="col-3">{{$m->office->full_name}}</td>
-                                                <td class="col-2">{{date('d/m/Y', strtotime($m->date_from))}}</td>
-                                                <td class="col-2">
+                                                <td class="col-2">{{date('d/m/Y H:i', strtotime($m->date_from))}}</td>
+                                                <td class="col-2"  data-bs-toggle="tooltip" title="{{$m->date_to ? $m->date_to->format('d/m/Y H:i') : 'in corso'}}" >
                                                     @if($movementIsActive)
                                                         <span class="badge bg-warning text-dark w-75">
                                                             <i class="bi bi-clock"></i> In corso
@@ -332,7 +332,6 @@
                                                             <i class="bi bi-check-circle"></i> Completata
                                                         </span>
                                                     @endif
-{{--                                                    {{$m->date_to ? date('d/m/Y', strtotime($m->date_to)) : '---'}}</td>--}}
                                                 <td>{{$m->note}}</td>
                                             </tr>
                                         @endforeach
@@ -370,10 +369,24 @@
             }
         });
         $(document).on('maintenance:inserted', function (e) {
-            window.location.href = '?tab=3';
+            Swal.fire({
+                icon: 'success',
+                title: 'Manutenzione aggiunta!',
+                timer: 3000,
+                showConfirmButton: false
+            }).then((result) => {
+                window.location.href = '?tab=3';
+            });
         })
         $(document).on('movement:inserted', function (e) {
-            window.location.href = '?tab=2';
+            Swal.fire({
+                icon: 'success',
+                title: 'Movimento aggiunto!',
+                timer: 3000,
+                showConfirmButton: false
+            }).then((result) => {
+                window.location.href = '?tab=2';
+            });
         })
 
     </script>

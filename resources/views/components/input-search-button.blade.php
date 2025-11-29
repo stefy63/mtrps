@@ -1,10 +1,14 @@
+@php
+    $enableCheck = $enableCheck ?? false;
+@endphp
+
 <div x-data='searchBox({
         action: "{{$action ?? ''}}",
         search: "{{$search ?? ''}}",
         name: "{{$name ?? 'attivo'}}",
         chk: "{{$check ?? false}}",
         label: "{{$label ?? null}}",
-        enableCheck: "{{$label ?? false}}",
+        enableCheck: "{{$enableCheck}}",
 })'
 >
     <form x-ref="searchForm" class="d-flex justify-content-between" :action="action" method="GET">
@@ -24,8 +28,8 @@
                     <i class="bi bi-x-circle"></i>
                 </button>
             </div>
-
         </div>
+        @if($enableCheck)
         <div class="col-1">
             <template x-if="enableCheck">
                 <div class="input-group">
@@ -42,6 +46,8 @@
                 </div>
             </template>
         </div>
+        @endif
+        {{ $slot }}
     </form>
     <div>
         <template x-if="loading">

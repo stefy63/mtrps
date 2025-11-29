@@ -165,7 +165,7 @@ class MovementController extends Controller
         try {
             DB::beginTransaction();
             $data = $request->validated();
-            $movement = MovementService::create($data);
+            MovementService::create($data);
             DB::commit();
             return Redirect::route('movements.index')
                 ->with('success', 'Movimento registrato con successo.');
@@ -214,6 +214,7 @@ class MovementController extends Controller
     public function update(MovementRequest $request, Movement $movement): RedirectResponse
     {
         try {
+
             DB::beginTransaction();
             $data = $request->validated();
             MovementService::update($movement, $data);

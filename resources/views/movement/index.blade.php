@@ -146,6 +146,7 @@
                                                 name="inprogress"
                                                 label="Terminate"
                                                 check="{{old('inprogress', $inprogress)}}"
+                                                enableCheck="true"
                                         />
                                     </div>
                                 </div>

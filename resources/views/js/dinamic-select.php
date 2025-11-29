@@ -73,9 +73,6 @@
                     }
                     const modalEl = document.getElementById('dinamicModal');
                     this.myModal = new bootstrap.Modal(modalEl);
-                    modalEl.addEventListener('hidden.bs.modal', () => {
-                        this.modalContent = '';
-                    });
                     this.myModal.show();
 
                 },
@@ -89,30 +86,35 @@
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
+                            'Accept': 'application/json',
                             "X-CSRF-TOKEN": "{{ csrf_token() }}"
                         },
                         body: JSON.stringify(formData)
-                    }).then(response => {
+                    }).then(async response => {
                         if (!response.ok) {
                             return response.json().then(err => {
                                 throw new Error(err.message || `${response.status}: ${response.statusText}`);
                             });
                         }
-                        return response.json();
+                        if(response.status !== 200){
+                            const errorData = await response.json();
+                            console.log("Errori di validazione:", errorData.errors);
+                            throw new Error(errorData.errors);
+                        }
+                        return await response.json();
                     }).then((data) => {
                         if (data) {
                             if (typeof this.onSelect === 'function') {
                                 this.onSelect(data.data);
                             }
                         }
+                        this.modalContent = '';
+                        this.myModal.hide();
                     }).catch(error => {
-                        console.error('Error:', error);
                         if (typeof this.onError === 'function') {
                             this.onError(error);
                         }
                     }).finally(() => {
-                        this.modalContent = '';
-                        this.myModal.hide();
                     });
                 }
             }
@@ -209,7 +211,6 @@
                             });
                         },
                         onError: (newItem) => {
-                            console.log(newItem)
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Errore!',
@@ -222,57 +223,6 @@
                 },
             }
         })
-
-        Alpine.data('datetimePicker', (config = {}) => ({
-            value: config.value ?? '',
-            dateFormat: config.dateFormat ?? 'Y-m-d H:i',
-            altFormat: config.altFormat ?? 'd/m/Y H:i',
-            enableSeconds: config.enableSeconds ?? false,
-            fp: null,
-
-            init() {
-                this.fp = flatpickr(this.$refs.input, {
-                    enableTime: true,
-                    enableSeconds: this.enableSeconds,
-                    time_24hr: true,
-                    minuteIncrement: 15,
-                    dateFormat: this.dateFormat,
-                    altInput: true,
-                    altFormat: this.altFormat,
-                    allowInput: true,
-                    defaultDate: this.value || null,
-
-                    // 1️⃣ Selezione dal calendario
-                    onChange: (dates, str) => {
-                        this.value = str;
-                        this.$dispatch('input', this.value);
-                    },
-                    // onValueUpdate viene chiamato quando il valore interno cambia
-                    onValueUpdate: (selectedDates, dateStr) => {
-                        this.value = dateStr;
-                    },
-                    // 3️⃣ Uscita dal campo (validazione finale)
-                    onClose: () => {
-                        this.value = this.$refs.input.value;
-                        this.$dispatch('input', this.value);
-                    },
-                });
-
-                // Sync Alpine → Flatpickr
-                this.$watch('value', (v) => {
-                    if (!this.fp) return;
-                    if (v !== this.fp.input.value) {
-                        this.fp.setDate(v, true, this.dateFormat);
-                    }
-                });
-            },
-
-            clear() {
-                this.fp.clear();
-                this.value = '';
-                this.$dispatch('input', this.value);
-            }
-        }));
 
         Alpine.store('modal', {
             open(config) {

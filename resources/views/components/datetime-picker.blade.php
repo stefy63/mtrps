@@ -1,42 +1,42 @@
 @props([
+    'id' => 'datetime-' . uniqid(),
     'name' => 'datetime',
-    'value' => '',
-    'dateFormat' => 'Y-m-d H:i',
-    'altFormat' => 'd/m/Y H:i',
-    'enableSeconds' => false,
+    'label' => null,
+    'value' => now()->format('Y-m-d\TH:i'),
+    'required' => false,
+    'disabled' => false,
 ])
 
 <div
-        x-data="datetimePicker({
+        x-data="{
         value: '{{ $value }}',
-        dateFormat: '{{ $dateFormat }}',
-        altFormat: '{{ $altFormat }}',
-        enableSeconds: {{ $enableSeconds ? 'true' : 'false' }},
-    })"
-        class="relative inline-flex items-center"
+    }"
 >
-    <!-- Hidden field per il form -->
-    <input type="hidden" name="{{ $name }}" x-bind:value="value">
+@if ($label)
+    <label for="{{ $id }}" class="form-label">
+        {{ $label }}
+        @if($required) <span class="text-danger">*</span> @endif
+    </label>
+@endif
     <div class="input-group">
-        {{--        📅--}}
-        <!-- Icona calendario -->
         <span class="input-group-text">
             <i class="bi bi-calendar2-date text-danger"></i>
         </span>
-        <!-- Input visibile -->
-        <input
-                x-ref="input"
-                x-model="value"
-                type="text"
-                placeholder="Seleziona data e ora"
-                aria-label="Seleziona data e ora"
-                autocomplete="off"
-                class="form-control border px-2 py-1 w-48 pr-10 pl-8"
+        <input 
+            type="datetime-local"
+            id="{{ $id }}"
+            name="{{ $name }}"
+            class="form-control"
+            placeholder="gg/mm/aaaa hh:mm"
+            x-model="value"
+            :value="value"
+            @if($required) required @endif
+            @if($disabled) disabled @endif
         >
         <button
                 type="button"
                 class="btn btn-warning"
-                @click="clear()"
+                @click="value = ''"
         >
             <i class="bi bi-x-circle"></i>
         </button>
