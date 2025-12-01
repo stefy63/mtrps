@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Office extends Model
@@ -46,18 +47,18 @@ class Office extends Model
 
     public function activeMaintenance(): BelongsToMany
     {
-        return $this->activeCars()
+        return $this->cars()->with('maintenances')
             ->whereHas('maintenances');
     }
 
-    public function movementsTo(): BelongsToMany
-    {
-        return $this->activeCars()
-            ->whereHas('movements', fn ($q) => $q->withoutGlobalScope('inprogress'));
+    public function movementsTo()
+    { 
+                return $this->cars();
     }
 
-    public function movementsFrom(): HasMany
+    public function movementsFrom()
     {
+       
         return $this->hasMany(Movement::class)->withoutGlobalScope('inprogress');
     }
 

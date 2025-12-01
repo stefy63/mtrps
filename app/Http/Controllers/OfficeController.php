@@ -107,7 +107,6 @@ class OfficeController extends Controller
             'movementsTo.movements.office',
             'movement',
         ]);
-        // dd($office->toArray());
         return view('office.show', compact('office'));
     }
 
@@ -135,7 +134,7 @@ class OfficeController extends Controller
             if ($request->validated()) {
                 $office->update($request->validated());
             } else {
-                Redirect::back()->withErrors();
+                Redirect::back()->withErrors($request->validated()); 
             }
             return Redirect::route('offices.index')
                 ->with('success', 'Ufficio Aggiornato');

@@ -49,7 +49,7 @@
                         @foreach($data as $d)
                             <tr class="">
                                 <td class="fw-bold text-truncate">
-                                    <a class="text-decoration-none text-dark" href="{{route('offices.show', $d->id)}}">{{$d->ente}}</a>
+                                    {{$d->ente}}
                                 </td>
                                 <td class="fw-bold">{{$d->active_cars_count}}</td>
                                 <td class="fw-bold text-muted">{{$d->active_maintenance_count}}</td>
