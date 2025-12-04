@@ -93,14 +93,19 @@ class CarPlateController extends Controller
      */
     public function show($id): View
     {
+        $hisotryPlate = Plate::with([
+            'cars' => fn($q) => $q->wherePivotNotNull('date_to'),
+            'cars.carOwner',
+            'cars.carOffices' => fn($q) => $q->wherePivotNull('date_to'),
+        ])->find($id);
         $carPlate = Plate::with([
             'cars' => fn($q) => $q->wherePivotNull('date_to'),
             'cars.carOwner',
             'cars.carOffices',
             'cars.carPlates' => fn($q) => $q->where('plates.id', '<>', $id)->wherePivotNull('date_to'),
         ])->find($id);
-
-        return view('car-plate.show', compact('carPlate'));
+// dd($hisotryPlate->toArray());
+        return view('car-plate.show', compact('carPlate', 'hisotryPlate'));
     }
 
     /**

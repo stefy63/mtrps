@@ -47,11 +47,30 @@
                         </div>
                     </div>
 
-                    <div class="card-body bg-white">
-                        <div class="row">
-                            <div class="col-md-12">
 
-                                <div class="form-group mb-3">
+                     <nav>
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <button class="nav-link active" id="nav-detail-tab" data-bs-toggle="tab"
+                                    data-bs-target="#nav-detail" type="button" role="tab" aria-controls="nav-detail"
+                                    aria-selected="true">Dettaglio
+                            </button>
+                            <button class="nav-link" id="nav-history-tab" data-bs-toggle="tab"
+                                    data-bs-target="#nav-history" type="button" role="tab"
+                                    aria-controls="nav-history" aria-selected="false">Storico
+                            </button>
+                        </div>
+                    </nav>
+
+
+
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane h-100 fade show active" id="nav-detail" role="tabpanel"
+                            aria-labelledby="nav-detail-tab">
+                            <div class="card-body bg-white" >
+                                <div class="row">
+                                    <div class="col-md-12">
+
+                                        <div class="form-group mb-3">
                                     <strong>Numero Targa:</strong>
                                     <h4 class="text-primary" style="font-family: monospace;">{{ $carPlate->name }}</h4>
                                 </div>
@@ -140,17 +159,17 @@
                                                 <div class="card-body text-center h-100">
                                                     <i class="fas fa-play-circle text-success fa-2x"></i>
                                                     <h6 class="mt-2">Data Inizio</h6>
-                                                    <p class="h5">{{ $carPlate->cars[0]?->pivot->date_from?->format('d/m/Y') }}</p>
+                                                    <p class="h5">{{ $carPlate->cars->first()?->pivot->date_from?->format('d/m/Y') }}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="card" style="height: -webkit-fill-available;">
                                                 <div class="card-body text-center">
-                                                    @if($carPlate->cars[0]?->pivot->date_to)
+                                                    @if($carPlate->cars->first()?->pivot->date_to)
                                                         <i class="fas fa-stop-circle text-danger fa-2x"></i>
                                                         <h6 class="mt-2">Data Fine</h6>
-                                                        <p class="h5">{{ $carPlate->cars[0]?->pivot->date_to?->format('d/m/Y') }}</p>
+                                                        <p class="h5">{{ $carPlate->cars->first()?->pivot->date_to?->format('d/m/Y') }}</p>
                                                         <small class="text-muted">{{ \Carbon\Carbon::parse($carPlate->cars[0]?->pivot->date_to)->diffForHumans() }}</small>
                                                     @else
                                                         <i class="fas fa-infinity text-primary fa-2x"></i>
@@ -176,7 +195,46 @@
                         </div>
 
                     </div>
-                </div>
+                        </div>
+                        <div class="tab-pane h-100 fade" id="nav-history" role="tabpanel"
+                            aria-labelledby="nav-history-tab">
+                            <table class="table table-striped table-bordered">
+                                <head>
+                                    <tr>
+                                        <th>Vettura</th>
+                                        <th>Proprietario</th>
+                                        <th>Assegnatario</th>
+                                        <th>Periodo</th>
+                                    </tr>
+                                </head>
+                                <tbody>
+                                    @foreach ($hisotryPlate->cars as $car)
+                                        <tr>
+                                            <td>
+                                                <a href="{{ route('cars.show', $car->id) }}">
+                                                    {{ $car->full_name }}
+                                                </a>
+                                            </td>
+                                            <td>{{ $car->carOwner?->name }}</td>
+                                            <td class="text-muted">
+                                                <small>{{ $car->carOffices?->first()?->full_name }}</small> <br>
+                                            </td>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <small>Dal: {{ $car?->pivot->date_from?->format('d/m/Y') }}</small>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <small>Al: {{ $car?->pivot->date_to?->format('d/m/Y') }}</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
             </div>
         </div>
     </section>

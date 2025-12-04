@@ -165,8 +165,9 @@ class CarController extends Controller
             'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
             'carEquipment' => fn($q) => $q->wherePivotNull('date_to'),
             'movements' => fn($q) => $q->with(['office'])->orderBy('date_to', 'asc')->limit(20),
-            'maintenances' => fn($q) => $q->with(['maintenanceGarages', 'maintenanceTypes'])->orderBy('date_to',
-                'asc')->limit(10),
+            'maintenances' => fn($q) => $q->with(['maintenanceGarages', 'maintenanceTypes'])
+            ->orderBy('date_to', 'asc')
+            ->limit(20),
         ])
             ->find($id);
 

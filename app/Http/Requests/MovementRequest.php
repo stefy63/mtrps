@@ -22,7 +22,6 @@ class MovementRequest extends FormRequest
      */
     public function rules(): array
     {
-        // dd($this->all());
         $rules = [
             'car_id' => [
                 'required',
@@ -45,9 +44,8 @@ class MovementRequest extends FormRequest
     {
         $this->merge([
             'car_id' => (int) $this->car_id,
-            // 'office_id' => (int) $this->office_id,
             'date_from' => Carbon::parse($this->date_from)->format('Y-m-d H:i'),
-            'date_to' => Carbon::parse($this->date_to)->format('Y-m-d H:i'),
+            'date_to' => $this->date_to ? Carbon::parse($this->date_to)->format('Y-m-d H:i') : null,
         ]);
     }
 

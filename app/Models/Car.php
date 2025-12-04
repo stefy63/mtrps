@@ -98,6 +98,7 @@ class Car extends Model
         'date_revision',
         'doc',
         'note',
+        'car_typology_id',
         'available',
         'createdBy',
         'updatedBy',

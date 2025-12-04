@@ -36,40 +36,47 @@ class OfficesService
     public static function getOfficesWithCars(?array $carTypology = [], ?string $date = null): QueryBuilder
     {
         return DB::table('offices as o')
-            ->leftJoin('car_office as co', fn($co) => $co->on('co.office_id', '=', 'o.id')
+            ->whereNull('o.deleted_at')
+            ->leftJoin('car_office as co', function($co) use ($date) {
+                $co->on('co.office_id', '=', 'o.id')
                     ->where('co.date_from', '<=', $date)
                     ->where(function ($co2) use ($date) {
                         $co2->whereNull('co.date_to')
                         ->orWhere('co.date_to', '>=', $date);
-                    })
-                )
-            ->leftJoin('cars as c', fn($c) => $c->on('co.car_id', '=', 'c.id')
-                    ->when($carTypology, fn($q) => $q->whereIn('car_typology_id', $carTypology)) 
-                )
-            ->leftJoin('movements as mc', fn($mc) => $mc->on('c.id', '=', 'mc.car_id')
+                    });
+            })
+            ->leftJoin('cars as c', function($c) use ($carTypology) {
+                $c->on('co.car_id', '=', 'c.id')
+                    ->whereNull('c.deleted_at')
+                    ->when($carTypology, fn($q) => $q->whereIn('car_typology_id', $carTypology));
+            })
+            ->leftJoin('movements as mc', function($mc) use ($date) {
+                $mc->on('c.id', '=', 'mc.car_id')
+                    ->whereNull('mc.deleted_at')
                     ->where('mc.date_from', '<=', $date)
                     ->where(function ($mc2) use ($date) {
                         $mc2->whereNull('mc.date_to')
                         ->orWhere('mc.date_to', '>=', $date);
-                    })
-                )
-            ->leftJoin('movements as mo', fn($mo) => $mo->on('o.id', '=', 'mo.office_id')
+                    });
+            })
+            ->leftJoin('movements as mo', function($mo) use ($date) {
+                $mo->on('o.id', '=', 'mo.office_id')
+                    ->whereNull('mo.deleted_at')
                     ->where('mo.date_from', '<=', $date)
                     ->where(function ($mo2) use ($date) {
                         $mo2->whereNull('mo.date_to')
                         ->orWhere('mo.date_to', '>=', $date);
-                    })
-                )
-            ->leftJoin('cars as ca', fn($ca) => $ca->on('ca.id', '=', 'mo.car_id')
-                ->when($carTypology, fn($ca) => $ca->whereIn('ca.car_typology_id', $carTypology))
-            )
-            ->leftJoin('maintenances as ma', fn($ma) => $ma->on('c.id', '=', 'ma.car_id')
+                    });
+            })
+            ->leftJoin('maintenances as ma', function($ma) use ($date) {
+                $ma->on('c.id', '=', 'ma.car_id')
+                    ->whereNull('ma.deleted_at')
                     ->where('ma.date_from', '<=', $date)
                     ->where(function ($ma2) use ($date) {
                         $ma2->whereNull('ma.date_to')
                         ->orWhere('ma.date_to', '>=', $date);
-                    })
-                )
+                    });
+            })
 
             ->select(
                 'o.ente as ente',

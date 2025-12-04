@@ -2,14 +2,14 @@
     'id' => 'datetime-' . uniqid(),
     'name' => 'datetime',
     'label' => null,
-    'value' => now()->format('Y-m-d\TH:i'),
+    'value' => null,
     'required' => false,
     'disabled' => false,
 ])
 
 <div
         x-data="{
-        value: '{{ $value }}',
+        value: @js($value),
     }"
 >
 @if ($label)
@@ -29,14 +29,15 @@
             class="form-control"
             placeholder="gg/mm/aaaa hh:mm"
             x-model="value"
-            :value="value"
+            x-bind:value="value"
+            @change="if (!value) value = null"
             @if($required) required @endif
             @if($disabled) disabled @endif
         >
         <button
                 type="button"
                 class="btn btn-warning"
-                @click="value = ''"
+                @click="value = null"
         >
             <i class="bi bi-x-circle"></i>
         </button>

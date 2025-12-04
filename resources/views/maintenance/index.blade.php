@@ -33,6 +33,7 @@
                                         name="closed"
                                         label="Chiuse"
                                         check="{{old('closed', $closed)}}"
+                                        enableCheck="true"
                                 />
                             </div>
                         </div>
