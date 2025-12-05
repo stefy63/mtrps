@@ -2,18 +2,11 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
-class StoreCigRequest extends FormRequest
+class StoreCigRequest extends BaseFormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -21,15 +14,37 @@ class StoreCigRequest extends FormRequest
      */
     public function rules(): array
     {
+        $userId = Auth::user()->id;
+        // dd($this->all());
         return [
             'car_id' => 'required|exists:cars,id',
             'maintenance_garage_id' => 'required|exists:maintenance_garages,id',
-            'user_rup_id' => 'nullable|exists:users,id',
-            'user_support_id' => 'nullable|exists:users,id',
-            'user_tender_notice_id' => 'nullable|exists:users,id',
-            'user_tester_id' => 'nullable|exists:users,id',
+            'user_rup_id' => [
+                'nullable',
+                'numeric',
+                'exists:users,id',  
+                Rule::in([$userId])
+            ],
+            'user_support_id' => [
+                'nullable',
+                'numeric',
+                'exists:users,id',
+                Rule::in([$userId])
+            ],
+            'user_tender_notice_id' => [
+                'nullable',
+                'numeric',
+                'exists:users,id',
+                Rule::in([$userId])
+            ],
+            'user_tester_id' => [
+                'nullable',
+                'numeric',
+                'exists:users,id',
+                Rule::in([$userId])
+            ],
             'date' => 'nullable|date',
-            'ce' => 'nullable|string|max:255',
+            'ce' => 'nullable|string|max:255',  
             'description' => 'nullable|string|max:255',
             'preventive' => 'nullable|string|max:255',
             'final_report' => 'nullable|string|max:255',
@@ -102,5 +117,13 @@ class StoreCigRequest extends FormRequest
         if ($this->has('cig')) {
             $this->merge(['cig' => strtoupper(trim($this->cig))]);
         }
+
+        // Converti i campi utente in ID
+        // $userFields = ['user_rup_id', 'user_support_id', 'user_tender_notice_id', 'user_tester_id'];
+        // foreach ($userFields as $field) {
+        //     if ($this->has($field) && !empty($this[$field])) {
+        //         $this->merge([$field => intval($this[$field])]);
+        //     }
+        // }
     }
 }

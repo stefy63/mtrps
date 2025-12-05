@@ -5,6 +5,7 @@
     'value' => null,
     'required' => false,
     'disabled' => false,
+    'type' => 'datetime-local',
 ])
 
 <div
@@ -23,7 +24,7 @@
             <i class="bi bi-calendar2-date text-danger"></i>
         </span>
         <input 
-            type="datetime-local"
+            type="{{ $type }}"
             id="{{ $id }}"
             name="{{ $name }}"
             class="form-control"

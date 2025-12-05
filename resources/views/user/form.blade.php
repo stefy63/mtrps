@@ -20,12 +20,14 @@
         </div>
 
     </div>
+    @if ($button)
     <div class="col-md-12 mt-3">
         <button type="submit" class="btn btn-primary">
-            <i class="bi bi-save"></i> {{ __('Salva Ufficio') }}
+            <i class="bi bi-save"></i> {{ __('Salva utente') }}
         </button>
         <a href="{{ route('users.index') }}" class="btn btn-secondary">
             <i class="bi bi-x-circle"></i> {{ __('Annulla') }}
         </a>
     </div>
+    @endif
 </div>

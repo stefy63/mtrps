@@ -16,9 +16,9 @@
                             </span>
 
                             <div class="float-right">
-                                <button class="btn btn-sm btn-outline-secondary me-2" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                                {{-- <button class="btn btn-sm btn-outline-secondary me-2" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
                                     <i class="bi bi-funnel"></i> Filtri
-                                </button>
+                                </button> --}}
                                 <a href="{{ route('cigs.create') }}" class="btn btn-primary btn-sm">
                                     <i class="bi bi-plus"></i> {{ __('Nuovo CIG') }}
                                 </a>
@@ -48,67 +48,15 @@
                         </div>
                     </div>
 
-                    <!-- Filtri collassabili -->
-                    <div class="collapse" id="filterCollapse">
-                        <div class="card-body bg-light">
-                            <form method="GET" action="{{ route('cigs.index') }}" class="row g-3">
-                                <div class="col-md-3">
-                                    <label class="form-label">Veicolo</label>
-                                    <select name="car_id" class="form-select">
-                                        <option value="">Tutti i veicoli</option>
-                                        @foreach($cars as $car)
-                                            <option value="{{ $car->id }}" {{ request('car_id') == $car->id ? 'selected' : '' }}>
-                                                {{ $car->name }}
-                                                @if($car->carPlates->count() > 0)
-                                                    - {{ $car->carPlates->first()->name }}
-                                                @endif
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-md-3">
-                                    <label class="form-label">Officina</label>
-                                    <select name="maintenance_garage_id" class="form-select">
-                                        <option value="">Tutte le officine</option>
-                                        @foreach($garages as $garage)
-                                            <option value="{{ $garage->id }}" {{ request('maintenance_garage_id') == $garage->id ? 'selected' : '' }}>
-                                                {{ $garage->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <label class="form-label">Anno</label>
-                                    <select name="year" class="form-select">
-                                        <option value="">Tutti gli anni</option>
-                                        @foreach($years as $year)
-                                            <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
-                                                {{ $year }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label class="form-label">Cerca</label>
-                                    <input type="text" name="search" class="form-control" placeholder="CIG, CE, descrizione..." value="{{ request('search') }}">
-                                </div>
-
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-search"></i> Applica Filtri
-                                    </button>
-                                    <a href="{{ route('cigs.index') }}" class="btn btn-secondary">
-                                        <i class="bi bi-x-circle"></i> Cancella
-                                    </a>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
                     <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <x-input-search-button
+                                        action="{{ route('cigs.index') }}"
+                                        search="{{old('search', $search)}}"
+                                />
+                            </div>
+                        </div>
                         @if(count($cigs) > 0)
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover">
@@ -121,7 +69,7 @@
                                             <th>Descrizione</th>
                                             <th>Importi</th>
                                             <th>RUP</th>
-                                            <th>Documenti</th>
+                                            <th>Responsabili</th>
                                             <th width="120"></th>
                                         </tr>
                                     </thead>
@@ -142,9 +90,9 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <small>{{ $cig->car->name }}</small>
+                                                    <small>{{ $cig->car->full_name }}</small>
                                                     @if($cig->car->carPlates->count() > 0)
-                                                        <br><span class="badge bg-primary">{{ $cig->car->carPlates->first()->name }}</span>
+                                                        <br><span class="badge bg-primary">{{ $cig->car->carPlates[0]->name }}</span>
                                                     @endif
                                                 </td>
                                                 <td>
@@ -163,7 +111,7 @@
                                                 <td>
                                                     @if($cig->taxable)
                                                         <small>Imp: € {{ number_format($cig->taxable, 2, ',', '.') }}</small><br>
-                                                        <small>IVA: € {{ number_format($cig->vat, 2, ',', '.') }}</small><br>
+                                                        {{-- <small>IVA: € {{ number_format($cig->vat, 2, ',', '.') }}</small><br> --}}
                                                         <strong>Tot: € {{ number_format($cig->taxable + $cig->vat, 2, ',', '.') }}</strong>
                                                     @else
                                                         <span class="text-muted">-</span>
@@ -178,47 +126,15 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <div class="d-flex gap-1">
-                                                        @if($cig->preventive)
-                                                            <span class="badge bg-info" data-bs-toggle="tooltip" title="Preventivo">
-                                                                <i class="bi bi-file-earmark-text"></i> P
-                                                            </span>
-                                                        @endif
-                                                        @if($cig->final_report)
-                                                            <span class="badge bg-success" data-bs-toggle="tooltip" title="Relazione Finale">
-                                                                <i class="bi bi-file-earmark-check"></i> RF
-                                                            </span>
-                                                        @endif
-                                                    </div>
+                                                    @if($cig->userTenderNotice)
+                                                        <small><strong>Resp:</strong> {{ $cig->userTenderNotice->name }}</small>
+                                                    @endif
+                                                    @if($cig->userTester)
+                                                        <br><small>Coll: {{ $cig->userTester->name }}</small>
+                                                    @endif
                                                 </td>
                                                 <td class="text-end">
-                                                    <div class="btn-group dropstart">
-                                                        <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <i class="bi bi-three-dots-vertical"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu">
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('cigs.show', $cig->id) }}">
-                                                                    <i class="bi bi-eye"></i> {{ __('Visualizza') }}
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="dropdown-item" href="{{ route('cigs.edit', $cig->id) }}">
-                                                                    <i class="bi bi-pencil"></i> {{ __('Modifica') }}
-                                                                </a>
-                                                            </li>
-                                                            <li><hr class="dropdown-divider"></li>
-                                                            <li>
-                                                                <form action="{{ route('cigs.destroy', $cig->id) }}" method="POST">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="dropdown-item text-danger" data-confirm-delete="true">
-                                                                        <i class="bi bi-trash"></i> {{ __('Elimina') }}
-                                                                    </button>
-                                                                </form>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
+                                                    <x-action-table-button :itemRoute="'cigs'" :item="$cig" />
                                                 </td>
                                             </tr>
                                         @endforeach

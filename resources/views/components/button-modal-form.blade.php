@@ -2,7 +2,7 @@
         x-data='buttonModalHandler({
             endpoint: "{{ $endpoint }}",
             label: "{{ $label ?? null }}",
-            url: "{{ $url }}",
+            url: "{{ str_replace('amp;', '', $url) }}",
             modalTitle: "{{ $modalTitle ?? "Nuovo elemento" }}",
             modalClass: "{{ $modalClass ?? "" }}",
             class: "{{ $class ?? "" }}",

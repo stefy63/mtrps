@@ -24,9 +24,7 @@ class BaseFormRequest extends FormRequest
     protected function resolveRoute(string $placeholder, string $model): Route|null|Model
     {
         $object = $this->route($placeholder);
-        if ($object instanceof $model) {
-            return $object;
-        } elseif (is_numeric($object)) {
+        if (is_numeric($object)) {
             $object = $model::find($object);
         }
         return $object;

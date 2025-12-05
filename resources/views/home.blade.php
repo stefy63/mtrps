@@ -19,7 +19,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12 mb-3 w-100">
-                        <x-input-search-button action="{{ route('home') }}" search="{{old('search', $search)}}" name="search"
+                        <x-input-search-button action="{{ Auth::check() ? route('home') : route('dashboard') }}" search="{{old('search', $search)}}" name="search"
                             label="Cerca" check="{{old('search', $search)}}" :enableCheck="false">
                             <div class="d-flex w-50 justify-content-end mx-2">
                                 <x-select-multi-checkbox :options="$typology" name="carTypology" :selected="$carTypology" />
@@ -69,10 +69,10 @@
 @push('scripts')
     <script type="module">
         $('#spinner').hide();
-        // setTimeout(() => {
-        //     $('#spinner').show();
-        //     location.reload();
-        // }, 30000)
+        setTimeout(() => {
+            $('#spinner').show();
+            location.reload();
+        }, 30000)
     </script>
 
 @endpush

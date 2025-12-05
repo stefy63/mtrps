@@ -18,7 +18,12 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except('dashboard');
+    }
+
+    public function dashboard(Request $request)
+    {
+        return $this->index($request);
     }
 
     /**
@@ -45,7 +50,6 @@ class HomeController extends Controller
         }
         $data = $data->get();
 
-// dd($data->toArray(), $date);
         return view('home', compact('data', 'search', 'date', 'carTypology', 'typology'));
     }
 }

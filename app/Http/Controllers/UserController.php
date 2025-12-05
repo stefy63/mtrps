@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends Controller
 {
@@ -24,6 +25,26 @@ class UserController extends Controller
 
         return view('user.index', compact('users'))
             ->with('i', ($request->input('page', 1) - 1) * $users->perPage());
+    }
+
+    public function getForm(Request $request): View
+    {
+        $user = new User();
+
+        return view('user.form', compact('user'));
+    }
+
+    public function storeForm(Request $request): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+
+            $user = User::create($data);
+
+            return $this->sendResponse($user, 'Utente creato con successo.');
+        } catch (\Throwable $e) {
+            return $this->sendError($e->getMessage());
+        }
     }
 
     /**

@@ -30,8 +30,24 @@
                             <div class="col-md-12">
                                 <!-- Informazioni Principali -->
                                 <div class="card mb-3">
-                                    <div class="card-header bg-light">
+                                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
                                         <h5 class="mb-0"><i class="bi bi-info-circle"></i> Informazioni Manutenzione</h5>
+                                        <div>
+
+                                    <x-button-modal-form
+                                            endpoint="{{ route('cig.storeForm') }}"
+                                            label="{{ __('CIG') }}"
+                                            url="{{ route('cig.getForm', ['car_id' => $maintenance->car_id, 'maintenance_garage_id' => $maintenance->garage_id]) }}"
+                                            modalTitle="Nuovo CIG"
+                                            modalClass="modal-xl"
+                                            class="btn-primary"
+                                            icon="bi-database-fill-add"
+                                            event="cig:inserted"
+                                    />
+                                            {{-- <a href="{{ route('cigs.create', ['car_id' => $maintenance->car_id, 'maintenance_garage_id' => $maintenance->garage_id]) }}" type="button" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-file-text"></i> {{ __('Crea CIG') }}
+                                            </a> --}}
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <div class="row mb-3">

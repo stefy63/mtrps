@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CigController extends Controller
 {
@@ -32,41 +33,36 @@ class CigController extends Controller
             'userTester'
         ]);
 
-        // Filtri
-        if ($request->filled('car_id')) {
-            $query->where('car_id', $request->car_id);
-        }
-
-        if ($request->filled('maintenance_garage_id')) {
-            $query->where('maintenance_garage_id', $request->maintenance_garage_id);
-        }
-
-        if ($request->filled('year')) {
-            $query->whereYear('date', $request->year);
-        }
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('cig', 'like', "%{$search}%")
-                    ->orWhere('ce', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                    ->orWhere('note', 'like', "%{$search}%");
-            });
+        if ($search = $request->get('search')) {
+            $query->where('cig', 'like', "%{$search}%")
+                ->whereHas('car', function ($q) use ($search) {
+                    $q->where('chassis', 'like', "%{$search}%");
+                })
+                ->orWhereHas('car.carPlates', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('type', 'like', "%{$search}%");
+                })
+                ->orWhereHas('maintenanceGarage.maintenance', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('userRup', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('userSupport', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('userTenderNotice', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('userTester', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
         }
 
         // Ordinamento
         $query->orderBy('date', 'desc')->orderBy('created_at', 'desc');
 
         $cigs = $query->paginate(20);
-
-        // Dati per i filtri
-        $cars = Car::with('carPlates')->orderBy('model')->get();
-        $garages = MaintenanceGarage::with('maintenance')->orderBy('name')->get();
-        $years = Cig::selectRaw('YEAR(date) as year')
-            ->distinct()
-            ->orderBy('year', 'desc')
-            ->pluck('year');
 
         // Calcola totali
         $totals = [
@@ -78,8 +74,46 @@ class CigController extends Controller
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo CIG?');
 
-        return view('cig.index', compact('cigs', 'cars', 'garages', 'years', 'totals'))
+        return view('cig.index', compact('cigs', 'totals', 'search'))
             ->with('i', ($request->input('page', 1) - 1) * $cigs->perPage());
+    }
+
+    public function getForm(Request $request): View
+    {
+        $cig = new Cig();
+        $cars = Car::with(['carPlates', 'carBrand'])->orderBy('model')->get();
+        $garages = MaintenanceGarage::with(['maintenance.car'])->orderBy('name')->get();
+        $users = User::orderBy('name')->get();
+        if ($request->has('maintenance_garage_id')) {
+            $cig->maintenance_garage_id = $request->maintenance_garage_id;
+        }
+        if ($request->has('car_id')) {
+            $cig->car_id = $request->car_id;
+        }
+        $button = false;
+        if ($request->has('button')) {
+            $button = true;
+        }
+
+        return view('cig.form', compact('cig', 'cars', 'garages', 'users', 'button'));
+    }
+
+    public function storeForm(StoreCigRequest $request): JsonResponse
+    {
+        try {
+            $data = $request->validated();
+
+            // Calcola IVA se non specificata
+            if (isset($data['taxable']) && !isset($data['vat'])) {
+                $data['vat'] = $data['taxable'] * 0.22; // IVA 22%
+            }
+
+            $cig = Cig::create($data);
+
+            return $this->sendResponse($cig, 'CIG creato con successo.');
+        } catch (\Throwable $e) {
+            return $this->sendError($e->getMessage());
+        }
     }
 
     /**
@@ -97,11 +131,9 @@ class CigController extends Controller
         // Se viene passato un maintenance_garage_id, preselezionalo
         if ($request->has('maintenance_garage_id')) {
             $cig->maintenance_garage_id = $request->maintenance_garage_id;
-            // Preseleziona anche il veicolo
-            $garage = MaintenanceGarage::find($request->maintenance_garage_id);
-            if ($garage) {
-                $cig->car_id = $garage->maintenance->car_id;
-            }
+        }
+        if ($request->has('car_id')) {
+            $cig->car_id = $request->car_id;
         }
 
         return view('cig.create', compact('cig', 'cars', 'garages', 'users'));
@@ -149,7 +181,6 @@ class CigController extends Controller
         $cig->load([
             'car.carPlates',
             'car.carBrand',
-            'maintenanceGarage.maintenance',
             'userRup',
             'userSupport',
             'userTenderNotice',

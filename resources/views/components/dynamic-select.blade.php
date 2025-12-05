@@ -1,23 +1,42 @@
+@props([
+    'required' => false,
+    'value' => null,
+    'errors' => null,
+    'options' => [],
+    'endpoint' => null,
+    'idKey' => 'id',
+    'labelKey' => 'name',
+    'label' => 'Seleziona',
+    'modalUrl' => null,
+    'modalTitle' => 'Nuovo elemento',
+    'modalClass' => '',
+    'class' => '',
+    'disabled' => false,
+    'onChange' => null,
+    'event' => 'dynamic-select',
+    'name' => null,
+])
+
+
 <div
         x-data='dynamicSelect({
-        required: {{ $required ?? false }},
+        required: "{{ $required }}",
         value: "{{ $value }}",
         errors: {{ $errors }},
         options: @json($options),
         endpoint: "{{ $endpoint }}",
-        idKey: "{{ $idKey ?? 'id' }}",
-        labelKey: "{{ $labelKey ?? "name" }}",
-        label: "{{ $label ?? "Seleziona" }}",
+        idKey: "{{ $idKey }}",
+        labelKey: "{{ $labelKey }}",
+        label: "{{ $label }}",
         modalUrl: "{{ $modalUrl }}",
-        modalTitle: "{{ $modalTitle ?? "Nuovo elemento" }}",
-        modalClass: "{{ $modalClass ?? "" }}",
-        class: "{{ $class ?? "" }}",
-        disabled: "{{$disabled ?? false}}",
-        callbackName: "{{ $onChange ?? null }}",
-        eventName: "{{ $event ?? 'dynamic-select' }}:changed"
+        modalTitle: "{{ $modalTitle }}",
+        modalClass: "{{ $modalClass }}",
+        class: "{{ $class }}",  
+        disabled: "{{ $disabled }}",
+        callbackName: "{{ $onChange }}",
+        eventName: "{{ $event }}:changed"
 })'
 >
-
 
 <!-- Campo di selezione dinamica con ricerca -->
 <div :class="getClass()" x-if="options">

@@ -14,6 +14,7 @@ use App\Http\Controllers\CarPowerController;
 use App\Http\Controllers\CarProfitAccountController;
 use App\Http\Controllers\CarSetupController;
 use App\Http\Controllers\CarTypeController;
+use App\Http\Controllers\CigController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\MaintenanceGarageController;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect()->route('home');
 });
+Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -71,6 +73,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('employment-code/store-form', [EmploymentCodeController::class, 'storeForm'])->name('employment-code.storeForm');
     Route::get('car-typology/get-form', [CarTypologyController::class, 'getForm'])->name('car-typology.getForm');
     Route::post('car-typology/store-form', [CarTypologyController::class, 'storeForm'])->name('car-typology.storeForm');
+    Route::get('cigs/get-form', [CigController::class, 'getForm'])->name('cig.getForm');
+    Route::post('cigs/store-form', [CigController::class, 'storeForm'])->name('cig.storeForm');
+    Route::get('users/get-form', [UserController::class, 'getForm'])->name('users.getForm');
+    Route::post('users/store-form', [UserController::class, 'storeForm'])->name('users.storeForm');
+
+
+
+
 
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -115,10 +125,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('car-fuels', CarFuelController::class);
     Route::resource('maintenance-garages', MaintenanceGarageController::class);
     Route::resource('maintenance-types', App\Http\Controllers\MaintenanceTypeController::class);
-    Route::get('cigs/generate', [App\Http\Controllers\CigController::class, 'generateCig'])->name('cigs.generate');
-    Route::get('cigs/statistics', [App\Http\Controllers\CigController::class, 'statistics'])->name('cigs.statistics');
-    Route::get('cigs/export', [App\Http\Controllers\CigController::class, 'export'])->name('cigs.export');
-    Route::resource('cigs', App\Http\Controllers\CigController::class);
+    Route::get('cigs/generate', [CigController::class, 'generateCig'])->name('cigs.generate');
+    Route::get('cigs/statistics', [CigController::class, 'statistics'])->name('cigs.statistics');
+    Route::get('cigs/export', [CigController::class, 'export'])->name('cigs.export');
+    Route::resource('cigs', CigController::class);
     Route::resource('offices', OfficeController::class);
     Route::resource('employment-code', EmploymentCodeController::class);
     Route::resource('car-typology', CarTypologyController::class);

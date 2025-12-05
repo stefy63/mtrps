@@ -27,7 +27,7 @@
 
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <!-- Informazioni Principali -->
                                 <div class="card mb-3">
                                     <div class="card-header bg-light">
@@ -72,7 +72,7 @@
                                                 <strong>Veicolo:</strong>
                                             </div>
                                             <div class="col-md-8">
-                                                <i class="bi bi-car-front"></i> {{ $cig->car->name }}
+                                                <i class="bi bi-car-front"></i> {{ $cig->car->full_name }}
                                                 @if($cig->car->carBrand)
                                                     <br><small class="text-muted">{{ $cig->car->carBrand->name }}</small>
                                                 @endif
@@ -233,93 +233,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="col-md-4">
-                                <!-- Documenti -->
-                                <div class="card mb-3">
-                                    <div class="card-header bg-secondary text-white">
-                                        <h5 class="mb-0"><i class="bi bi-folder2-open"></i> Documenti</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="mb-2">
-                                            <strong>Preventivo:</strong><br>
-                                            @if($cig->preventive)
-                                                <span class="badge bg-info">
-                                                    <i class="bi bi-file-earmark-text"></i> {{ $cig->preventive }}
-                                                </span>
-                                            @else
-                                                <span class="text-muted">Non presente</span>
-                                            @endif
-                                        </p>
-                                        <p class="mb-0">
-                                            <strong>Relazione Finale:</strong><br>
-                                            @if($cig->final_report)
-                                                <span class="badge bg-success">
-                                                    <i class="bi bi-file-earmark-check"></i> {{ $cig->final_report }}
-                                                </span>
-                                            @else
-                                                <span class="text-muted">Non presente</span>
-                                            @endif
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <!-- Info Manutenzione -->
-                                <div class="card mb-3">
-                                    <div class="card-header bg-primary text-white">
-                                        <h5 class="mb-0"><i class="bi bi-wrench"></i> Manutenzione</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="mb-2">
-                                            <strong>Tipo:</strong> {{ $cig->maintenanceGarage->maintenance->name }}
-                                        </p>
-                                        <p class="mb-2">
-                                            <strong>Periodo:</strong><br>
-                                            {{ $cig->maintenanceGarage->maintenance->date_from->format('d/m/Y') }}
-                                            @if($cig->maintenanceGarage->maintenance->date_to)
-                                                - {{ $cig->maintenanceGarage->maintenance->date_to->format('d/m/Y') }}
-                                            @else
-                                                (In corso)
-                                            @endif
-                                        </p>
-                                        <div class="d-grid gap-2">
-                                            <a href="{{ route('maintenances.show', $cig->maintenanceGarage->maintenance->id) }}" class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-eye"></i> Vedi Manutenzione
-                                            </a>
-                                            <a href="{{ route('maintenance-garages.show', $cig->maintenanceGarage->id) }}" class="btn btn-sm btn-outline-secondary">
-                                                <i class="bi bi-building"></i> Vedi Officina
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Riepilogo Importi -->
-                                @if($cig->taxable || $cig->vat)
-                                    <div class="card">
-                                        <div class="card-header bg-info text-white">
-                                            <h5 class="mb-0"><i class="bi bi-calculator"></i> Riepilogo Importi</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <table class="table table-sm mb-0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Imponibile:</td>
-                                                        <td class="text-end">€ {{ number_format($cig->taxable, 2, ',', '.') }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>IVA (22%):</td>
-                                                        <td class="text-end">€ {{ number_format($cig->vat, 2, ',', '.') }}</td>
-                                                    </tr>
-                                                    <tr class="table-primary">
-                                                        <td><strong>TOTALE:</strong></td>
-                                                        <td class="text-end"><strong>€ {{ number_format($cig->taxable + $cig->vat, 2, ',', '.') }}</strong></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                @endif
                             </div>
                         </div>
                     </div>
