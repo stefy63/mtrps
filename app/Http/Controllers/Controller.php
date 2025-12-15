@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
 
 class Controller extends BaseController
 {
@@ -71,7 +72,7 @@ class Controller extends BaseController
      */
     protected function getUser(): \Illuminate\Http\JsonResponse|\Illuminate\Contracts\Auth\Authenticatable
     {
-        $user = auth()->user();
+        $user =  Auth::user();
         if (!$user) {
             throw new AuthenticationException();
         }

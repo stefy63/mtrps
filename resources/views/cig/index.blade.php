@@ -122,7 +122,7 @@
                                                         <small><strong>RUP:</strong> {{ $cig->userRup->name }}</small>
                                                     @endif
                                                     @if($cig->userSupport)
-                                                        <br><small>Supp: {{ $cig->userSupport->name }}</small>
+                                                        <br><small><strong>Supp:</strong> {{ $cig->userSupport->name }}</small>
                                                     @endif
                                                 </td>
                                                 <td>
@@ -130,7 +130,7 @@
                                                         <small><strong>Resp:</strong> {{ $cig->userTenderNotice->name }}</small>
                                                     @endif
                                                     @if($cig->userTester)
-                                                        <br><small>Coll: {{ $cig->userTester->name }}</small>
+                                                        <br><small><strong>Coll:</strong> {{ $cig->userTester->name }}</small>
                                                     @endif
                                                 </td>
                                                 <td class="text-end">
@@ -159,13 +159,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-<script>
-    // Inizializza i tooltip
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-</script>
-@endpush

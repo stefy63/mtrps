@@ -23,25 +23,25 @@ class StoreCigRequest extends BaseFormRequest
                 'nullable',
                 'numeric',
                 'exists:users,id',  
-                Rule::in([$userId])
+                // Rule::in([$userId])
             ],
             'user_support_id' => [
                 'nullable',
                 'numeric',
                 'exists:users,id',
-                Rule::in([$userId])
+                // Rule::in([$userId])
             ],
             'user_tender_notice_id' => [
                 'nullable',
                 'numeric',
                 'exists:users,id',
-                Rule::in([$userId])
+                // Rule::in([$userId])
             ],
             'user_tester_id' => [
                 'nullable',
                 'numeric',
                 'exists:users,id',
-                Rule::in([$userId])
+                // Rule::in([$userId])
             ],
             'date' => 'nullable|date',
             'ce' => 'nullable|string|max:255',  

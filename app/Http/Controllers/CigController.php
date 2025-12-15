@@ -90,10 +90,11 @@ class CigController extends Controller
         if ($request->has('car_id')) {
             $cig->car_id = $request->car_id;
         }
+        $cig->date = now();
         $button = false;
-        if ($request->has('button')) {
-            $button = true;
-        }
+        // if ($request->has('button')) {
+        //     $button = true;
+        // }
 
         return view('cig.form', compact('cig', 'cars', 'garages', 'users', 'button'));
     }
@@ -321,7 +322,7 @@ class CigController extends Controller
     public function export(Request $request)
     {
         $query = Cig::with([
-            'car',
+            'car.carPlates',
             'maintenanceGarage',
             'userRup',
             'userSupport',
@@ -375,7 +376,7 @@ class CigController extends Controller
                     $cig->cig,
                     $cig->date ? $cig->date->format('d/m/Y') : '',
                     $cig->car ? $cig->car->name : '',
-                    $cig->car && $cig->car->carPlates->count() > 0 ? $cig->car->carPlates->first()->name : '',
+                    $cig->car && $cig->car()->carPlates()->count() > 0 ? $cig->car()->carPlates()->first()->name : '',
                     $cig->maintenanceGarage ? $cig->maintenanceGarage->name : '',
                     $cig->ce,
                     $cig->description,
