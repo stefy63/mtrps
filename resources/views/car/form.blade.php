@@ -21,7 +21,7 @@
                     <x-dynamic-select
                             name="car_brand_id"
                             :class="'mb-2'"
-                            :required="'false'"
+                            :required="false"
                             :value="old('car_brand_id', $car?->car_brand_id)"
                             :options="$carBrands"
                             :errors="$errors"
@@ -38,7 +38,7 @@
                     <x-dynamic-select
                             required
                             name="car_type_id"
-                            :required="'true'"
+                            :required="true"
                             :value="old('car_type_id', $car?->car_type_id)"
                             :options="$carTypes"
                             :errors="$errors"
@@ -53,7 +53,7 @@
                     <x-dynamic-select
                             required
                             name="car_owner_id"
-                            :required="'true'"
+                            :required="true"
                             :value="old('car_owner_id', $car?->car_owner_id)"
                             :options="$carOwners"
                             :errors="$errors"
@@ -67,7 +67,7 @@
 
                     <x-dynamic-select
                             name="car_power_id"
-                            :required="'false'"
+                            :required="false"
                             :value="old('car_power_id', $car?->car_power_id)"
                             :options="$carPowers"
                             :errors="$errors"
@@ -81,7 +81,7 @@
                     <x-dynamic-select
                             name="car_profit_account_id"
                             modalClass="modal-xl"
-                            :required="'false'"
+                            :required="false"
                             :value="old('car_profit_account_id', $car?->car_profit_account_id)"
                             :options="$carProfitAccounts"
                             :errors="$errors"
@@ -95,7 +95,7 @@
 
                     <x-dynamic-select
                             name="car_employment_code_id"
-                            :required="'false'"
+                            :required="false"
                             :value="old('car_employment_code_id', $car?->car_employment_code_id)"
                             :options="$carEmployment"
                             :errors="$errors"
@@ -109,7 +109,7 @@
 
                     <x-dynamic-select
                             name="car_typology_id"
-                            :required="'false'"
+                            :required="false"
                             :value="old('car_typology_id', $car?->car_typology_id)"
                             :options="$carTypologies"
                             :errors="$errors"
@@ -254,7 +254,7 @@
                             <x-dynamic-select
                                     name="car_police_plate_id"
                                     modalClass="modal-xl"
-                                    :required="'false'"
+                                    :required="true"
                                     :value="old('car_police_plate_id', $car_police_plate_id?->id)"
                                     :options="$polPlates"
                                     :errors="$errors"
@@ -280,7 +280,7 @@
                             <x-dynamic-select
                                     name="car_civil_plate_id"
                                     modalClass="modal-xl"
-                                    :required="'false'"
+                                    :required="false"
                                     :value="old('car_civil_plate_id', $car_civil_plate_id?->id)"
                                     :options="$civPlates"
                                     :errors="$errors"
@@ -305,7 +305,7 @@
                             <x-dynamic-select
                                     name="car_origin_plate_id"
                                     modalClass="modal-xl"
-                                    :required="'false'"
+                                    :required="false"
                                     :value="old('car_origin_plate_id', $car_origin_plate_id?->id)"
                                     :options="$origPlates"
                                     :errors="$errors"
@@ -330,7 +330,7 @@
                     </div>
                     <x-dynamic-select
                             name="assignee_id"
-                            :required="'false'"
+                            :required="true"
                             :value="old('assignee_id', $car->carOffices[0]?->id ?? null)"
                             :options="$offices"
                             :errors="$errors"

@@ -41,7 +41,7 @@
                                     name="car_id"
                                     modalClass="modal-xl"
                                     disabled="{{!$button}}"
-                                    :required="'true'"
+                                    :required="true"
                                     :value="old('car_id', $movement?->car_id)"
                                     :options="$cars"
                                     :errors="$errors"
@@ -59,7 +59,7 @@
 
                         <x-dynamic-select
                                 name="office_id"
-                                required="true"
+                                :required="true"
                                 :value="old('office_id', $movement?->office_id)"
                                 :options="$offices"
                                 :errors="$errors"

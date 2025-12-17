@@ -10,7 +10,7 @@
                     <!-- Veicolo -->
                     <x-dynamic-select
                             name="car_id"
-                            :required="'true'"
+                            :required="true"
                             disabled="{{!$button}}"
                             :value="old('car_id', $maintenance?->car_id)"
                             :options="$cars"
@@ -28,7 +28,7 @@
                 <div class="row mb-3">
                     <x-dynamic-select
                             name="garage_id"
-                            :required="'true'"
+                            :required="true"
                             :value="old('garage_id', $maintenance?->garage_id)"
                             :options="$garages"
                             :errors="$errors"
@@ -45,7 +45,7 @@
                 <div class="row mb-3">
                     <x-dynamic-select
                             name="type_id"
-                            :required="'false'"
+                            :required="false"
                             :value="old('type_id', $maintenance?->type_id)"
                             :options="$types"
                             :errors="$errors"
