@@ -24,8 +24,8 @@
                         </div>
                     </div>
                     {{-- Validazione --}}
-                    <div class="col-md-1 ms-auto">
-
+                    @if ($movement?->date_to && $movement?->date_to < now())
+                        <div class="col-md-1 ms-auto">
                             <div class="form-check form-switch mt-3">
                                 <input
                                     value="1"
@@ -36,8 +36,8 @@
                                     {{ old('validated', $movement?->validated) ? 'checked' : '' }}>
                                 <label class="form-check-label" for="validated">Convalidato</label>
                             </div>
-
-                    </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

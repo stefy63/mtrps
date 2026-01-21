@@ -32,8 +32,8 @@ unset($__errorArgs, $__bag); ?>"
                         </div>
                     </div>
                     
-                    <div class="col-md-1 ms-auto">
-
+                    <?php if($movement?->date_to && $movement?->date_to < now()): ?>
+                        <div class="col-md-1 ms-auto">
                             <div class="form-check form-switch mt-3">
                                 <input
                                     value="1"
@@ -44,8 +44,8 @@ unset($__errorArgs, $__bag); ?>"
                                     <?php echo e(old('validated', $movement?->validated) ? 'checked' : ''); ?>>
                                 <label class="form-check-label" for="validated">Convalidato</label>
                             </div>
-
-                    </div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
