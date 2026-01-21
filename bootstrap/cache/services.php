@@ -35,8 +35,9 @@
     31 => 'Termwind\\Laravel\\TermwindServiceProvider',
     32 => 'Pest\\Laravel\\PestServiceProvider',
     33 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
-    34 => 'App\\Providers\\AppServiceProvider',
-    35 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
+    34 => 'Spatie\\Permission\\PermissionServiceProvider',
+    35 => 'App\\Providers\\AppServiceProvider',
+    36 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
   ),
   'eager' => 
   array (
@@ -58,8 +59,9 @@
     15 => 'Termwind\\Laravel\\TermwindServiceProvider',
     16 => 'Pest\\Laravel\\PestServiceProvider',
     17 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
-    18 => 'App\\Providers\\AppServiceProvider',
-    19 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
+    18 => 'Spatie\\Permission\\PermissionServiceProvider',
+    19 => 'App\\Providers\\AppServiceProvider',
+    20 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
   ),
   'deferred' => 
   array (

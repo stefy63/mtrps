@@ -123,7 +123,7 @@
         Alpine.data('dynamicSelect', (config) => {
             let oldSearch;
             let oldId;
-            if (config.value) {
+            if (config.value && config.options.length > 0) {
                 const old = config.options.find(o => o[config.idKey] === +config.value);
                 oldId = config.option_id = old[config.idKey] || '';
                 oldSearch = config.search = old[config.labelKey] || '';
@@ -146,15 +146,16 @@
                 modalClass: config.modalClass || '',
                 class: config.class || '',
                 disabled: config.disabled || false,
-                callbackName: config.callbackName,
+                callbackChange: config.callbackChange,
+                callbackFilter: config.callbackFilter,
                 eventName: config.eventName,
 
                 init() {
                     this.$watch('option_id', val => {
                         if (val && val !== oldId) {
                             // 1️⃣ CALLBACK JS SPECIFICA PER L'ISTANZA
-                            if (this.callbackName && typeof window[this.callbackName] === 'function') {
-                                window[this.callbackName](val);
+                            if (this.callbackChange && typeof window[this.callbackChange] === 'function') {
+                                window[this.callbackChange](val);
                             }
                             // 2️⃣ EVENTO SPECIFICO PER L'ISTANZA
                             this.$dispatch(this.eventName, {value: val}, {bubbles: true});
@@ -184,9 +185,13 @@
 
                 get filteredOptions() {
                     if (this.search === '') return this.options;
-                    return this.options.filter(o =>
-                        o[this.labelKey].toLowerCase().includes(this.search.toLowerCase())
-                    );
+                    if (this.callbackFilter && typeof window[this.callbackFilter] === 'function') {
+                        return window[this.callbackFilter](this.search, this.options);
+                    } else {    
+                        return this.options.filter(o =>
+                            o[this.labelKey].toLowerCase().includes(this.search.toLowerCase())
+                        );
+                    }
                 },
 
 

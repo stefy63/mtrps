@@ -9,6 +9,7 @@ use App\Models\Maintenance;
 use App\Models\MaintenanceGarage;
 use App\Models\MaintenanceType;
 use App\Services\FilterCarService;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,10 +27,24 @@ class MaintenanceController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Maintenance::with(['car.carPlates', 'maintenanceGarages', 'maintenanceTypes']);
+        $query = Maintenance::with(['car.carPlates','car.carOffices', 'maintenanceGarages', 'maintenanceTypes']);
 
-        if ($closed = $request->exists('closed')) {
-            $query->withoutGlobalScope('closed');
+        $total = (clone $query)->count();
+        $totalInGarage = (clone $query)->whereHas('maintenanceGarages', function ($q) {
+            $q->whereNotNull('piva')->whereNotNull('cf')->whereNotNull('iban');
+        })->count();
+        $totalInHome = (clone $query)->whereHas('maintenanceGarages', function ($q) {
+            $q->where('piva', null)->where('cf', null)->where('iban', null);
+        })->count();
+        $totalOpen_today = (clone $query)->whereDay('date_from', now()->day)->count();
+        $totalOpen_week = (clone $query)->whereBetween('date_from', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+        $totalOpen_month = (clone $query)->whereMonth('date_from', now()->month)->count();
+        $totalClosed_today = (clone $query)->whereDay('date_to', now()->day)->count();
+        $totalClosed_week = (clone $query)->whereBetween('date_to', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+        $totalClosed_month = (clone $query)->whereMonth('date_to', now()->month)->count();
+
+        if ($inprogress = $request->exists('inprogress')) {
+            $query->withoutGlobalScope('inprogress');
         }
         // Filtri
         if ($search = $request->search) {
@@ -53,21 +68,30 @@ class MaintenanceController extends Controller
         }
         // Ordinamento
         $query->orderBy('date_from', 'desc');
-        $garages = MaintenanceGarage::get();
 
         $maintenances = $query->paginate(20);
+        $stats = [
+            'total' => $total,
+            'totalInGarage' => $totalInGarage,
+            'totalInHome' => $totalInHome,
+            'totalOpen_today' => $totalOpen_today,
+            'totalOpen_week' => $totalOpen_week,
+            'totalOpen_month' => $totalOpen_month,
+            'totalClosed_today' => $totalClosed_today,
+            'totalClosed_week' => $totalClosed_week,
+            'totalClosed_month' => $totalClosed_month,
+        ];
+
 
         // Dati per i filtri
-        $cars = Car::with('carPlates')->get();
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questa manutenzione?');
 
         return view('maintenance.index', compact(
             'maintenances',
-            'cars',
-            'garages',
+            'stats',
             'search',
-            'closed'
+            'inprogress'
         ))
             ->with('i', ($request->input('page', 1) - 1) * $maintenances->perPage());
     }
@@ -175,9 +199,11 @@ class MaintenanceController extends Controller
      * @param  Maintenance  $maintenance
      * @return View
      */
-    public function show(Maintenance $maintenance): View
+    public function show(int $maintenance): View
     {
-        $maintenance->load(['car.carPlates', 'maintenanceGarages', 'maintenanceTypes']);
+        $maintenance = Maintenance::withoutGlobalScope('inprogress')
+            ->with(['car.carPlates', 'maintenanceGarages', 'maintenanceTypes'])
+            ->findOrFail($maintenance);
 
         return view('maintenance.show', compact('maintenance'));
     }

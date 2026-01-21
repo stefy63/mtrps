@@ -27,7 +27,7 @@
     
     <div class="col-md-6">
         
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="car_id" class="form-label">{{ __('Veicolo') }} <span class="text-danger">*</span></label>
             <select name="car_id" class="form-control @error('car_id') is-invalid @enderror" id="car_id">
                 <option value="">Seleziona veicolo</option>
@@ -41,14 +41,14 @@
             <small class="form-text text-muted">Seleziona il veicolo da assegnare</small>
         </div>
         
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="name" class="form-label">{{ __('Nome Assegnatario') }} <span class="text-danger">*</span></label>
             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $carAssignee?->name) }}" id="name" placeholder="Nome e cognome dell'assegnatario">
             {!! $errors->first('name', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
             <small class="form-text text-muted">Inserisci il nome completo della persona o ufficio assegnatario</small>
         </div>
         
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="description" class="form-label">{{ __('Descrizione/Ruolo') }}</label>
             <input type="text" name="description" class="form-control @error('description') is-invalid @enderror" value="{{ old('description', $carAssignee?->description) }}" id="description" placeholder="Ruolo, qualifica o descrizione">
             {!! $errors->first('description', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
@@ -59,21 +59,21 @@
     
     <div class="col-md-6">
         
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="date_from" class="form-label">{{ __('Data Inizio Assegnazione') }} <span class="text-danger">*</span></label>
             <input type="date" name="date_from" class="form-control @error('date_from') is-invalid @enderror" value="{{ old('date_from', $carAssignee?->date_from) }}" id="date_from">
             {!! $errors->first('date_from', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
             <small class="form-text text-muted">Data di inizio dell'assegnazione del veicolo</small>
         </div>
         
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="date_to" class="form-label">{{ __('Data Fine Assegnazione') }}</label>
             <input type="date" name="date_to" class="form-control @error('date_to') is-invalid @enderror" value="{{ old('date_to', $carAssignee?->date_to) }}" id="date_to">
             {!! $errors->first('date_to', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
             <small class="form-text text-muted">Data di fine (lasciare vuoto se assegnazione a tempo indeterminato)</small>
         </div>
         
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label class="form-label">Controllo Sovrapposizioni</label>
             <div id="overlap-check" class="alert alert-info" style="display: none;">
                 <i class="fas fa-info-circle"></i> <span id="overlap-message"></span>
@@ -146,7 +146,7 @@
             </div>
         </div>
         
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="note" class="form-label">{{ __('Note') }}</label>
             <textarea name="note" class="form-control @error('note') is-invalid @enderror" id="note" rows="3" placeholder="Note aggiuntive sull'assegnazione">{{ old('note', $carAssignee?->note) }}</textarea>
             {!! $errors->first('note', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}

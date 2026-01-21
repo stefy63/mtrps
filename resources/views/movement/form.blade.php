@@ -23,6 +23,21 @@
                             {!! $errors->first('code', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                         </div>
                     </div>
+                    {{-- Validazione --}}
+                    <div class="col-md-1 ms-auto">
+
+                            <div class="form-check form-switch mt-3">
+                                <input
+                                    value="1"
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="validated"
+                                    name="validated"
+                                    {{ old('validated', $movement?->validated) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="validated">Convalidato</label>
+                            </div>
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -51,6 +66,7 @@
                                     idKey="id"
                                     modal-url="{{ route('car.getForm') }}"
                                     modal-title="Nuova Vettura"
+                                    onFilter="carFilter"
                             />
                     </div>
 

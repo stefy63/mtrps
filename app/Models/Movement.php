@@ -78,7 +78,11 @@ class Movement extends Model
     protected static function booted()
     {
         static::addGlobalScope('inprogress', function (Builder $builder) {
-            $builder->whereNull('date_to')->orWhere('date_to', '>=', now());
+            $builder
+                ->where('validated', 0)
+                // ->whereNull('date_to')
+                // ->orWhere('date_to', '>=', now())
+                ;
         });
     }
 
@@ -96,6 +100,7 @@ class Movement extends Model
         'date_from',
         'date_to',
         'note',
+        'validated',
         'created_by',
         'updated_by'
     ];

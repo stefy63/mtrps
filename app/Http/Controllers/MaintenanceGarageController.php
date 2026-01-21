@@ -21,7 +21,9 @@ class MaintenanceGarageController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = MaintenanceGarage::orderBy('name');
+        $query = MaintenanceGarage::with('maintenances.car.carPlates')
+            ->withCount('maintenances')
+            ->orderBy('maintenances_count', 'desc');
 
         if ($request->filled('search')) {
             $search = $request->search;

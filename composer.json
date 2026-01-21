@@ -11,6 +11,7 @@
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.6",
         "realrashid/sweet-alert": "^v7.3.0",
+        "spatie/laravel-permission": "^6.24",
         "twbs/bootstrap-icons": "^1.11"
     },
     "require-dev": {

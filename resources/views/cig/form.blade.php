@@ -15,7 +15,7 @@
                             <input type="text" name="cig" id="cig"
                                 class="form-control @error('cig') is-invalid @enderror"
                                 value="{{ old('cig', $cig->cig ?? '') }}"
-                                placeholder="ZAB12345"
+                                placeholder="CIG"
                                 style="text-transform: uppercase;"
                                 required>
                             @error('cig')
@@ -56,6 +56,7 @@
                             modal-url="{{ route('car.getForm') }}"
                             modal-title="Nuovo veicolo"
                             modalClass="modal-xl"
+                            onFilter="carFilter"
                         />
                     </div>
 
@@ -139,7 +140,6 @@
                                 value="{{ old('vat', $cig->vat ?? '') }}"
                                 placeholder="0,00"
                                 readonly>
-                            <label for="vat">{{ __('IVA € (22%)') }}</label>
                             @error('vat')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -257,27 +257,3 @@
     </div>
 </div>
 @endif
-@push('scripts')
-<script type="module">
-$(document).ready(function() {
-
-    // Calcolo automatico IVA e totale
-    $('#taxable').on('input', function() {
-        var taxable = parseFloat($(this).val().replace(',', '.')) || 0;
-        var vat = taxable * 0.22;
-        var total = taxable + vat;
-
-        $('#vat').val(vat.toFixed(2).replace('.', ','));
-        $('#total').val(total.toFixed(2).replace('.', ','));
-    });
-
-    // Uppercase automatico per CIG
-    $('#cig').on('input', function() {
-        $(this).val($(this).val().toUpperCase());
-    });
-
-    // Trigger calcolo iniziale
-    $('#taxable').trigger('input');
-});
-</script>
-@endpush

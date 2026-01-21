@@ -76,14 +76,35 @@ class OfficesService
                         $ma2->whereNull('ma.date_to')
                         ->orWhere('ma.date_to', '>=', $date);
                     });
-            })
+            })   
 
             ->select(
                 'o.ente as ente',
+
+                // 🔹 Totale vetture SEMPRE invariato
                 DB::raw('COUNT(DISTINCT c.id) as active_cars_count'),
-                DB::raw('COUNT(DISTINCT mc.id) as movements_to_count'),
-                DB::raw('COUNT(DISTINCT mo.id) as movements_from_count'),
-                DB::raw('COUNT(DISTINCT ma.id) as active_maintenance_count'),
+
+                // 🔹 Vetture prestate SOLO se NON in manutenzione
+                DB::raw('COUNT(DISTINCT CASE 
+                    WHEN mc.id IS NOT NULL AND ma.id IS NULL THEN mc.id 
+                END) as movements_to_count'),
+
+                // 🔹 Vetture in prestito SOLO se NON in manutenzione
+                DB::raw('COUNT(DISTINCT CASE 
+                    WHEN mo.id IS NOT NULL 
+                    AND NOT EXISTS (
+                        SELECT 1 
+                        FROM maintenances ma2
+                        WHERE ma2.car_id = mo.car_id
+                        AND ma2.deleted_at IS NULL
+                        AND ma2.date_from <= "'.$date.'"
+                        AND (ma2.date_to IS NULL OR ma2.date_to >= "'.$date.'")
+                    )
+                    THEN mo.id 
+                END) as movements_from_count'),
+
+                // 🔹 Manutenzioni attive
+                DB::raw('COUNT(DISTINCT ma.id) as active_maintenance_count')
             )
             ->groupBy('o.ente');
 

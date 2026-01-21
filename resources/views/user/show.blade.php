@@ -20,11 +20,11 @@
 
                     <div class="card-body bg-white">
                         
-                                <div class="form-group mb-2 mb20">
+                                <div class="form-group mb-2 ">
                                     <strong>Name:</strong>
                                     {{ $user->name }}
                                 </div>
-                                <div class="form-group mb-2 mb20">
+                                <div class="form-group mb-2 ">
                                     <strong>Email:</strong>
                                     {{ $user->email }}
                                 </div>

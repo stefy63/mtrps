@@ -39,6 +39,7 @@ class CarController extends Controller
             'carBrand',
             'carPower',
             'carProfitAccount',
+            'carEmployment',
             'carTypology',
             'carPlates' => fn($q) => $q->wherePivotNull('date_to'),
             'carOffices' => fn($q) => $q->wherePivotNull('date_to'),
@@ -46,6 +47,7 @@ class CarController extends Controller
             'movements' => fn($q) => $q->whereNull('date_to'),
             'maintenances' => fn($q) => $q->whereNull('date_to'),
         ]);
+        // dd($query->get()->toArray());
         if ($unavailable = $request->exists('unavailable')) {
             $query->withoutGlobalScope('available');
         }

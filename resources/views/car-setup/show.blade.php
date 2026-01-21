@@ -20,27 +20,27 @@
 
                     <div class="card-body bg-white">
                         
-    <div class="form-group mb-2 mb20">
+    <div class="form-group mb-2 ">
         <strong>Car Id:</strong>
         {{ $carSetup->car_id }}
     </div>
-    <div class="form-group mb-2 mb20">
+    <div class="form-group mb-2 ">
         <strong>Name:</strong>
         {{ $carSetup->name }}
     </div>
-    <div class="form-group mb-2 mb20">
+    <div class="form-group mb-2 ">
         <strong>Description:</strong>
         {{ $carSetup->description }}
     </div>
-    <div class="form-group mb-2 mb20">
+    <div class="form-group mb-2 ">
         <strong>Date From:</strong>
         {{ $carSetup->date_from }}
     </div>
-    <div class="form-group mb-2 mb20">
+    <div class="form-group mb-2 ">
         <strong>Date To:</strong>
         {{ $carSetup->date_to }}
     </div>
-    <div class="form-group mb-2 mb20">
+    <div class="form-group mb-2 ">
         <strong>Note:</strong>
         {{ $carSetup->note }}
     </div>

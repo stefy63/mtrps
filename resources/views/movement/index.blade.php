@@ -7,12 +7,15 @@
 @section('content')
     <div class="container-fluid">
         {{-- Statistiche Header --}}
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="row g-3">
-                    <div class="col-md-2 col-sm-6">
-                        <div class="card border-left-primary shadow h-100 py-2">
-                            <div class="card-body">
+        <div class="row mb-4" x-data>
+            <form x-ref="filterForm" action="{{ route('movements.index') }}" method="GET">
+                <input type="hidden" name="search" value="{{ old('search', $search) }}">
+                <input type="hidden" name="inprogress" value="{{ old('inprogress', $inprogress) }}">
+                <div class="col-12">
+                    <div class="row g-2">
+                        <div class="col-md-2 col-sm-6">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
@@ -43,7 +46,7 @@
                                         </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="bi bi-clock-history fs-2 text-gray-300"></i>
+                                        <i class="bi bi-hourglass-split fs-2 text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -70,7 +73,70 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3 col-sm-6">
+                    <div class="col-md-2 col-sm-6">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Termine Oggi
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ number_format($stats['end_today']) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="input-group">
+                                            <div class="form-check form-switch">
+                                                <input 
+                                                    @if(old('end_today', $end_today))
+                                                    checked
+                                                    @endif                                                       class="form-check-input"
+                                                    type="checkbox"
+                                                    name="end_today"
+                                                    @change="$refs.filterForm.submit()"
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-sm-6">
+                        <div class="card border-left-dark shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                                            Iniziano Oggi
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ number_format($stats['start_today']) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="input-group">
+                                            <div class="form-check form-switch">
+                                                <input 
+                                                    @if(old('start_today', $start_today))
+                                                    checked
+                                                    @endif
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    name="start_today"
+                                                    @change="$refs.filterForm.submit()"
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-sm-6">
                         <div class="card border-left-success shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
@@ -90,27 +156,9 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3 col-sm-6">
-                        <div class="card border-left-dark shadow h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                            In Corso ({{ now()->format('F') }})
-                                        </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            {{ number_format($stats['in_progress_month']) }}
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="bi bi-speedometer2 fs-2 text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
+            </form>
         </div>
 
         {{-- Main Card --}}
@@ -164,9 +212,10 @@
                                             Codice
                                         </a>
                                     </th>
+                                    <th class="col-1">Stato</th>
                                     <th class="col-2">Veicolo</th>
                                     <th class="col-2">Assegnatario</th>
-                                    <th class="col-3">Ufficio Destinatario</th>
+                                    <th class="col-2">Ufficio Destinatario</th>
                                     <th class="col-1">Dal</th>
                                     <th class="col-1">Al</th>
                                     <th class="text-end col-1">Azioni</th>
@@ -180,6 +229,29 @@
                                                class="text-decoration-none">
                                                 <strong>{{ $movement->code }}</strong>
                                             </a>
+                                        </td>
+                                        <td>
+                                            @if($movement->date_to && $movement->date_to < now())
+                                                @if ($movement->validated)
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-arrow-left"></i> Restituita
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-danger">
+                                                        <i class="bi bi-key"></i> Non Restituita
+                                                    </span>
+                                                @endif
+                                            @else
+                                                @if ($movement->date_from > now())
+                                                    <span class="badge bg-warning">
+                                                        <i class="bi bi-hourglass-split"></i> In Attesa
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-primary">
+                                                        <i class="bi bi-clock-history"></i> In Uso
+                                                    </span>
+                                                @endif
+                                            @endif
                                         </td>
                                         <td>
                                             <div>
@@ -222,7 +294,7 @@
                                             </div>
                                         </td>
                                         <td class="text-end">
-                                            @if(!$movement->date_to || $movement->date_to > now())
+                                            @if(!$movement->validated)
                                                 <div class="btn-group dropstart">
                                                     <x-action-table-button :item="$movement" :label="'Movimento'"/>
                                                 </div>
@@ -248,36 +320,4 @@
             </div>
         </div>
     </div>
-
-    {{-- Stili aggiuntivi --}}
-    <style>
-        .border-left-primary {
-            border-left: 4px solid #4e73df !important;
-        }
-
-        .border-left-warning {
-            border-left: 4px solid #f6c23e !important;
-        }
-
-        .border-left-info {
-            border-left: 4px solid #36b9cc !important;
-        }
-
-        .border-left-success {
-            border-left: 4px solid #1cc88a !important;
-        }
-
-        .border-left-dark {
-            border-left: 4px solid #5a5c69 !important;
-        }
-
-        .table th a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .table th a:hover {
-            color: #0d6efd;
-        }
-    </style>
 @endsection

@@ -80,4 +80,11 @@
       0 => 'RealRashid\\SweetAlert\\SweetAlertServiceProvider',
     ),
   ),
+  'spatie/laravel-permission' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Spatie\\Permission\\PermissionServiceProvider',
+    ),
+  ),
 );

@@ -22,6 +22,7 @@
                             idKey="id"
                             modal-url="{{ route('car.getForm') }}"
                             modal-title="Nuova Vettura"
+                            onFilter="carFilter"
                     />
                 </div>
 

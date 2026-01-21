@@ -16,12 +16,14 @@
                                 {{ __('Users') }}
                             </span>
 
+                            @role('admin')
                             <div class="float-right">
                                 <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm float-right"
                                    data-placement="left">
                                     {{ __('Create New') }}
                                 </a>
                             </div>
+                            @endrole
                         </div>
                     </div>
 
@@ -43,7 +45,9 @@
                                         <td class="col-4">{{ $user->name }}</td>
                                         <td class="col-5">{{ $user->email }}</td>
                                         <td class="text-end">
+                                            @role('pippo')  
                                             <x-action-table-button :item="$user" :label="'Utente'" />
+                                            @endrole
                                         </td>
                                     </tr>
                                 @endforeach

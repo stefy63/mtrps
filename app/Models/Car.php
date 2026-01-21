@@ -115,6 +115,7 @@ class Car extends Model
         return $this->belongsToMany(Office::class)
 //            ->using(CarAssignee::class)
             ->withPivot('date_from', 'date_to', 'note')
+            ->wherePivotNull('date_to')
             ->withTimestamps();
     }
 
@@ -187,6 +188,7 @@ class Car extends Model
     {
         return $this->belongsToMany(Plate::class)
             ->using(CarPlate::class)
+            ->wherePivotNull('date_to')
             ->withPivot('date_from', 'date_to', 'note')
             ->withTimestamps();
     }

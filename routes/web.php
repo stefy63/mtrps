@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AssigneeOfficeController;
+use App\Http\Controllers\AutoUpdateController;
 use App\Http\Controllers\CarAssigneeController;
 use App\Http\Controllers\CarBrandController;
 use App\Http\Controllers\CarController;
@@ -32,6 +33,7 @@ Route::get('/', function () {
 Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('auto-update', AutoUpdateController::class)->name('auto-update');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -75,25 +77,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('car-typology/store-form', [CarTypologyController::class, 'storeForm'])->name('car-typology.storeForm');
     Route::get('cigs/get-form', [CigController::class, 'getForm'])->name('cig.getForm');
     Route::post('cigs/store-form', [CigController::class, 'storeForm'])->name('cig.storeForm');
-    Route::get('users/get-form', [UserController::class, 'getForm'])->name('users.getForm');
-    Route::post('users/store-form', [UserController::class, 'storeForm'])->name('users.storeForm');
-
-
-
-
-
+    Route::get('users/get-form', [UserController::class, 'getForm'])->name('users.getForm')->middleware('role:admin');
+    Route::post('users/store-form', [UserController::class, 'storeForm'])->name('users.storeForm')->middleware('role:admin');
 
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::resource('users', UserController::class);
-    Route::resource('cars', CarController::class);
-//    Route::get('/car-types/{brand}', [CarTypeController::class, 'getType'])->name('car-type.get-type');
-    Route::resource('car-types', CarTypeController::class);
-    Route::resource('car-owners', CarOwnerController::class);
-    Route::resource('car-assignees', CarAssigneeController::class);
+    Route::resource('users', UserController::class)->names('users');
+    Route::resource('cars', CarController::class)->names('cars');
+    Route::resource('car-types', CarTypeController::class)->names('car-types');
+    Route::resource('car-owners', CarOwnerController::class)->names('car-owners');
+    Route::resource('car-assignees', CarAssigneeController::class)->names('car-assignees');
     Route::get('car-assignees-current', [CarAssigneeController::class, 'current'])->name('car-assignees.current');
-    Route::resource('car-brands', CarBrandController::class);
-    Route::resource('car-powers', CarPowerController::class);
-    Route::resource('car-profit-accounts', CarProfitAccountController::class);
+    Route::resource('car-brands', CarBrandController::class)->names('car-brands');
+    Route::resource('car-powers', CarPowerController::class)->names('car-powers');
+    Route::resource('car-profit-accounts', CarProfitAccountController::class)->names('car-profit-accounts');
     Route::prefix('car-profit-accounts')->name('car-profit-accounts.')->group(function () {
         // Toggle active status
         Route::patch('{car_profit_account}/toggle-active',
@@ -102,15 +98,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Export CSV
         Route::get('export', [CarProfitAccountController::class, 'export'])->name('export');
     });
-    Route::resource('car-setups', CarSetupController::class);
+    Route::resource('car-setups', CarSetupController::class)->names('car-setups');
     Route::get('/car-setups/suggestions',
         [CarSetupController::class, 'getSuggestions'])->name('car-setups.suggestions');
     Route::get('/car-setups/check-conflicts',
         [CarSetupController::class, 'checkConflicts'])->name('car-setups.check-conflicts');
-    Route::resource('car-plates', CarPlateController::class);
-    Route::resource('assignee-offices', AssigneeOfficeController::class);
-    Route::resource('equipments', EquipmentController::class);
-    Route::resource('movements', MovementController::class);
+    Route::resource('car-plates', CarPlateController::class)->names('car-plates');
+    Route::resource('assignee-offices', AssigneeOfficeController::class)->names('assignee-offices');
+    Route::resource('equipments', EquipmentController::class)->names('equipments');
+    Route::resource('movements', MovementController::class)->names('movements');
     Route::get('maintenances/suggestions',
         [App\Http\Controllers\MaintenanceController::class, 'suggestions'])->name('maintenances.suggestions');
     Route::get('maintenances/statistics/{car}',
@@ -122,16 +118,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         [App\Http\Controllers\CarFuelController::class, 'suggestions'])->name('car-fuels.suggestions');
     Route::get('car-fuels/statistics/{car}',
         [App\Http\Controllers\CarFuelController::class, 'statistics'])->name('car-fuels.statistics');
-    Route::resource('car-fuels', CarFuelController::class);
-    Route::resource('maintenance-garages', MaintenanceGarageController::class);
-    Route::resource('maintenance-types', App\Http\Controllers\MaintenanceTypeController::class);
+    Route::resource('car-fuels', CarFuelController::class)->names('car-fuels');
+    Route::resource('maintenance-garages', MaintenanceGarageController::class)->names('maintenance-garages');
+    Route::resource('maintenance-types', App\Http\Controllers\MaintenanceTypeController::class)->names('maintenance-types');
     Route::get('cigs/generate', [CigController::class, 'generateCig'])->name('cigs.generate');
     Route::get('cigs/statistics', [CigController::class, 'statistics'])->name('cigs.statistics');
     Route::get('cigs/export', [CigController::class, 'export'])->name('cigs.export');
-    Route::resource('cigs', CigController::class);
-    Route::resource('offices', OfficeController::class);
-    Route::resource('employment-code', EmploymentCodeController::class);
-    Route::resource('car-typology', CarTypologyController::class);
+    Route::resource('cigs', CigController::class)->names('cigs');
+    Route::resource('offices', OfficeController::class)->names('offices');
+    Route::resource('employment-code', EmploymentCodeController::class)->names('employment-code');
+    Route::resource('car-typology', CarTypologyController::class)->names('car-typology');
 
 
 //    Rotte di import
@@ -144,19 +140,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('export/templateKm',
         [App\Http\Controllers\ImportKmController::class, 'export'])->name('export.template-km');
     Route::post('imports/km', [App\Http\Controllers\ImportKmController::class, 'importKm'])->name('imports.km');
-//    Route::post('imports/owners', [App\Http\Controllers\ImportController::class, 'importOwners'])->name('imports.owners');
-//    Route::post('imports/types', [App\Http\Controllers\ImportController::class, 'importTypes'])->name('imports.types');
-//    Route::post('imports/brands', [App\Http\Controllers\ImportController::class, 'importBrands'])->name('imports.brands');
-//    Route::post('imports/powers', [App\Http\Controllers\ImportController::class, 'importPowers'])->name('imports.powers');
-//    Route::post('imports/profit-accounts', [App\Http\Controllers\ImportController::class, 'importProfitAccounts'])->name('imports.profit-accounts');
-//    Route::post('imports/setups', [App\Http\Controllers\ImportController::class, 'importSetups'])->name('imports.setups');
-//    Route::post('imports/plates', [App\Http\Controllers\ImportController::class, 'importPlates'])->name('imports.plates');
-//    Route::post('imports/offices', [App\Http\Controllers\ImportController::class, 'importOffices'])->name('imports.offices');
-//    Route::post('imports/equipments', [App\Http\Controllers\ImportController::class, 'importEquipments'])->name('imports.equipments');
-//    Route::post('imports/maintenance-garages', [App\Http\Controllers\ImportController::class, 'importMaintenanceGarages'])->name('imports.maintenance-garages');
-//    Route::post('imports/maintenance-types', [App\Http\Controllers\ImportController::class, 'importMaintenanceTypes'])->name('imports.maintenance-types');
-//    Route::post('imports/maintenances', [App\Http\Controllers\ImportController::class, 'importMaintenances'])->name('imports.maintenances');
-//    Route::post('imports/car-fuels', [App\Http\Controllers\ImportController::class, 'importCarFuels'])->name('imports.car-fuels');
 });
 
 require __DIR__.'/auth.php';

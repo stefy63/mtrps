@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -32,8 +33,8 @@ class Maintenance extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope('closed', function (Builder $builder) {
-            $builder->whereNull('date_to')->orWhere('date_to', '>=', now());
+        static::addGlobalScope('inprogress', function (Builder $builder) {
+            $builder->whereNull('date_to')->orWhere('date_to', '>=', Carbon::now());
         });
     }
 

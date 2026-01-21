@@ -119,7 +119,15 @@
             }, 500); // tempo uguale alla durata della transition
         }
     }, 5000);
-
+</script>
+<script>
+    function carFilter(search, options) {
+        if (!search) return options;
+        return options.filter(o =>
+            o.full_name.toLowerCase().includes(search.toLowerCase()) ||
+            (o.car_plates && o.car_plates.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).length > 0)
+        );
+    }
 </script>
 </body>
 </html>

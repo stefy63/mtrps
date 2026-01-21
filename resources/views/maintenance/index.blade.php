@@ -6,6 +6,149 @@
 
 @section('content')
     <div class="container-fluid">
+
+
+        {{-- Statistiche Header --}}
+        <div class="row mb-4" x-data>
+            <div class="col-12">
+                    <div class="row g-2">
+                        <div class="col-md-2 col-sm-6">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Totale Manutenzioni
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ number_format($stats['total']) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-truck fs-2 text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-sm-6">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Totali in ditta
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ number_format($stats['totalInGarage']) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-clock-history fs-2 text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-sm-6">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Totali in officina
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            {{ number_format($stats['totalInHome']) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-arrow-right-circle fs-2 text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card border-left-warning shadow h-100">
+                            <div class="ps-2 card-title text-xs font-weight-bold text-warning text-uppercase">
+                                Manutenzioni aperte
+                            </div>
+                            <div class="card-body p-1 h-100">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col m-0">
+                                        <div class="mb-0 font-weight-bold ">
+                                            <table class="table table-sm table-borderless m-0">
+                                                <thead>
+                                                    <tr class="text-center small text-warning">
+                                                        <th class="text-warning">Oggi</th>
+                                                        <th class="text-warning">Settimana</th>
+                                                        <th class="text-warning">Mese</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="h5 text-center text-gray-800">
+                                                        <td>{{ number_format($stats['totalOpen_today']) }}</td>
+                                                        <td>{{ number_format($stats['totalOpen_week']) }}</td>
+                                                        <td>{{ number_format($stats['totalOpen_month']) }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-arrow-right-circle fs-2 text-gray-300 me-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card border-left-dark shadow h-100">
+                            <div class="ps-2 card-title text-xs font-weight-bold text-dark text-uppercase">
+                                Manutenzioni chiuse
+                            </div>
+                            <div class="card-body p-1 h-100">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col m-0">
+                                        <div class="mb-0 font-weight-bold text-gray-800">
+                                            <table class="table table-sm table-borderless m-0">
+                                                <thead>
+                                                    <tr class="text-center small text-dark">
+                                                        <th class="text-dark">Oggi</th>
+                                                        <th class="text-dark">Settimana</th>
+                                                        <th class="text-dark">Mese</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="h5 text-center text-gray-800">
+                                                        <td>{{ number_format($stats['totalClosed_today']) }}</td>
+                                                        <td>{{ number_format($stats['totalClosed_week']) }}</td>
+                                                        <td>{{ number_format($stats['totalClosed_month']) }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="bi bi-check-circle fs-2 text-gray-300 me-2"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {{-- </form> --}}
+        </div>
+
+
+
+
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
@@ -30,9 +173,9 @@
                                 <x-input-search-button
                                         action="{{ route('maintenances.index') }}"
                                         search="{{old('search', $search)}}"
-                                        name="closed"
+                                        name="inprogress"
                                         label="Chiuse"
-                                        check="{{old('closed', $closed)}}"
+                                        check="{{old('inprogress', $inprogress)}}"
                                         enableCheck="true"
                                 />
                             </div>
@@ -44,13 +187,13 @@
                                     <tr>
                                         <th class="col-1">Stato</th>
                                         <th class="col-2">Veicolo</th>
-                                        <th class="col-1">Targa</th>
-                                        <th class="col-1">Tipo Manutenzione</th>
+                                        {{-- <th class="col-1">Targa</th> --}}
+                                        <th class="col-2">Tipo Manutenzione</th>
                                         <th class="col-1">Data Inizio</th>
                                         <th class="col-1">Data Fine</th>
                                         <th class="col-2">Officina</th>
-                                        <th class="col-1">Mail</th>
-                                        <th class="col-1">Telefono</th>
+                                        <th class="col-2">Assegnatario</th>
+                                        {{-- <th class="col-1">Telefono</th> --}}
                                         <th class="col-1"></th>
                                     </tr>
                                     </thead>
@@ -71,24 +214,19 @@
                                                         </span>
                                                 @endif
                                             </td>
-                                            <td class="text-truncate">
-                                                <a href="{{route('cars.show', $maintenance->car_id)}}"
-                                                   class="text-decoration-none">
-                                                    <strong>{{ $maintenance->car?->carType->name }}</strong>
-                                                    @if($maintenance->car?->carBrand)
-                                                        <br>
-                                                        <small class="text-muted">{{ $maintenance->car?->carBrand->name }}</small>
-                                                    @endif
-                                                </a>
-                                            </td>
                                             <td>
-                                                @if($maintenance->car?->carPlates->count() > 0)
-                                                    <span class="badge bg-primary w-75">
-                                                        {{ $maintenance->car?->carPlates()->whereType('POLIZIA')->first()?->name }}
-                                                    </span>
-                                                @else
-                                                    <span class="text-muted">-</span>
-                                                @endif
+                                                <div>
+                                                    <a href="{{route('cars.show', $maintenance->car_id)}}"
+                                                       class="text-decoration-none">
+                                                        <strong>{{ $maintenance->car?->full_name }}</strong>
+                                                    </a>
+                                                    @if($maintenance->car?->carPlates->first())
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            <i class="bi bi-credit-card"></i> {{ $maintenance->car?->carPlates()->whereType('POLIZIA')->first()->name }}
+                                                        </small>
+                                                    @endif
+                                                </div>
                                             </td>
                                             <td>
                                                 <strong>{{ $maintenance->maintenanceTypes?->name ?? '' }}</strong>
@@ -116,44 +254,29 @@
                                                 </a>
                                                 </span>
                                             </td>
+
                                             <td class="text-truncate">
-                                                @if($maintenance->maintenanceGarages?->mail)
-                                                    <small data-bs-toggle="tooltip"
-                                                           title="{{ $maintenance->maintenanceGarages?->mail }}">
-                                                        {{$maintenance->maintenanceGarages?->mail }}
-                                                    </small><br>
-                                                @endif
-                                                @if($maintenance->maintenanceGarages?->pec)
-                                                    <small data-bs-toggle="tooltip"
-                                                           title="{{ $maintenance->maintenanceGarages?->pec }}">
-                                                        {{$maintenance->maintenanceGarages?->pec }}
-                                                    </small><br>
-                                                @endif
+                                                <span data-bs-toggle="tooltip">
+
+                                                <a href="{{route('offices.show', $maintenance->car?->carOffices?->first()?->id)}}"
+                                                   class="text-decoration-none">
+                                                    {{ $maintenance->car?->carOffices?->first()?->ente ?? '' }}
+                                                    @if($maintenance->car?->carOffices?->first()?->name)
+                                                        <br>
+                                                        <small class="text-muted">{{ $maintenance->car?->carOffices?->first()?->name }}</small>
+                                                    @endif
+                                                </a>
+                                                </span>
                                             </td>
-                                            <td style="font-size: 10px">
-                                                @if($maintenance->maintenanceGarages?->phone1)
-                                                    <small data-bs-toggle="tooltip"
-                                                           title="{{ $maintenance->maintenanceGarages?->phone1 }}">
-                                                        {{$maintenance->maintenanceGarages?->phone1 }}
-                                                    </small><br>
-                                                @endif
-                                                @if($maintenance->maintenanceGarages?->phone2)
-                                                    <small data-bs-toggle="tooltip"
-                                                           title="{{ $maintenance->maintenanceGarages?->phone2 }}">
-                                                        {{$maintenance->maintenanceGarages?->phone2 }}
-                                                    </small><br>
-                                                @endif
-                                                @if($maintenance->maintenanceGarages?->phone3)
-                                                    <small data-bs-toggle="tooltip"
-                                                           title="{{ $maintenance->maintenanceGarages?->phone3 }}">
-                                                        {{$maintenance->maintenanceGarages?->phone3 }}
-                                                    </small>
-                                                @endif
-                                            </td>
+
                                             <td class="text-end">
                                                 @if($isActive)
                                                     <x-action-table-button :item="$maintenance" :label="'Manutenzione'"
                                                                            itemRoute="maintenances"/>
+                                                @else
+                                                    <a data-bs-toggle="tooltip" title="Visualizza dati Manutenzione" class="ms-2"
+                                                       href="{{ route('maintenances.show', $maintenance->id) }}"><i
+                                                            class="bi bi-search"></i></a>
                                                 @endif
                                             </td>
                                         </tr>

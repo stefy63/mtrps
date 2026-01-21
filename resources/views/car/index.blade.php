@@ -46,6 +46,10 @@
                                         <th>Modello</th>
                                         <th>Tipologia</th>
                                         <th>Colore</th>
+                                        <th>Ufficio Assegnatario</th>
+                                        <th><abbr title="Codice Impiego">C. I.</abbr></th>
+                                        <th>Proprietario</th>
+                                        <th>Telaio</th>
                                         <th>Km</th>
                                         <th>Alimentazione</th>
                                         <th></th>
@@ -87,6 +91,10 @@
                                             </td>
                                             <td >({{ $car->carTypology->name ?? 'N/A' }})</td>
                                             <td>{{ $car->color ?? 'N/A' }}</td>
+                                            <td>{{ $car->carOffices->first()?->full_name ?? 'N/A' }}</td>
+                                            <td><abbr title="{{ $car->carEmployment->extended ?? 'N/A' }}">{{ $car->carEmployment->code ?? 'N/A' }}</abbr></td>
+                                            <td>{{ $car->carOwner->name ?? 'N/A' }}</td>
+                                            <td class="small">{{ $car->chassis ?? 'N/A' }}</td>
                                             <td>{{ number_format($car->km ?? 0) }} km</td>
                                             <td>{{ $car->carPower?->name ?? 'N/A' }}</td>
 

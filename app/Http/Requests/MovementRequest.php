@@ -30,6 +30,7 @@ class MovementRequest extends FormRequest
             ],
             'office_id' => 'required|integer|exists:offices,id',
             'code' => 'required|string|max:100',
+            'validated' => 'required|integer',
         ];
         $rules['date_from'] = 'required|date|date_format:Y-m-d H:i';
         $rules['date_to'] = 'nullable|date|date_format:Y-m-d H:i|after_or_equal:date_from';
@@ -44,6 +45,7 @@ class MovementRequest extends FormRequest
     {
         $this->merge([
             'car_id' => (int) $this->car_id,
+            'validated' => $this->validated ? 1 : 0,
             'date_from' => Carbon::parse($this->date_from)->format('Y-m-d H:i'),
             'date_to' => $this->date_to ? Carbon::parse($this->date_to)->format('Y-m-d H:i') : null,
         ]);

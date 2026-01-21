@@ -38,7 +38,7 @@
                             <th class="text-bg-info fw-bold">
                                 ENTE
                             </th>
-                            <th class="text-bg-info fw-bold ">TOTALI</th>
+                            <th class="text-bg-info fw-bold">TOTALI</th>
                             <th class="text-bg-info fw-bold">IN RIPARAZIONE</th>
                             <th class="text-bg-info fw-bold">IN PRESTITO</th>
                             <th class="text-bg-info fw-bold">PRESTATE</th>

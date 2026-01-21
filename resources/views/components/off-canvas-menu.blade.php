@@ -63,9 +63,7 @@
                             </x-menu-link>
                         </ul>
                     </li>
-
-
-
+                    @role('admin')
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
                            aria-expanded="false">Utilità</a>
@@ -73,7 +71,6 @@
                             <x-menu-link :href="route('users.index')" :active="request()->routeIs('dashboard')">
                                 {{ __('Utenti') }}
                             </x-menu-link>
-
                             <x-menu-link :href="route('car-imports.index')"
                                          :active="request()->routeIs('imports/cars')">
                                 {{ __('Import Vetture') }}
@@ -83,8 +80,13 @@
                                          :active="request()->routeIs('imports/km')">
                                 {{ __('Import Kilometri') }}
                             </x-menu-link>
+                            <x-menu-link :href="route('auto-update')"
+                                         :active="request()->routeIs('auto-update')">
+                                {{ __('Aggiornamento Automatico') }}
+                            </x-menu-link>
                         </ul>
                     </li>
+                    @endrole
                 </ul>
             </div>
         </div>

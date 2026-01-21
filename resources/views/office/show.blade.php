@@ -55,31 +55,31 @@
                                                 </div>
                                             </div>
                                             <div class="">
-                                                <div class="form-group mb-2 mb20">
+                                                <div class="form-group mb-2 ">
                                                     <strong>Ente:</strong>
                                                     {{ $office->ente }}
                                                 </div>
-                                                <div class="form-group mb-2 mb20">
+                                                <div class="form-group mb-2 ">
                                                     <strong>Name:</strong>
                                                     {{ $office->name }}
                                                 </div>
-                                                <div class="form-group mb-2 mb20">
+                                                <div class="form-group mb-2 ">
                                                     <strong>Phone:</strong>
                                                     {{ $office->phone }}
                                                 </div>
-                                                <div class="form-group mb-2 mb20">
+                                                <div class="form-group mb-2 ">
                                                     <strong>Mail:</strong>
                                                     {{ $office->mail }}
                                                 </div>
-                                                <div class="form-group mb-2 mb20">
+                                                <div class="form-group mb-2 ">
                                                     <strong>Address:</strong>
                                                     {{ $office->address }}
                                                 </div>
-                                                <div class="form-group mb-2 mb20">
+                                                <div class="form-group mb-2 ">
                                                     <strong>Description:</strong>
                                                     {{ $office->description }}
                                                 </div>
-                                                <div class="form-group mb-2 mb20">
+                                                <div class="form-group mb-2 ">
                                                     <strong>Note:</strong>
                                                     {{ $office->note }}
                                                 </div>

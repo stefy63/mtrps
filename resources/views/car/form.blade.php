@@ -128,7 +128,7 @@
                         {!! $errors->first('color', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
-                    <div class="form-group mb-2 mb20" style="margin-top: 1.3rem">
+                    <div class="form-group mb-2 " style="margin-top: 1.3rem">
                         <label for="available" class="form-label">{{ __('Stato vettura') }}</label>
                         <div class="form-check">
                             <input type="hidden" name="available" value="0">
@@ -144,7 +144,7 @@
                 </div>
                 <div class="col-md-6">
 
-                    <div class="form-group mb-2 mb20">
+                    <div class="form-group mb-2 ">
                         <label for="doc" class="form-label">{{ __('Data Documento') }}</label>
                         <input type="date" name="date_assignee"
                                class="form-control @error('date_assignee') is-invalid @enderror"
@@ -152,7 +152,7 @@
                         {!! $errors->first('date_assignee', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
-                    <div class="form-group mb-2 mb20">
+                    <div class="form-group mb-2 ">
                         <label for="tank" class="form-label">{{ __('Serbatoio (L)') }}</label>
                         <input type="number" name="tank" class="form-control @error('tank') is-invalid @enderror"
                                value="{{ old('tank', $car?->tank) }}" id="tank"
@@ -161,14 +161,14 @@
                         {!! $errors->first('tank', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
-                    <div class="form-group mb-2 mb20">
+                    <div class="form-group mb-2 ">
                         <label for="km" class="form-label">{{ __('Chilometraggio') }}</label>
                         <input type="number" name="km" class="form-control @error('km') is-invalid @enderror"
                                value="{{ old('km', $car?->km) }}" id="km" placeholder="Chilometri percorsi" min="0">
                         {!! $errors->first('km', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
-                    <div class="form-group mb-2 mb20" style="margin-top: 1.3rem">
+                    <div class="form-group mb-2 " style="margin-top: 1.3rem">
                         <label for="winter_wheels" class="form-label">{{ __('Pneumatici Invernali') }}</label>
                         <div class="form-check">
                             <input type="hidden" name="winter_wheels" value="0">
@@ -182,7 +182,7 @@
                         {!! $errors->first('winter_wheels', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
-                    <div class="form-group mb-2 mb20">
+                    <div class="form-group mb-2 ">
                         <label for="wheels_type" class="form-label">{{ __('Tipo Pneumatici') }}</label>
                         <input type="text" name="wheels_type"
                                class="form-control @error('wheels_type') is-invalid @enderror"
@@ -191,7 +191,7 @@
                         {!! $errors->first('wheels_type', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
-                    <div class="form-group mb-2 mb20">
+                    <div class="form-group mb-2 ">
                         <label for="warranty" class="form-label">{{ __('Garanzia') }}</label>
                         <input type="text" name="warranty" class="form-control @error('warranty') is-invalid @enderror"
                                value="{{ old('warranty', $car?->warranty) }}" id="warranty"
@@ -199,7 +199,7 @@
                         {!! $errors->first('warranty', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
-                    <div class="form-group mb-2 mb20">
+                    <div class="form-group mb-2 ">
                         <label for="tel_warranty" class="form-label">{{ __('Telefono Assistenza') }}</label>
                         <input type="text" name="tel_warranty"
                                class="form-control @error('tel_warranty') is-invalid @enderror"
@@ -208,14 +208,14 @@
                         {!! $errors->first('tel_warranty', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
-                    <div class="form-group mb-2 mb20">
+                    <div class="form-group mb-2 ">
                         <label for="chassis" class="form-label">{{ __('Telaio') }}</label>
                         <input type="text" name="chassis" class="form-control @error('chassis') is-invalid @enderror"
                                value="{{ old('chassis', $car?->chassis) }}" id="chassis" placeholder="Numero telaio">
                         {!! $errors->first('chassis', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
-                    <div class="form-group mb-2 mb20">
+                    <div class="form-group mb-2 ">
                         <label for="date_revision" class="form-label">{{ __('Data Revisione') }}</label>
                         <input type="date" name="date_revision"
                                class="form-control @error('date_revision') is-invalid @enderror"
@@ -226,7 +226,7 @@
                 </div>
                 <div class="col-md-12">
 
-                    <div class="form-group mb-2 mb20">
+                    <div class="form-group mb-2 ">
                         <label for="description" class="form-label">{{ __('Descrizione') }}</label>
                         <input type="text" name="description"
                                class="form-control @error('description') is-invalid @enderror"
@@ -235,7 +235,7 @@
                         {!! $errors->first('description', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                     </div>
 
-                    <div class="form-group mb-2 mb20">
+                    <div class="form-group mb-2 ">
                         <label for="note" class="form-label">{{ __('Note') }}</label>
                         <textarea name="note" class="form-control @error('note') is-invalid @enderror" id="note"
                                   rows="3"

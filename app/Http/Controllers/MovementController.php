@@ -33,9 +33,19 @@ class MovementController extends Controller
 
         $total = Movement::withoutGlobalScope('inprogress')->count();
         $pending = (clone $query)
+            ->where('date_from', '>', Carbon::now())
+            ->count();
+        $inProgress = (clone $query)
+            ->where('date_from', '<=', Carbon::now())
+            ->count();
+
+        $endToday = (clone $query)
             ->withoutGlobalScope('inprogress')
-            ->whereNull('date_to')
-            ->whereNull('date_from')
+            ->whereDay('date_to', Carbon::now()->day)
+            ->count();
+        $startToday = (clone $query)
+            ->withoutGlobalScope('inprogress')
+            ->whereDay('date_from', Carbon::now()->day)
             ->count();
         $notPending = (clone $query)
             ->withoutGlobalScope('inprogress')
@@ -43,23 +53,20 @@ class MovementController extends Controller
             ->whereNotNull('date_from')
             ->whereMonth('date_to', Carbon::now()->month)
             ->count();
-        $inProgress = (clone $query)
-            ->withoutGlobalScope('inprogress')
-            ->whereNotNull('date_from')
-            ->whereNull('date_to')
-            ->count();
         $inProgressMonth = (clone $query)
-            ->withoutGlobalScope('inprogress')
             ->whereNotNull('date_from')
             ->whereNull('date_to')
-            ->whereMonth('date_to', Carbon::now()->month)
+            ->orWhereMonth('date_to', Carbon::now()->month)
             ->count();
 
-        if ($inprogress = $request->exists('inprogress')) {
+        if ($inprogress = $request->inprogress ?? false) {
             $query->withoutGlobalScope('inprogress');
         }
         // Filtri
         $search = $request->search;
+        $start_today = $request->start_today ?? false;
+        $end_today = $request->end_today ?? false;
+
         if ($request->filled('search')) {
             $query->where('code', 'LIKE', "%{$search}%")
                 ->orWhere('code', 'like', "%{$search}%");
@@ -69,23 +76,25 @@ class MovementController extends Controller
 
         $movements = $query->paginate();
 
-        $cars = Car::with(['carPlates' => fn($q) => $q->wherePivotNull('date_to')])->orderBy('model')->get();
         $stats = [
             'total' => $total,
             'pending' => $pending,
             'in_progress' => $inProgress,
             'completed_month' => $notPending,
             'in_progress_month' => $inProgressMonth,
+            'end_today' => $endToday,
+            'start_today' => $startToday,
         ];
 
         confirmDelete('Conferma cancellazione', 'Sei sicuro di voler cancellare questo movimento?');
 
         return view('movement.index', compact(
             'movements',
-            'cars',
             'stats',
             'search',
-            'inprogress'
+            'inprogress',
+            'start_today',
+            'end_today',
         ))->with('i', ($request->input('page', 1) - 1) * $movements->perPage());
     }
 
@@ -214,7 +223,6 @@ class MovementController extends Controller
     public function update(MovementRequest $request, Movement $movement): RedirectResponse
     {
         try {
-
             DB::beginTransaction();
             $data = $request->validated();
             MovementService::update($movement, $data);

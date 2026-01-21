@@ -21,7 +21,7 @@
 
     <div class="col-md-6">
 
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="name" class="form-label">{{ __('Numero Targa') }} <span class="text-danger">*</span></label>
             <input type="text" name="name" class="text-uppercase form-control @error('name') is-invalid @enderror"
                    value="{{ old('name', $carPlate?->name) }}" id="name" placeholder="Es: AB 123 CD" maxlength="20"
@@ -34,7 +34,7 @@
 
     <div class="col-md-6">
 
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="type" class="form-label">{{ __('Tipo Targa') }} <span class="text-danger">*</span></label>
             <select name="type" class="form-control @error('type') is-invalid @enderror" id="type" @if(!$button) disabled @endif>
                 <option value="">Seleziona tipo</option>
@@ -58,7 +58,7 @@
     </div>
 
     <div class="col-md-12">
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="note" class="form-label">{{ __('Note') }}</label>
             <textarea name="note" class="form-control @error('note') is-invalid @enderror" id="note" rows="3"
                       placeholder="Note aggiuntive sulla targa">{{ old('note', $carPlate?->note) }}</textarea>

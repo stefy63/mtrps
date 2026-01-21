@@ -2,7 +2,7 @@
 <div class="row padding-1 p-1">
     <div class="col-md-12">
 
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="name" class="form-label">{{ __('Nome Marca') }} <span class="text-danger">*</span></label>
             <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
                    value="{{ old('name', $carBrand?->name) }}" id="name"
@@ -11,7 +11,7 @@
             <small class="form-text text-muted">Inserisci il nome ufficiale della casa automobilistica</small>
         </div>
 
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="description" class="form-label">{{ __('Descrizione') }}</label>
             <input type="text" name="description" class="form-control @error('description') is-invalid @enderror"
                    value="{{ old('description', $carBrand?->description) }}" id="description"
@@ -21,7 +21,7 @@
                 ecc.)</small>
         </div>
 
-        <div class="form-group mb-2 mb20">
+        <div class="form-group mb-2 ">
             <label for="note" class="form-label">{{ __('Note') }}</label>
             <textarea name="note" class="form-control @error('note') is-invalid @enderror" id="note" rows="4"
                       placeholder="Note aggiuntive sulla marca">{{ old('note', $carBrand?->note) }}</textarea>

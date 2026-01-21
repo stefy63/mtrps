@@ -61,7 +61,7 @@ class MaintenanceGarage extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function maintenance()
+    public function maintenances()
     {
         return $this->hasMany(Maintenance::class, 'garage_id', 'id');
     }

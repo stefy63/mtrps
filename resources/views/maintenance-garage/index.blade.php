@@ -3,7 +3,7 @@
 @section('template_title')
     Officine
 @endsection
-
+@use('App\Enum\PlateTypeEnum')
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -37,13 +37,15 @@
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                 <tr>
-                                    <th class="col-4">Officina</th>
+                                    <th class="col-2">Officina</th>
                                     <th class="col-1">P.IVA / CF</th>
                                     <th class="col-1">Mail / PEC</th>
                                     <th class="col-1">Certificazioni</th>
                                     <th class="col-1">DURC</th>
                                     <th class="col-1">Telefono</th>
                                     <th class="col-2">Indirizzo</th>
+                                    <th class="col-1">Incarichi</th>
+                                    <th class="col-1">Targhe</th>
                                     <th class="col-1"></th>
                                 </tr>
                                 </thead>
@@ -134,6 +136,26 @@
                                         </td>
                                         <td>
                                             <small>{{ $garage->address }}</small>
+                                        </td>
+                                        <td>
+                                            @if($garage->maintenances->count() > 0)
+                                                <span class="badge text-bg-dark">{{ $garage->maintenances->count() }}</span>
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($garage->maintenances->count() > 0)
+                                                @foreach($garage->maintenances as $maintenance)
+                                                    @foreach ($maintenance->car->carPlates as $plate)
+                                                        @if ($plate->type === PlateTypeEnum::POLIZIA->value)
+                                                            <span class="small badge text-bg-primary">{{ $plate->name }}</span>
+                                                        @endif
+                                                    @endforeach
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted">-</span>
+                                            @endif
                                         </td>
                                         <td class="text-end">
                                             <x-action-table-button itemRoute="maintenance-garages" :item="$garage"

@@ -26,7 +26,7 @@ class CigController extends Controller
     {
         $query = Cig::with([
             'car.carPlates',
-            'maintenanceGarage.maintenance',
+            'maintenanceGarage.maintenances',
             'userRup',
             'userSupport',
             'userTenderNotice',
@@ -42,7 +42,7 @@ class CigController extends Controller
                     $q->where('name', 'like', "%{$search}%")
                     ->orWhere('type', 'like', "%{$search}%");
                 })
-                ->orWhereHas('maintenanceGarage.maintenance', function ($q) use ($search) {
+                ->orWhereHas('maintenanceGarage.maintenances', function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%");
                 })
                 ->orWhereHas('userRup', function ($q) use ($search) {
@@ -82,7 +82,7 @@ class CigController extends Controller
     {
         $cig = new Cig();
         $cars = Car::with(['carPlates', 'carBrand'])->orderBy('model')->get();
-        $garages = MaintenanceGarage::with(['maintenance.car'])->orderBy('name')->get();
+        $garages = MaintenanceGarage::with(['maintenances.car'])->orderBy('name')->get();
         $users = User::orderBy('name')->get();
         if ($request->has('maintenance_garage_id')) {
             $cig->maintenance_garage_id = $request->maintenance_garage_id;
@@ -92,9 +92,6 @@ class CigController extends Controller
         }
         $cig->date = now();
         $button = false;
-        // if ($request->has('button')) {
-        //     $button = true;
-        // }
 
         return view('cig.form', compact('cig', 'cars', 'garages', 'users', 'button'));
     }
@@ -126,7 +123,7 @@ class CigController extends Controller
     {
         $cig = new Cig();
         $cars = Car::with(['carPlates', 'carBrand'])->orderBy('model')->get();
-        $garages = MaintenanceGarage::with(['maintenance.car'])->orderBy('name')->get();
+        $garages = MaintenanceGarage::with(['maintenances.car'])->orderBy('name')->get();
         $users = User::orderBy('name')->get();
 
         // Se viene passato un maintenance_garage_id, preselezionalo

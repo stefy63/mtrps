@@ -7,13 +7,15 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends Controller
 {
+    public function __construct() {
+        $this->middleware('role:admin');
+    }
     /**
      * Display a listing of the resource.
      */
@@ -34,7 +36,7 @@ class UserController extends Controller
         return view('user.form', compact('user'));
     }
 
-    public function storeForm(Request $request): JsonResponse
+    public function storeForm(StoreUserRequest $request): JsonResponse
     {
         try {
             $data = $request->validated();
@@ -74,7 +76,6 @@ class UserController extends Controller
     public function show($id): View
     {
         $user = User::find($id);
-
         return view('user.show', compact('user'));
     }
 
