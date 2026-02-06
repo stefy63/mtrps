@@ -197,7 +197,7 @@ class CigController extends Controller
     public function edit(Cig $cig): View
     {
         $cars = Car::with(['carPlates', 'carBrand'])->orderBy('model')->get();
-        $garages = MaintenanceGarage::with(['maintenance.car'])->orderBy('name')->get();
+        $garages = MaintenanceGarage::with(['maintenances.car'])->orderBy('name')->get();
         $users = User::orderBy('name')->get();
 
         return view('cig.edit', compact('cig', 'cars', 'garages', 'users'));

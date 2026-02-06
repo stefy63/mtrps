@@ -29,7 +29,7 @@ class MaintenanceController extends Controller
     {
         $query = Maintenance::with(['car.carPlates','car.carOffices', 'maintenanceGarages', 'maintenanceTypes']);
 
-        $total = (clone $query)->count();
+        $total = (clone $query)->withoutGlobalScope('inprogress')->count();
         $totalInGarage = (clone $query)->whereHas('maintenanceGarages', function ($q) {
             $q->whereNotNull('piva')->whereNotNull('cf')->whereNotNull('iban');
         })->count();
@@ -39,9 +39,9 @@ class MaintenanceController extends Controller
         $totalOpen_today = (clone $query)->whereDay('date_from', now()->day)->count();
         $totalOpen_week = (clone $query)->whereBetween('date_from', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
         $totalOpen_month = (clone $query)->whereMonth('date_from', now()->month)->count();
-        $totalClosed_today = (clone $query)->whereDay('date_to', now()->day)->count();
-        $totalClosed_week = (clone $query)->whereBetween('date_to', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
-        $totalClosed_month = (clone $query)->whereMonth('date_to', now()->month)->count();
+        $totalClosed_today = (clone $query)->withoutGlobalScope('inprogress')->whereDay('date_to', now()->day)->count();
+        $totalClosed_week = (clone $query)->withoutGlobalScope('inprogress')->whereBetween('date_to', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+        $totalClosed_month = (clone $query)->withoutGlobalScope('inprogress')->whereMonth('date_to', now()->month)->count();
 
         if ($inprogress = $request->exists('inprogress')) {
             $query->withoutGlobalScope('inprogress');
